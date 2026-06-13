@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.licenta.workout.WorkoutApplicationTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.51 s -- in com.licenta.workout.WorkoutApplicationTest
