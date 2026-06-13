@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: workout
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/workout}
+    username: ${SPRING_DATASOURCE_USERNAME:workout}
+    password: ${SPRING_DATASOURCE_PASSWORD:workout}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8080

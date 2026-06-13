@@ -1,42 +1,79 @@
-# Workout Thesis Platform Docs
+# Workout Thesis Platform
 
-This package contains the project-control files for a thesis-grade gym training platform.
+Evidence-Informed Workout Template Discovery and Training History Platform.
 
-## Files
+Backend: Spring Boot 3.5.x (Java 21) · Frontend: React + TypeScript (Vite) · DB: PostgreSQL 16 + Flyway · Docker Compose.
 
-Root:
+The production build serves the React frontend and the REST API together at `http://localhost:8080`.
 
-- `CLAUDE.md`
-- `AGENTS.md`
-- `README.md`
-
-Docs:
-
-- `docs/PROJECT_SPEC.md`
-- `docs/ARCHITECTURE.md`
-- `docs/DATABASE_SCHEMA.md`
-- `docs/API_CONTRACT.md`
-- `docs/SECURITY_MODEL.md`
-- `docs/ROUTINE_ANALYZER.md`
-- `docs/SEARCH_AND_CACHING.md`
-- `docs/COACH_MODE.md`
-- `docs/TASKS.md`
-- `docs/CLAUDE_CODE_WORKFLOW.md`
-- `docs/CODEX_PROMPTS.md`
-- `docs/THESIS_ANGLE.md`
-
-Migration:
-
-- `backend/src/main/resources/db/migration/V1__full_initial_schema.sql`
-
-## Recommended First Claude Code Task
-
-Start with:
+## Layout
 
 ```text
-Read CLAUDE.md, AGENTS.md, docs/PROJECT_SPEC.md, docs/ARCHITECTURE.md, docs/DATABASE_SCHEMA.md, docs/TASKS.md, and backend/src/main/resources/db/migration/V1__full_initial_schema.sql.
-
-Do not edit yet.
-
-Summarize the architecture, implementation order, and any blocking inconsistencies.
+backend/      Spring Boot app, Flyway migrations, Dockerfile
+frontend/     React + TypeScript (Vite) app
+docs/         Specification, architecture, schema, API contract, etc.
+docker-compose.yml
 ```
+
+## Run with Docker (recommended)
+
+Requires Docker + Docker Compose.
+
+```bash
+docker compose up --build
+```
+
+This builds the frontend, packages it into the Spring Boot jar, starts PostgreSQL 16, applies the Flyway migration, and serves everything at `http://localhost:8080`.
+
+- App / UI: http://localhost:8080
+- Health: http://localhost:8080/api/health
+
+Stop and remove containers (keep data volume):
+
+```bash
+docker compose down
+```
+
+## Backend development
+
+The build requires a JDK 21. The frontend is built automatically by Maven
+(`frontend-maven-plugin`) and bundled into the jar.
+
+```bash
+mvn -f backend/pom.xml verify   # compile, build frontend, run Testcontainers tests
+mvn -f backend/pom.xml spring-boot:run
+```
+
+Tests use [Testcontainers](https://testcontainers.com/) to run against a real
+PostgreSQL 16 container (no H2), so a running Docker daemon is required for
+`mvn verify`.
+
+The backend expects a PostgreSQL instance. Defaults (overridable via
+`SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`):
+
+```text
+jdbc:postgresql://localhost:5432/workout   user: workout   password: workout
+```
+
+You can start just the database with `docker compose up postgres`.
+
+## Frontend development
+
+For fast iteration, run the Vite dev server (port 5173). It proxies `/api`
+requests to the backend on port 8080.
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+For the final/demo build, the frontend is served by Spring Boot at
+`http://localhost:8080` (no separate dev server needed) — see the Docker
+instructions above.
+
+## Implementation roadmap
+
+See `docs/TASKS.md`. Phase 1 (this milestone) delivers the runnable
+infrastructure: backend, frontend, Docker Compose, PostgreSQL, Flyway migration,
+and the `/api/health` endpoint.
