@@ -19,3 +19,19 @@ spring:
 
 server:
   port: 8080
+
+app:
+  security:
+    jwt:
+      # Production MUST set JWT_SECRET. The dev fallback is intentionally long
+      # (>= 256 bits) so HS256 key derivation works out of the box locally.
+      secret: ${JWT_SECRET:dev-only-insecure-secret-change-me-0123456789-abcdefghijklmnopqrstuvwxyz}
+      issuer: workout-thesis
+      access-ttl: 15m
+      refresh-ttl: 14d
+    cookie:
+      # false for local HTTP; the prod profile flips this to true for HTTPS.
+      secure: ${AUTH_COOKIE_SECURE:false}
+      name: refresh_token
+    cors:
+      allowed-origins: ${AUTH_CORS_ALLOWED_ORIGINS:http://localhost:5173}

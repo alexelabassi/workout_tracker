@@ -26,6 +26,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/workout
       SPRING_DATASOURCE_USERNAME: workout
       SPRING_DATASOURCE_PASSWORD: workout
+      # Same-origin over HTTP at localhost:8080 in this compose setup, so the
+      # refresh cookie stays non-Secure. Override for an HTTPS deployment.
+      JWT_SECRET: ${JWT_SECRET:-dev-compose-secret-change-me-0123456789-abcdefghijklmnopqrstuvwxyz}
+      AUTH_COOKIE_SECURE: "false"
     ports:
       - "8080:8080"
 

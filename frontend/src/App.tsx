@@ -1,28 +1,18 @@
-import { HealthCard } from "./features/health/HealthCard";
-import { useTheme } from "./shared/theme/ThemeProvider";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { LoginPage } from "./features/auth/LoginPage";
+import { RegisterPage } from "./features/auth/RegisterPage";
+import { ProtectedRoute } from "./features/auth/ProtectedRoute";
+import { DashboardPage } from "./features/dashboard/DashboardPage";
 
 export default function App() {
-  const { theme, toggleTheme } = useTheme();
-
   return (
-    <div className="app">
-      <header className="app__header">
-        <div>
-          <h1>Workout Platform</h1>
-          <p className="muted">
-            Evidence-Informed Workout Template Discovery and Training History
-          </p>
-        </div>
-        <button type="button" className="button" onClick={toggleTheme}>
-          {theme === "dark" ? "Light mode" : "Dark mode"}
-        </button>
-      </header>
-
-      <main className="app__main">
-        <HealthCard />
-      </main>
-
-      <footer className="app__footer muted">Phase 1 — Infrastructure ready</footer>
-    </div>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/" element={<DashboardPage />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

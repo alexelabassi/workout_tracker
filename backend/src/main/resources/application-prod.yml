@@ -1,0 +1,8 @@
+app:
+  security:
+    cookie:
+      # Production is served over HTTPS, so the refresh cookie must be Secure.
+      secure: ${AUTH_COOKIE_SECURE:true}
+    cors:
+      # Same-origin in production (frontend served by Spring Boot); no dev origin.
+      allowed-origins: ${AUTH_CORS_ALLOWED_ORIGINS:}
