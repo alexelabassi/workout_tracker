@@ -5,6 +5,7 @@ import com.thesis.workout.session.application.WorkoutSessionService;
 import com.thesis.workout.session.web.dto.AddExtraExerciseRequest;
 import com.thesis.workout.session.web.dto.SessionExerciseResponse;
 import com.thesis.workout.session.web.dto.StartWorkoutRequest;
+import com.thesis.workout.session.web.dto.UpdateSessionNotesRequest;
 import com.thesis.workout.session.web.dto.WorkoutSessionDetailResponse;
 import jakarta.validation.Valid;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -67,5 +69,12 @@ public class WorkoutSessionController {
             @PathVariable UUID sessionId,
             @Valid @RequestBody AddExtraExerciseRequest request) {
         return workoutSessionService.addExtraExercise(principal.id(), sessionId, request.exerciseId());
+    }
+
+    @PutMapping("/{sessionId}/notes")
+    public WorkoutSessionDetailResponse updateNotes(@AuthenticationPrincipal UserPrincipal principal,
+            @PathVariable UUID sessionId,
+            @Valid @RequestBody UpdateSessionNotesRequest request) {
+        return workoutSessionService.updateNotes(principal.id(), sessionId, request.notes());
     }
 }

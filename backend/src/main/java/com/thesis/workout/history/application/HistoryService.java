@@ -3,7 +3,7 @@ package com.thesis.workout.history.application;
 import com.thesis.workout.history.infrastructure.repository.HistorySessionRepository;
 import com.thesis.workout.history.infrastructure.repository.HistorySessionRepository.SessionSummaryRow;
 import com.thesis.workout.history.web.dto.HistoryItemResponse;
-import com.thesis.workout.history.web.dto.PagedResponse;
+import com.thesis.workout.shared.web.PagedResponse;
 import com.thesis.workout.session.domain.model.WorkoutSession;
 import java.math.BigDecimal;
 import java.time.Duration;

@@ -14,6 +14,8 @@ import { LiveWorkoutPage } from "./features/workouts/LiveWorkoutPage";
 import { WorkoutSummaryPage } from "./features/workouts/WorkoutSummaryPage";
 import { HistoryPage } from "./features/history/HistoryPage";
 import { AnalyticsPage } from "./features/analytics/AnalyticsPage";
+import { MarketplacePage } from "./features/marketplace/MarketplacePage";
+import { MarketplaceDetailPage } from "./features/marketplace/MarketplaceDetailPage";
 
 export default function App() {
   return (
@@ -33,6 +35,8 @@ export default function App() {
         <Route path="/workouts/:sessionId" element={<WorkoutSummaryPage />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/marketplace" element={<MarketplacePage />} />
+        <Route path="/marketplace/:templateId" element={<MarketplaceDetailPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

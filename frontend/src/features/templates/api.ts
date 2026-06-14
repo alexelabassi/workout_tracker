@@ -26,6 +26,14 @@ export function updateTemplate(id: string, payload: TemplatePayload): Promise<Te
   return apiPut<TemplateDetail>(`/templates/${id}`, payload);
 }
 
+export function publishTemplate(id: string): Promise<TemplateDetail> {
+  return apiPost<TemplateDetail>(`/templates/${id}/publish`);
+}
+
+export function unpublishTemplate(id: string): Promise<TemplateDetail> {
+  return apiPost<TemplateDetail>(`/templates/${id}/unpublish`);
+}
+
 export function deleteTemplate(id: string): Promise<void> {
   return apiDelete<void>(`/templates/${id}`);
 }

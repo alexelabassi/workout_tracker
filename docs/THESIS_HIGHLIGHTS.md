@@ -8,11 +8,16 @@ Brief by design — expand later. Newest at the bottom of each section.
 - Two-level snapshotting — template-day captures exercise name/type/muscles; session snapshots again at start.
 - Soft-delete everywhere it matters (templates, exercises, routines, gyms, equipment); sessions never physically deleted.
 - Package-by-feature with strict domain/application/infrastructure/web layering.
+- Marketplace copy = snapshot-preserving deep copy: official exercise refs kept, foreign/custom refs + routine refs nulled, snapshots retained → copied template fully usable & independent (only link is copiedFromTemplateId).
+- Entire Phase 7 (publish, vote, save, copy, stats) shipped with zero schema changes — V1 already modelled the marketplace.
+- Deterministic, rule-based evidence-informed template analyzer (weighted set volume, coverage, frequency, push/pull & posterior/quad balance, rest, rep extremes, difficulty), explainable "Template Structure Score" with a fixed deduction table — no ML, honest disclaimer, never claims optimality.
+- Analyzer kept architecturally clean: a template application-level read model (not web DTOs); missing planned-set counts are excluded (never fabricated) and flagged as incomplete.
 
 ## Concurrency & DB constraints
 - One-active-workout-per-user enforced by a **partial unique index** (`WHERE status='IN_PROGRESS'`), not just a service check.
 - DB constraint violations mapped to clean 409s (active workout, duplicate set number) instead of 500s.
 - Soft-delete-aware uniqueness via partial unique indexes (`WHERE deleted_at IS NULL`) — names reusable after delete.
+- Vote/save counters updated via atomic clamped SQL (`GREATEST(0, count ± delta)`) — no read-modify-write race, no negative counts; counters move only on a real row change.
 
 ## Security
 - IDOR-safe by design — owner-scoped queries return 404 (not 403) so existence isn't leaked; ownership chains for nested resources.

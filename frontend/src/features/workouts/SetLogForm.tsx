@@ -25,6 +25,7 @@ export function SetLogForm({ sessionExerciseId, equipment, onLogged, onError }: 
   const [reps, setReps] = useState("");
   const [rpe, setRpe] = useState("");
   const [equipmentId, setEquipmentId] = useState("");
+  const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async (event: FormEvent) => {
@@ -37,7 +38,7 @@ export function SetLogForm({ sessionExerciseId, equipment, onLogged, onError }: 
       durationSeconds: null,
       distanceMeters: null,
       rpe: toNumberOrNull(rpe),
-      note: null,
+      note: note.trim() ? note.trim() : null,
       equipmentId: equipmentId === "" ? null : equipmentId,
     };
     try {
@@ -45,6 +46,7 @@ export function SetLogForm({ sessionExerciseId, equipment, onLogged, onError }: 
       setWeight("");
       setReps("");
       setRpe("");
+      setNote("");
       onLogged();
     } catch (err) {
       onError(err instanceof ApiError ? err.message : "Could not log the set.");
@@ -76,6 +78,8 @@ export function SetLogForm({ sessionExerciseId, equipment, onLogged, onError }: 
           </option>
         ))}
       </select>
+      <input type="text" placeholder="note (optional)" value={note} maxLength={5000}
+        onChange={(event) => setNote(event.target.value)} aria-label="Set note" />
       <button type="submit" className="button" disabled={submitting}>
         {submitting ? "…" : "Log set"}
       </button>

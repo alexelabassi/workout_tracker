@@ -155,6 +155,14 @@ public class WorkoutSessionService {
         return assembleDetail(session);
     }
 
+    /** Sets the workout's notes. Allowed in any status (it's user commentary, not workout data). */
+    @Transactional
+    public WorkoutSessionDetailResponse updateNotes(UUID userId, UUID sessionId, String notes) {
+        WorkoutSession session = access.requireOwnedSession(userId, sessionId);
+        session.updateNotes(notes == null || notes.isBlank() ? null : notes.trim());
+        return assembleDetail(session);
+    }
+
     @Transactional
     public SessionExerciseResponse addExtraExercise(UUID userId, UUID sessionId, UUID exerciseId) {
         WorkoutSession session = requireActiveSession(userId, sessionId);

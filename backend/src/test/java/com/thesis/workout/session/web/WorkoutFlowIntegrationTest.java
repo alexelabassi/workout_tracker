@@ -379,6 +379,70 @@ class WorkoutFlowIntegrationTest extends AbstractPostgresIntegrationTest {
                 .andExpect(jsonPath("$.error").value("VALIDATION_ERROR"));
     }
 
+    @Test
+    void loggedSetCanCarryANote() throws Exception {
+        Fixtures fx = setup();
+        UUID sessionId = idOf(startWorkout(fx.token(), fx.dayId(), fx.gymId()).andReturn());
+        UUID sessionExerciseId = firstSessionExerciseId(fx.token(), sessionId);
+
+        mockMvc.perform(post("/api/session-exercises/" + sessionExerciseId + "/sets")
+                        .header("Authorization", "Bearer " + fx.token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "weight", 60, "reps", 8, "note", "felt easy, add weight"))))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.note").value("felt easy, add weight"));
+
+        MvcResult detail = mockMvc.perform(get("/api/workouts/" + sessionId)
+                        .header("Authorization", "Bearer " + fx.token()))
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(body(detail).get("exercises").get(0).get("sets").get(0).get("note").asText())
+                .isEqualTo("felt easy, add weight");
+    }
+
+    @Test
+    void workoutNotesCanBeSetAndEditedEvenAfterFinish() throws Exception {
+        Fixtures fx = setup();
+        UUID sessionId = idOf(startWorkout(fx.token(), fx.dayId(), fx.gymId()).andReturn());
+
+        mockMvc.perform(put("/api/workouts/" + sessionId + "/notes")
+                        .header("Authorization", "Bearer " + fx.token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("notes", "great session"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.notes").value("great session"));
+
+        mockMvc.perform(post("/api/workouts/" + sessionId + "/finish").header("Authorization", "Bearer " + fx.token()))
+                .andExpect(status().isOk());
+
+        // Notes remain editable after the workout is finished (they are commentary, not workout data).
+        mockMvc.perform(put("/api/workouts/" + sessionId + "/notes")
+                        .header("Authorization", "Bearer " + fx.token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("notes", "edited afterwards"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.notes").value("edited afterwards"));
+
+        mockMvc.perform(get("/api/workouts/" + sessionId).header("Authorization", "Bearer " + fx.token()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.notes").value("edited afterwards"));
+    }
+
+    @Test
+    void cannotEditAnotherUsersWorkoutNotes() throws Exception {
+        Fixtures owner = setup();
+        UUID sessionId = idOf(startWorkout(owner.token(), owner.dayId(), owner.gymId()).andReturn());
+
+        Fixtures intruder = setup();
+        mockMvc.perform(put("/api/workouts/" + sessionId + "/notes")
+                        .header("Authorization", "Bearer " + intruder.token())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("notes", "hijack"))))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("WORKOUT_NOT_FOUND"));
+    }
+
     // --- fixtures / helpers ---
 
     private Fixtures setup() throws Exception {

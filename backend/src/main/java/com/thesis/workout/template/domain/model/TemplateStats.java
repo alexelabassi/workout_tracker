@@ -60,4 +60,24 @@ public class TemplateStats {
     public UUID getTemplateId() {
         return templateId;
     }
+
+    public int getUpvotesCount() {
+        return upvotesCount;
+    }
+
+    public int getDownvotesCount() {
+        return downvotesCount;
+    }
+
+    public int getSavesCount() {
+        return savesCount;
+    }
+
+    public int getUsesCount() {
+        return usesCount;
+    }
+
+    public BigDecimal getRatingScore() {
+        return ratingScore;
+    }
 }

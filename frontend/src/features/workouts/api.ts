@@ -23,6 +23,10 @@ export function cancelWorkout(sessionId: string): Promise<WorkoutDetail> {
   return apiPost<WorkoutDetail>(`/workouts/${sessionId}/cancel`);
 }
 
+export function updateWorkoutNotes(sessionId: string, notes: string | null): Promise<WorkoutDetail> {
+  return apiPut<WorkoutDetail>(`/workouts/${sessionId}/notes`, { notes });
+}
+
 export function addExtraExercise(sessionId: string, exerciseId: string): Promise<SessionExerciseView> {
   return apiPost<SessionExerciseView>(`/workouts/${sessionId}/extra-exercises`, { exerciseId });
 }

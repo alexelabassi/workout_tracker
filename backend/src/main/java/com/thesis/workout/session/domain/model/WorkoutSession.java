@@ -100,6 +100,11 @@ public class WorkoutSession {
         return status == SessionStatus.IN_PROGRESS;
     }
 
+    /** User-authored commentary on the workout; editable any time the session is owned. */
+    public void updateNotes(String notes) {
+        this.notes = notes;
+    }
+
     public UUID getId() {
         return id;
     }

@@ -6,6 +6,7 @@ import { fetchVisibleExercises } from "../exercises/api";
 import type { Exercise } from "../exercises/types";
 import { fetchEquipment } from "../gyms/api";
 import type { Equipment } from "../gyms/types";
+import { SessionNotesEditor } from "./SessionNotesEditor";
 import { SetLogForm } from "./SetLogForm";
 import {
   addExtraExercise,
@@ -253,6 +254,7 @@ export function LiveWorkoutPage() {
                           .filter(Boolean)
                           .join(" · ") || "—"}
                       </p>
+                      {set.note && <p className="muted exercise-row__muscles">Note: {set.note}</p>}
                     </div>
                     <div className="app__actions">
                       <button type="button" className="button button--ghost" onClick={() => void onDeleteSet(set.id)}>
@@ -278,6 +280,8 @@ export function LiveWorkoutPage() {
             )}
           </section>
         ))}
+
+        <SessionNotesEditor sessionId={workout.id} initialNotes={workout.notes} onSaved={() => void load()} />
 
         <section className="card">
           <header className="card__header">

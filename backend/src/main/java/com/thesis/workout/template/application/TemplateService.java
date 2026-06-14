@@ -1,10 +1,12 @@
 package com.thesis.workout.template.application;
 
+import com.thesis.workout.template.application.exception.TemplateNotFoundException;
 import com.thesis.workout.template.domain.model.Template;
 import com.thesis.workout.template.domain.model.TemplateDay;
 import com.thesis.workout.template.domain.model.TemplateDayExercise;
 import com.thesis.workout.template.domain.model.TemplateDayRoutine;
 import com.thesis.workout.template.domain.model.TemplateStats;
+import com.thesis.workout.template.domain.model.TemplateVisibility;
 import com.thesis.workout.template.infrastructure.repository.TemplateDayExerciseRepository;
 import com.thesis.workout.template.infrastructure.repository.TemplateDayRepository;
 import com.thesis.workout.template.infrastructure.repository.TemplateDayRoutineRepository;
@@ -63,6 +65,15 @@ public class TemplateService {
     @Transactional(readOnly = true)
     public TemplateDetailResponse get(UUID userId, UUID templateId) {
         Template template = templateAccess.requireOwnedTemplate(userId, templateId);
+        return assembleDetail(template);
+    }
+
+    /** Assembles the detail tree for a PUBLIC template regardless of owner (marketplace read). */
+    @Transactional(readOnly = true)
+    public TemplateDetailResponse getPublicDetail(UUID templateId) {
+        Template template = templateRepository
+                .findByIdAndVisibilityAndDeletedAtIsNull(templateId, TemplateVisibility.PUBLIC)
+                .orElseThrow(TemplateNotFoundException::new);
         return assembleDetail(template);
     }
 

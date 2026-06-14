@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../../shared/api/client";
+import { SessionNotesEditor } from "./SessionNotesEditor";
 import { fetchWorkout } from "./api";
 import type { WorkoutDetail } from "./types";
 
@@ -114,6 +115,7 @@ export function WorkoutSummaryPage() {
                           .filter(Boolean)
                           .join(" · ") || "—"}
                       </p>
+                      {set.note && <p className="muted exercise-row__muscles">Note: {set.note}</p>}
                     </div>
                   </li>
                 ))}
@@ -121,6 +123,8 @@ export function WorkoutSummaryPage() {
             )}
           </section>
         ))}
+
+        <SessionNotesEditor sessionId={workout.id} initialNotes={workout.notes} onSaved={() => void load()} />
       </main>
     </div>
   );

@@ -1,6 +1,7 @@
 package com.thesis.workout.template.infrastructure.repository;
 
 import com.thesis.workout.template.domain.model.Template;
+import com.thesis.workout.template.domain.model.TemplateVisibility;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +15,9 @@ public interface TemplateRepository extends JpaRepository<Template, UUID> {
     List<Template> findByUserIdAndDeletedAtIsNullOrderByNameAsc(UUID userId);
 
     Optional<Template> findByIdAndUserIdAndDeletedAtIsNull(UUID id, UUID userId);
+
+    /** Loads a template only if it is public and active — the marketplace read guard. */
+    Optional<Template> findByIdAndVisibilityAndDeletedAtIsNull(UUID id, TemplateVisibility visibility);
 
     /**
      * Recomputes the denormalised aggregate arrays from the template's child rows, entirely

@@ -63,6 +63,9 @@ export function DashboardPage() {
           <Link to="/templates" className="button button--block">
             Manage templates
           </Link>
+          <Link to="/marketplace" className="button button--block button--ghost">
+            Browse marketplace
+          </Link>
         </section>
 
         <section className="card">

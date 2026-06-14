@@ -1,0 +1,383 @@
+% Workout Platform --- Bachelor's Thesis Documentation (DRAFT)
+% Build: pdflatex main.tex  (run twice for the table of contents / references)
+% Only standard packages are used so it builds with a stock TeX Live / MiKTeX.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue, citecolor=black}
+
+\definecolor{codebg}{RGB}{245,247,251}
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{codebg},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!40},
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  captionpos=b
+}
+
+\title{\textbf{An Evidence-Informed Workout Tracking,\\ Discovery and Coaching Platform}\\[4pt]
+\large Design and Implementation of a Full-Stack Training-History System}
+\author{Bachelor's Thesis --- Draft Documentation}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This document describes the design and implementation of a full-stack workout platform built
+as a bachelor's thesis project. The system lets users build evidence-informed workout templates,
+execute live training sessions whose history is preserved through immutable snapshots, review
+progress through analytics, share and copy templates in a marketplace, and obtain deterministic,
+rule-based structural feedback on their programs. The backend is a Spring Boot 3 / Java 21
+application backed by PostgreSQL 16 with Flyway migrations; the frontend is a React + TypeScript
+single-page application served by the same backend. The work emphasises data integrity
+(historical truth via snapshots), correctness (real-database integration tests), security
+(JWT authentication with refresh-token rotation and ownership checks), and honest, explainable
+feedback rather than opaque ``AI''. This is a working draft and is intentionally incomplete.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\subsection{Motivation}
+Most consumer training apps either act as passive loggers or present opaque ``AI coach''
+recommendations that users cannot interrogate. The goal of this project is a platform that is
+useful as a logger and a planner, that preserves training history truthfully even as plans
+change, and that gives \emph{explainable}, evidence-informed structural feedback on programs
+without pretending to offer medical or individualised advice.
+
+\subsection{Contributions}
+The implemented system provides:
+\begin{itemize}[noitemsep]
+  \item Authentication with JWT access tokens and rotating refresh tokens.
+  \item Management of planning data: a shared official exercise catalog, user custom exercises,
+        reusable warm-up/cool-down routines, gyms and equipment.
+  \item A multi-day workout \emph{template} builder with snapshotting of exercise metadata.
+  \item Live workout execution that copies the chosen template day into \emph{immutable session
+        snapshots}, so recorded history never changes when source data is later edited or deleted.
+  \item Training history and analytics (volume over time, estimated one-rep-max progression,
+        weekly frequency, muscle-group distribution).
+  \item A template marketplace (publish, browse, vote, save, deep-copy) built entirely on the
+        existing schema.
+  \item A deterministic, rule-based, evidence-informed template structure analyzer.
+\end{itemize}
+
+\subsection{Scope of this draft}
+The platform was built as a sequence of vertical slices (``phases''). This draft documents
+phases~1--9 as implemented (Redis caching, phase~8, and OpenSearch/coach mode, phases~10--11,
+are out of scope here). It is a work in progress.
+
+\section{Requirements and Scope}
+
+\subsection{Functional requirements}
+\begin{itemize}[noitemsep]
+  \item Users register, authenticate, and access only their own private data.
+  \item Users create and manage exercises, routines, gyms, equipment, and templates.
+  \item Users start a workout from a template day at a chosen gym, log sets, add unplanned
+        exercises, and finish or cancel the session.
+  \item Past sessions remain correct after the source template, exercises, routines, gyms, or
+        equipment are edited or deleted.
+  \item Users review history and progress analytics derived from real logged data.
+  \item Users publish templates publicly, browse and sort the marketplace, vote, save and copy
+        templates into their own private library.
+  \item Users obtain structural, evidence-informed analysis of a template.
+\end{itemize}
+
+\subsection{Non-functional requirements}
+PostgreSQL is the single source of truth; the schema is fixed up-front and evolved only through
+Flyway migrations. Every user-owned resource enforces ownership checks to avoid Insecure Direct
+Object Reference (IDOR) vulnerabilities. The codebase targets ``portfolio / backend systems''
+quality rather than a throwaway prototype: no in-memory fakes, no H2, real integration tests.
+
+\subsection{Phased roadmap}
+\begin{center}
+\begin{tabular}{@{}cll@{}}
+\toprule
+Phase & Theme & Status \\
+\midrule
+1 & Infrastructure, database, Docker, health & Done \\
+2 & Authentication (JWT + refresh rotation) & Done \\
+3 & Planning data (exercises, routines, gyms, equipment) & Done \\
+4 & Workout templates / programs & Done \\
+5 & Live workout execution + immutable snapshots & Done \\
+6 & History + basic analytics & Done \\
+7 & Template marketplace & Done \\
+8 & Redis caching & Skipped (future) \\
+9 & Evidence-informed template analyzer & Done \\
+10--11 & Coach mode, OpenSearch & Future \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{System Architecture}
+
+\subsection{High-level shape}
+The system is a classic three-tier web application: a React single-page application talks to a
+Spring Boot REST API over JSON, and the API persists to PostgreSQL. In production the compiled
+frontend is bundled into the backend and served from the same origin at \verb|http://localhost:8080/|,
+which keeps the authentication cookie same-origin. The whole stack runs through Docker Compose.
+
+\subsection{Package-by-feature and layering}
+The backend is organised \emph{by feature}, not by technical layer. Each feature package
+(\verb|auth|, \verb|exercise|, \verb|routine|, \verb|gym|, \verb|template|, \verb|session|,
+\verb|history|, \verb|analytics|, \verb|marketplace|, \verb|analyzer|, \verb|shared|) contains its
+own four layers:
+\begin{itemize}[noitemsep]
+  \item \textbf{domain} --- JPA entities and value objects (the persistence model).
+  \item \textbf{application} --- services, commands, and feature-specific exceptions (use cases).
+  \item \textbf{infrastructure} --- Spring Data repositories.
+  \item \textbf{web} --- REST controllers and request/response DTOs.
+\end{itemize}
+A strict rule is that the web layer never leaks entities: controllers exchange DTOs only. Where
+one feature needs another's data (for example the analyzer reading template structure), the
+producer exposes a clean \emph{application-level} read model rather than sharing a web DTO or a
+repository, keeping the dependency direction sane.
+
+\subsection{Request flow}
+A request is authenticated by a servlet filter that validates the JWT and populates the security
+context with a \verb|UserPrincipal|. Controllers read the principal, never trusting a user id from
+the request body. Services run inside transactions; read paths are marked read-only. Domain errors
+extend a shared \verb|ApiException| carrying an HTTP status and a stable machine-readable error
+code, and a single \verb|@RestControllerAdvice| renders them into a uniform error envelope.
+
+\subsection{Error envelope}
+Every failed request returns a consistent shape:
+\begin{lstlisting}
+{ "timestamp": "...", "status": 404, "error": "TEMPLATE_NOT_FOUND",
+  "message": "Template not found.", "path": "/api/templates/..." }
+\end{lstlisting}
+The exception handler deliberately omits a catch-all handler so that framework 404s for unknown
+routes are not masked; validation failures and unreadable bodies map to \verb|VALIDATION_ERROR|.
+
+\section{Technology Stack}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Concern & Choice \\
+\midrule
+Language / runtime & Java 21 \\
+Backend framework & Spring Boot 3.5 (Web, Security, Validation, Data JPA) \\
+Persistence & PostgreSQL 16, Hibernate ORM 6, \verb|ddl-auto: validate| \\
+Migrations & Flyway (\verb|V1| schema, \verb|V2| seed data, \verb|V3| index) \\
+Auth & JWT (HS256, jjwt), BCrypt password hashing \\
+Frontend & React 18 + TypeScript, Vite, React Router, Recharts \\
+Packaging & Docker Compose; frontend bundled into the backend jar \\
+Testing & JUnit 5, Spring MVC Test, Testcontainers (real PostgreSQL) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent A key discipline is \verb|ddl-auto: validate|: Hibernate never generates or alters
+schema. The schema is owned by Flyway, and every entity must match it exactly, which catches
+mapping drift at start-up.
+
+\section{Data Model}
+
+\subsection{Overview}
+The schema is created by a single initial migration (\verb|V1|) covering users, the exercise
+catalog and muscle groups, routines, gyms and equipment, templates and their day/exercise/routine
+children, live sessions and their snapshots, the marketplace tables (votes, saves, use events,
+per-template stats), and tables reserved for later phases (coaching, analysis results, an outbox).
+A second migration seeds the official exercise catalog; a third adds a concurrency index
+(Section~\ref{sec:concurrency}).
+
+\subsection{The snapshot principle}
+\label{sec:snapshots}
+Historical truth is the central data-integrity requirement. It is enforced at two levels:
+\begin{enumerate}[noitemsep]
+  \item \textbf{Template day exercises} store \verb|exercise_name_snapshot|,
+        \verb|exercise_type_snapshot| and a snapshot of muscle groups, keeping only a
+        \emph{nullable} reference to the live exercise (\verb|ON DELETE SET NULL|).
+  \item \textbf{Workout sessions} snapshot again at start: template name, day name, gym name, and
+        every exercise's name/type/planned fields and muscle groups are copied into
+        \verb|session_exercises| and \verb|session_exercise_muscle_groups|; logged sets snapshot
+        the equipment name.
+\end{enumerate}
+Because session rows carry their own values and only nullable foreign keys, editing or deleting
+the source template, exercise, routine, gym or equipment can never alter what a past session
+recorded. This is verified directly by integration tests.
+
+\subsection{Soft deletes and uniqueness}
+User-owned planning resources use a \verb|deleted_at| column for soft deletion, so history that
+references them survives. Uniqueness is enforced with \emph{partial} unique indexes that ignore
+soft-deleted rows, e.g. a unique custom-exercise name per user
+\verb|WHERE deleted_at IS NULL|; this lets a name be reused after deletion. Sessions are never
+physically deleted --- cancellation is a status, not a row removal.
+
+\section{Security Model}
+
+\subsection{Authentication}
+Passwords are stored as BCrypt hashes. On login the API issues a short-lived JWT access token
+(sent by the SPA in the \verb|Authorization| header and kept only in memory) and an opaque refresh
+token stored as a \verb|HttpOnly|, \verb|SameSite=Strict| cookie scoped to \verb|/api/auth|. The
+refresh token is persisted only as a SHA-256 hash. On refresh the token is \emph{rotated}
+transactionally: the presented token is validated and revoked and a new pair is issued, so a
+stolen-and-replayed refresh token is detected. The cookie's \verb|Secure| flag is profile-based
+(off for local HTTP, on for production HTTPS), and CORS allows the Vite dev origin with
+credentials.
+
+\subsection{Authorization and IDOR safety}
+Every user-owned resource is loaded with an owner-scoped query. Crucially, a request for a resource
+owned by another user returns \textbf{404, not 403}, so the API does not even reveal that the
+resource exists. Nested resources resolve ownership up the chain (for example a template-day
+exercise is reachable only if its day's template is owned by the caller). Public marketplace
+templates are readable by any authenticated user; private templates are never exposed in browse
+results.
+
+\section{Feature Walkthrough}
+
+\subsection{Planning data}
+Users build a library of exercises (the seeded official catalog plus their own custom exercises,
+each tagged with primary/secondary muscle groups), reusable START/END routines, gyms, and
+equipment within gyms. All endpoints are owner-scoped, validate input, and use soft deletes.
+
+\subsection{Templates}
+A template is a private, multi-day program. Each day holds ordered exercises (with planned
+sets/reps/weight/rest and a note) and attached routines. Adding an exercise snapshots its
+name/type/muscle groups into the template day. After every exercise change the template's
+denormalised aggregate arrays (muscle groups, official exercise ids, exercise names) are recomputed
+Postgres-side for future search.
+
+\subsection{Live workout execution}
+Starting a workout (from a template day and a gym) performs the snapshot copy of
+Section~\ref{sec:snapshots} in a single transaction. During the session the user logs sets
+(weight, reps, RPE, optional equipment and note), adds unplanned ``extra'' exercises, and finally
+finishes or cancels. Only one in-progress workout per user is allowed (Section~\ref{sec:concurrency}).
+
+\subsection{History and analytics}
+History lists the user's sessions newest-first with per-session summary numbers. Analytics, computed
+entirely with native PostgreSQL aggregation over finished sessions, provide: total volume per day,
+weekly workout counts (\verb|date_trunc|), primary-muscle set distribution, and a best estimated
+one-rep-max per exercise per day (Epley) for a strength-progression chart.
+
+\subsection{Marketplace}
+Owners publish a non-empty template, making it public. Authenticated users browse public templates
+sorted by newest, top (net votes) or trending, vote (toggle/switch), save, and \emph{use} a
+template. ``Use'' deep-copies the public template into a new private template owned by the copier,
+linked to its source only by \verb|copied_from_template_id|. Per-template counters are updated with
+atomic, clamped SQL (Section~\ref{sec:concurrency}).
+
+\paragraph{Copying templates with custom exercises.}
+A subtle case is a public template that references the publisher's \emph{private} custom exercise.
+Because template days are self-contained snapshots, the copy keeps the exercise reference only when
+it points to an \emph{official} exercise; for the publisher's custom (or any foreign/deleted)
+exercise the reference is set null while the name/type/muscle-group snapshots are preserved. The
+copy is therefore fully usable from snapshots and independent of the source, with no privacy leak.
+
+\section{The Evidence-Informed Analyzer}
+
+\subsection{Framing}
+The analyzer is deterministic and rule-based --- no machine learning. It produces a \emph{Template
+Structure Score}, never a ``scientific quality'' or medical judgement, and every response carries a
+disclaimer that it is not medical advice and ignores recovery, technique, effort, sleep, nutrition
+and individual response. It is computed live on a read-only \verb|GET| and is not persisted.
+
+\subsection{Inputs and assumptions}
+Weekly volume is the sum over the template's authored days (each counted once); when
+\verb|days_per_week| exceeds the authored day count an informational note records the assumption.
+Sets are weighted by muscle role (primary 1.0, secondary 0.5). Exercises with no planned set count
+are \emph{excluded} from volume (never assumed to be a default) and flagged as incomplete data.
+Only resistance (\verb|STRENGTH|) exercises count toward volume and balance.
+
+\subsection{Rule families}
+The rule pack covers: per-muscle weekly volume bands; major-region coverage (lower body, pulling,
+pushing, posterior chain), where minor groups cannot mask a missing major region; weekly frequency
+and single-session concentration; structural balance ratios (pull/push, posterior/quads,
+lower/upper); rest intervals (compound vs. isolation, the latter detected by a $\geq 3$ distinct
+muscle-group heuristic); rep-range extremes (goal-agnostic, since templates have no goal field);
+proximity-to-failure (always an informational limitation, as templates store no RIR/RPE); and
+difficulty suitability.
+
+\subsection{Scoring}
+The 100-point score is split into five sub-scores, each starting at its maximum and deducting a
+fixed amount per finding (floored at zero), so outputs are fully deterministic and testable:
+\begin{center}
+\begin{tabular}{@{}lc l@{}}
+\toprule
+Sub-score & Max & Example deductions \\
+\midrule
+Volume coverage & 35 & missing region $-12$; excessive $-5$; very low $-3$ \\
+Frequency & 20 & volume concentrated on one day $-4$ \\
+Balance & 20 & severe imbalance $-8$; moderate $-4$ \\
+Session design & 15 & excessive session $-5$; concentration $-3$ \\
+Specificity / rest & 10 & short rest $-2$; rep extreme $-2$ to $-3$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Categories map the total to \verb|WELL_STRUCTURED| ($\geq 80$), \verb|DECENT_STRUCTURE| (55--79) or
+\verb|NEEDS_REVIEW| ($<55$).
+
+\section{Engineering Highlights}
+
+\subsection{Concurrency and database constraints}
+\label{sec:concurrency}
+``One active workout per user'' is guaranteed by a \emph{partial unique index}
+(\verb|WHERE status = 'IN_PROGRESS'|) added in migration \verb|V3|; the service-level check is only
+a friendly fast path, and a lost race surfaces as a clean \verb|409 ACTIVE_WORKOUT_EXISTS| rather
+than a 500. Marketplace vote and save counters are updated with atomic, clamped SQL
+(\verb|GREATEST(0, count +/- delta)|) so there is no read--modify--write race and counts never go
+negative; counters move only when a row actually changes.
+
+\subsection{Postgres-side aggregation}
+Template aggregate arrays and all analytics are computed in SQL rather than in Java. The template
+aggregates are recomputed with a single native statement using \verb|array_agg(DISTINCT ... ORDER BY ...)|
+with explicitly cast empty-array fallbacks and deterministic ordering (which also keeps tests
+stable). This avoids binding PostgreSQL arrays through JPA, which is fragile under
+\verb|ddl-auto: validate|.
+
+\subsection{Clean read models}
+The analyzer consumes a dedicated application-level read model produced by the template feature,
+not a web DTO or a repository, so the analyzer package stays decoupled from template internals.
+
+\section{Testing Strategy}
+The backend has 108 integration tests (roughly 3.2k lines) that run against a \emph{real}
+PostgreSQL 16 instance via Testcontainers --- never H2 --- so the full Flyway-managed schema and its
+constraints are exercised. Tests assert behaviour through the HTTP layer (Spring MVC Test) and, where
+it matters, assert database-level guarantees directly: a raw second in-progress insert is rejected
+by the partial unique index; recomputed aggregate arrays are read back with \verb|JdbcTemplate|;
+session snapshots are shown to be unchanged after the source data is edited. Determinism of the
+analyzer is asserted by analysing the same template twice. A representative non-flaky-testing fix
+was tracing a JWT-tamper test failure to unused bits in the final base64url character of an HMAC
+signature and corrupting a fully-significant character instead.
+
+\section{Limitations and Future Work}
+This is an honest list of known gaps:
+\begin{itemize}[noitemsep]
+  \item \textbf{Frontend tests.} The React frontend (\(\approx\)5.3k lines) currently has no automated
+        tests; a component/smoke suite is the most valuable next addition.
+  \item \textbf{Auth hardening.} There is no login rate limiting or account lockout.
+  \item \textbf{Trending freshness.} \verb|trending_score| is a write-time approximation; a true
+        time-decaying rank needs a scheduled recompute (a natural fit for the deferred caching phase).
+  \item \textbf{Analyzer validity.} The scoring weights are reasoned heuristics, not empirically
+        validated; the feature is framed accordingly and always disclaimed.
+  \item \textbf{Search.} Full-text history and marketplace search is reserved for a later
+        OpenSearch phase; the denormalised aggregate arrays already prepare for it.
+  \item \textbf{Coaching.} Coach/client relationships and coach dashboards are modelled in the
+        schema but not yet implemented.
+  \item Minor: a small N+1 in the template list, a large frontend bundle (charting library), and
+        no generated OpenAPI specification.
+\end{itemize}
+
+\section{Conclusion}
+The platform realises a coherent, integrity-focused training system: plans are snapshotted into
+immutable history, analytics and feedback are derived honestly from real data, and a marketplace
+lets programs be shared and independently copied. The engineering emphasises correctness
+(real-database tests), data integrity (two-level snapshots, soft deletes), security (rotating JWT
+auth and IDOR-safe access), and explainability (a deterministic, disclaimed analyzer) over
+superficial features. The remaining phases (caching, coaching, search) extend rather than reshape
+this foundation.
+
+\end{document}

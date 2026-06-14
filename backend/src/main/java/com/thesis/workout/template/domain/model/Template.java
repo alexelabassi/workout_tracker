@@ -88,6 +88,15 @@ public class Template {
         return template;
     }
 
+    /** Creates a new PRIVATE template owned by the copier, linked to its source only via copiedFromTemplateId. */
+    public static Template createPrivateCopy(UUID userId, String name, String description, SplitType splitType,
+            Integer daysPerWeek, Difficulty difficulty, Integer estimatedDurationMinutes, UUID copiedFromTemplateId) {
+        Template template = createPrivate(
+                userId, name, description, splitType, daysPerWeek, difficulty, estimatedDurationMinutes);
+        template.copiedFromTemplateId = copiedFromTemplateId;
+        return template;
+    }
+
     public void updateDetails(String name, String description, SplitType splitType, Integer daysPerWeek,
             Difficulty difficulty, Integer estimatedDurationMinutes) {
         this.name = name;
@@ -96,6 +105,22 @@ public class Template {
         this.daysPerWeek = daysPerWeek;
         this.difficulty = difficulty;
         this.estimatedDurationMinutes = estimatedDurationMinutes;
+    }
+
+    /** Makes the template publicly visible in the marketplace. The CHECK requires published_at when PUBLIC. */
+    public void publish(Instant when) {
+        this.visibility = TemplateVisibility.PUBLIC;
+        this.publishedAt = when;
+    }
+
+    /** Returns the template to PRIVATE and clears its publish timestamp. */
+    public void unpublish() {
+        this.visibility = TemplateVisibility.PRIVATE;
+        this.publishedAt = null;
+    }
+
+    public boolean isPublic() {
+        return visibility == TemplateVisibility.PUBLIC;
     }
 
     public void softDelete(Instant when) {
@@ -138,6 +163,14 @@ public class Template {
 
     public TemplateVisibility getVisibility() {
         return visibility;
+    }
+
+    public Instant getPublishedAt() {
+        return publishedAt;
+    }
+
+    public UUID getCopiedFromTemplateId() {
+        return copiedFromTemplateId;
     }
 
     public Instant getUpdatedAt() {

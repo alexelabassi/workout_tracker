@@ -6,10 +6,11 @@ import { fetchVisibleExercises } from "../exercises/api";
 import type { Exercise } from "../exercises/types";
 import { fetchRoutines } from "../routines/api";
 import type { Routine } from "../routines/types";
+import { TemplateAnalysisPanel } from "../analyzer/TemplateAnalysisPanel";
 import { DayExerciseForm } from "./DayExerciseForm";
 import { DayForm } from "./DayForm";
 import { DayRoutineForm } from "./DayRoutineForm";
-import { deleteDay, deleteExercise, fetchTemplate, removeRoutine } from "./api";
+import { deleteDay, deleteExercise, fetchTemplate, publishTemplate, removeRoutine, unpublishTemplate } from "./api";
 import type { TemplateDay, TemplateDayExercise, TemplateDetail } from "./types";
 
 type LoadState =
@@ -72,6 +73,20 @@ export function TemplateBuilderPage() {
       reload("Day deleted.");
     } catch (err) {
       showToast(err instanceof ApiError ? err.message : "Could not delete the day.", "error");
+    }
+  };
+
+  const onTogglePublish = async (id: string, currentlyPublic: boolean) => {
+    try {
+      if (currentlyPublic) {
+        await unpublishTemplate(id);
+        reload("Template unpublished.");
+      } else {
+        await publishTemplate(id);
+        reload("Template published to the marketplace.");
+      }
+    } catch (err) {
+      showToast(err instanceof ApiError ? err.message : "Could not change publish state.", "error");
     }
   };
 
@@ -139,21 +154,31 @@ export function TemplateBuilderPage() {
           <h1>{template.name}</h1>
           <p className="muted">
             <Link to="/templates">← Back to templates</Link>
+            {template.visibility === "PUBLIC" ? " · Published" : ""}
             {template.muscleGroups.length > 0 ? ` · ${template.muscleGroups.join(", ")}` : ""}
           </p>
         </div>
-        <button
-          type="button"
-          className="button"
-          onClick={() => {
-            setEditingDay(null);
-            setDayFormOpen(true);
-            setExerciseForm(null);
-            setRoutineFormDayId(null);
-          }}
-        >
-          Add day
-        </button>
+        <div className="app__actions">
+          <button
+            type="button"
+            className={template.visibility === "PUBLIC" ? "button button--ghost" : "button"}
+            onClick={() => void onTogglePublish(template.id, template.visibility === "PUBLIC")}
+          >
+            {template.visibility === "PUBLIC" ? "Unpublish" : "Publish"}
+          </button>
+          <button
+            type="button"
+            className="button button--ghost"
+            onClick={() => {
+              setEditingDay(null);
+              setDayFormOpen(true);
+              setExerciseForm(null);
+              setRoutineFormDayId(null);
+            }}
+          >
+            Add day
+          </button>
+        </div>
       </header>
 
       <main className="app__main">
@@ -329,6 +354,8 @@ export function TemplateBuilderPage() {
             )}
           </section>
         ))}
+
+        <TemplateAnalysisPanel templateId={template.id} />
       </main>
     </div>
   );

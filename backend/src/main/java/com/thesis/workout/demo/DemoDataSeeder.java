@@ -37,7 +37,9 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +72,22 @@ public class DemoDataSeeder implements ApplicationRunner {
     private static final UUID OFFICIAL_SQUAT = UUID.fromString("00000000-0000-0000-0000-000000000101");
     private static final UUID OFFICIAL_BENCH = UUID.fromString("00000000-0000-0000-0000-000000000103");
     private static final UUID OFFICIAL_ROW = UUID.fromString("00000000-0000-0000-0000-000000000106");
+
+    // Marketplace demo data: many authors publishing many templates with varied stats so the
+    // newest / top / trending sorts visibly differ.
+    private static final String AUTHOR_EMAIL_PREFIX = "author";
+    private static final int MARKETPLACE_TEMPLATE_COUNT = 50;
+    private static final String[] AUTHOR_NAMES = {
+        "Alex R.", "Sam T.", "Jordan K.", "Maria L.", "Chris P.", "Dana W.",
+        "Noah B.", "Ivy S.", "Leo M.", "Tara V.", "Omar H.", "Nina F."
+    };
+    private static final SplitType[] SPLITS = {
+        SplitType.FULL_BODY, SplitType.UPPER_LOWER, SplitType.PPL, SplitType.BRO_SPLIT, SplitType.CUSTOM
+    };
+    private static final String[] SPLIT_LABELS = {"Full Body", "Upper/Lower", "Push Pull Legs", "Bro Split", "Custom"};
+    private static final Difficulty[] DIFFICULTIES = {
+        Difficulty.BEGINNER, Difficulty.INTERMEDIATE, Difficulty.ADVANCED
+    };
 
     private final AppUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -108,11 +126,16 @@ public class DemoDataSeeder implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+        seedDemoAthlete();
+        seedMarketplace();
+    }
+
+    private void seedDemoAthlete() {
         if (userRepository.existsByEmailIgnoreCase(DEMO_EMAIL)) {
-            log.info("Demo data already present ({}); skipping seed.", DEMO_EMAIL);
+            log.info("Demo athlete already present ({}); skipping.", DEMO_EMAIL);
             return;
         }
-        log.info("Seeding demo data for {} ...", DEMO_EMAIL);
+        log.info("Seeding demo athlete {} ...", DEMO_EMAIL);
 
         AppUser user = AppUser.create(
                 DEMO_EMAIL, passwordEncoder.encode(DEMO_PASSWORD), "Demo Athlete", Role.USER);
@@ -185,6 +208,71 @@ public class DemoDataSeeder implements ApplicationRunner {
                 "UPDATE workout_sets SET completed_at = ?, created_at = ?, updated_at = ? "
                         + "WHERE session_exercise_id IN (SELECT id FROM session_exercises WHERE session_id = ?)",
                 Timestamp.from(startedAt), Timestamp.from(startedAt), Timestamp.from(startedAt), sessionId);
+    }
+
+    /**
+     * Seeds a populated marketplace: several authors each publish templates, with varied
+     * upvotes/downvotes/saves/uses and spread-out publish dates so the newest / top / trending
+     * sorts visibly differ. Templates are built through the real services (publishable, official
+     * exercises), then publish state, dates and stats are set directly for controlled test data.
+     */
+    private void seedMarketplace() {
+        if (userRepository.existsByEmailIgnoreCase(AUTHOR_EMAIL_PREFIX + "1@workout.app")) {
+            log.info("Marketplace demo data already present; skipping.");
+            return;
+        }
+        log.info("Seeding {} marketplace templates across {} authors ...",
+                MARKETPLACE_TEMPLATE_COUNT, AUTHOR_NAMES.length);
+
+        List<UUID> authors = new ArrayList<>();
+        for (int a = 0; a < AUTHOR_NAMES.length; a++) {
+            AppUser author = AppUser.create(AUTHOR_EMAIL_PREFIX + (a + 1) + "@workout.app",
+                    passwordEncoder.encode(DEMO_PASSWORD), AUTHOR_NAMES[a], Role.USER);
+            userRepository.save(author);
+            authors.add(author.getId());
+        }
+
+        UUID[] officialLifts = {OFFICIAL_SQUAT, OFFICIAL_BENCH, OFFICIAL_ROW};
+        Random rnd = new Random(42); // fixed seed → reproducible demo data
+        Instant now = Instant.now();
+
+        for (int t = 0; t < MARKETPLACE_TEMPLATE_COUNT; t++) {
+            UUID authorId = authors.get(t % authors.size());
+            SplitType split = SPLITS[t % SPLITS.length];
+            Difficulty difficulty = DIFFICULTIES[t % DIFFICULTIES.length];
+            int daysPerWeek = 2 + (t % 5); // 2..6
+            String name = SPLIT_LABELS[t % SPLIT_LABELS.length] + " Program " + (t + 1);
+
+            UUID templateId = templateService.create(authorId, new TemplateCommand(
+                    name, "Community-shared " + split + " program.", split, daysPerWeek, difficulty,
+                    45 + (t % 5) * 10)).id();
+            UUID dayId = templateDayService.create(authorId, templateId, new TemplateDayCommand(
+                    1, "Day 1", DayFocus.FULL_BODY, 60, null)).id();
+            templateDayExerciseService.add(authorId, dayId, new TemplateDayExerciseCommand(
+                    officialLifts[t % officialLifts.length], 3, "5", new BigDecimal("60"), 120, null));
+            templateDayExerciseService.add(authorId, dayId, new TemplateDayExerciseCommand(
+                    officialLifts[(t + 1) % officialLifts.length], 3, "8", new BigDecimal("40"), 120, null));
+
+            Instant publishedAt = now.minus(rnd.nextInt(60) * 24L + rnd.nextInt(24), ChronoUnit.HOURS);
+            publishWithStats(templateId, publishedAt,
+                    rnd.nextInt(250), rnd.nextInt(40), rnd.nextInt(120), rnd.nextInt(60));
+        }
+        log.info("Marketplace demo data seeded.");
+    }
+
+    /** Publishes a template and sets its publish date + varied stats directly (demo sorting data). */
+    private void publishWithStats(UUID templateId, Instant publishedAt, int up, int down, int saves, int uses) {
+        jdbcTemplate.update(
+                "UPDATE workout_templates SET visibility = 'PUBLIC', published_at = ?, updated_at = now() "
+                        + "WHERE id = ?",
+                Timestamp.from(publishedAt), templateId);
+        jdbcTemplate.update(
+                "UPDATE template_stats SET upvotes_count = ?, downvotes_count = ?, saves_count = ?, "
+                        + "uses_count = ?, rating_score = ? - ?, "
+                        + "trending_score = round((? - ?) "
+                        + "/ power(extract(epoch FROM (now() - ?)) / 3600.0 + 2, 1.5), 4), updated_at = now() "
+                        + "WHERE template_id = ?",
+                up, down, saves, uses, up, down, up, down, Timestamp.from(publishedAt), templateId);
     }
 
     private record Lift(UUID exerciseId, BigDecimal baseWeight, BigDecimal weeklyIncrement, int reps) {

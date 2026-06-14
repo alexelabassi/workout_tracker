@@ -2,6 +2,7 @@ package com.thesis.workout.exercise.infrastructure.repository;
 
 import com.thesis.workout.exercise.domain.model.Exercise;
 import com.thesis.workout.exercise.domain.model.Visibility;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,4 +33,11 @@ public interface ExerciseRepository extends JpaRepository<Exercise, UUID> {
     @Query("SELECT e FROM Exercise e WHERE e.id = :id AND e.deletedAt IS NULL "
             + "AND (e.ownerUserId IS NULL OR e.ownerUserId = :userId)")
     Optional<Exercise> findVisibleByIdToUser(@Param("id") UUID id, @Param("userId") UUID userId);
+
+    /**
+     * Filters a set of exercise ids down to those that are OFFICIAL and active. Used when copying
+     * a public template: only official references are safe to keep; foreign/custom ones are nulled.
+     */
+    @Query("SELECT e.id FROM Exercise e WHERE e.id IN :ids AND e.deletedAt IS NULL AND e.visibility = :official")
+    List<UUID> findOfficialIdsIn(@Param("ids") Collection<UUID> ids, @Param("official") Visibility official);
 }
