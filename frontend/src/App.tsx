@@ -12,6 +12,8 @@ import { TemplateBuilderPage } from "./features/templates/TemplateBuilderPage";
 import { StartWorkoutPage } from "./features/workouts/StartWorkoutPage";
 import { LiveWorkoutPage } from "./features/workouts/LiveWorkoutPage";
 import { WorkoutSummaryPage } from "./features/workouts/WorkoutSummaryPage";
+import { HistoryPage } from "./features/history/HistoryPage";
+import { AnalyticsPage } from "./features/analytics/AnalyticsPage";
 
 export default function App() {
   return (
@@ -29,6 +31,8 @@ export default function App() {
         <Route path="/workouts/start" element={<StartWorkoutPage />} />
         <Route path="/workouts/live" element={<LiveWorkoutPage />} />
         <Route path="/workouts/:sessionId" element={<WorkoutSummaryPage />} />
+        <Route path="/history" element={<HistoryPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

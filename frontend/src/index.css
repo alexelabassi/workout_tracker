@@ -438,3 +438,44 @@ body {
   font-family: inherit;
   min-width: 80px;
 }
+
+.chart {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.chart .recharts-text {
+  fill: var(--muted);
+}
+
+.legend-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 12px;
+}
+
+.legend-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.legend-toggle--on {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}

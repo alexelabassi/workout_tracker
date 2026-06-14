@@ -78,6 +78,19 @@ export function DashboardPage() {
           </Link>
         </section>
 
+        <section className="card">
+          <header className="card__header">
+            <h2>Review</h2>
+          </header>
+          <p className="muted">Look back at logged workouts and track your progress over time.</p>
+          <Link to="/history" className="button button--block">
+            Workout history
+          </Link>
+          <Link to="/analytics" className="button button--block button--ghost">
+            Progress &amp; analytics
+          </Link>
+        </section>
+
         <HealthCard />
       </main>
 

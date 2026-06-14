@@ -131,27 +131,31 @@ The backend must create snapshots transactionally.
 
 ---
 
-# History
+# History + Analytics
 
 ```http
-GET /history
-GET /history/{sessionId}
+GET /history                 # paged list of the caller's sessions (all statuses), newest first
+GET /workouts/{sessionId}     # session detail/summary (reused from Phase 5; no separate /history/{id})
+GET /analytics/overview       # bundled analytics over FINISHED sessions
+```
+
+`GET /history` params: `page` (default 0), `size` (default 20, max 100). Returns
+`{ items, page, size, totalItems, hasNext }`; each item carries summary numbers
+(`exerciseCount`, `setCount`, `totalVolume`, `durationSeconds` — null while IN_PROGRESS).
+
+`GET /analytics/overview` returns `{ totalWorkouts, totalVolume, volumeOverTime[],
+workoutsPerWeek[], primaryMuscleSetDistribution[], bestSets[], oneRepMaxOverTime[] }`. Best sets
+are ranked by estimated 1RM (Epley); `oneRepMaxOverTime` is a per-exercise time series of each
+day's best estimated 1RM (strength progression). Analytics count FINISHED sessions only.
+
+## Deferred to Phase 11 (OpenSearch)
+
+```http
 GET /history/search
 ```
 
-Filters:
-
-```text
-dateFrom
-dateTo
-exercise
-gym
-equipment
-template
-textQuery
-```
-
-Phase 1 can use PostgreSQL. Later use OpenSearch.
+Filters: `dateFrom, dateTo, exercise, gym, equipment, template, textQuery`.
+Full-text / filtered history search is implemented later with OpenSearch, not in Phase 6.
 
 ---
 

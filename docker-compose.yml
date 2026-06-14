@@ -30,6 +30,9 @@ services:
       # refresh cookie stays non-Secure. Override for an HTTPS deployment.
       JWT_SECRET: ${JWT_SECRET:-dev-compose-secret-change-me-0123456789-abcdefghijklmnopqrstuvwxyz}
       AUTH_COOKIE_SECURE: "false"
+      # Set SPRING_PROFILES_ACTIVE=demo on the host to seed a demo user with months of
+      # backdated workouts on first boot (idempotent). Leave unset for a normal run.
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-}
     ports:
       - "8080:8080"
 
