@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { HealthCard } from "../health/HealthCard";
 import { useAuth } from "../../shared/auth/AuthProvider";
 import { useTheme } from "../../shared/theme/ThemeProvider";
@@ -43,6 +44,16 @@ export function DashboardPage() {
               </div>
             </dl>
           )}
+        </section>
+
+        <section className="card">
+          <header className="card__header">
+            <h2>Planning data</h2>
+          </header>
+          <p className="muted">Build your exercise library from the official catalog or your own movements.</p>
+          <Link to="/exercises" className="button button--block">
+            Manage exercises
+          </Link>
         </section>
 
         <HealthCard />

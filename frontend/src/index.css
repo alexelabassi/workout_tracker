@@ -106,9 +106,12 @@ body {
 }
 
 .button--block {
+  display: block;
   width: 100%;
   padding: 11px 14px;
   margin-top: 4px;
+  text-align: center;
+  text-decoration: none;
 }
 
 .button--ghost {
@@ -165,16 +168,25 @@ body {
   color: var(--muted);
 }
 
-.field input {
+.field input,
+.field select,
+.field textarea {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 15px;
   color: var(--text);
+  font-family: inherit;
 }
 
-.field input:focus {
+.field textarea {
+  resize: vertical;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
   outline: none;
   border-color: var(--accent);
 }
@@ -246,4 +258,115 @@ body {
 
 .status strong {
   display: block;
+}
+
+.badge--muted {
+  background: color-mix(in srgb, var(--muted) 18%, transparent);
+  color: var(--muted);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab--active {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.exercise-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.exercise-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+
+.exercise-row:first-child {
+  border-top: none;
+}
+
+.exercise-row__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.exercise-row__muscles {
+  margin-top: 6px;
+}
+
+.exercise-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.muscle-tags {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.muscle-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--text);
+}
+
+.muscle-tag button {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.muscle-add {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.muscle-add select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: inherit;
 }
