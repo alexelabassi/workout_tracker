@@ -57,6 +57,9 @@ export function DashboardPage() {
           <Link to="/routines" className="button button--block">
             Manage routines
           </Link>
+          <Link to="/gyms" className="button button--block">
+            Manage gyms
+          </Link>
         </section>
 
         <HealthCard />

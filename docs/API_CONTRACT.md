@@ -60,6 +60,7 @@ DELETE /routines/{routineId}
 ```http
 GET    /gyms
 POST   /gyms
+GET    /gyms/{gymId}
 PUT    /gyms/{gymId}
 DELETE /gyms/{gymId}
 
@@ -68,6 +69,13 @@ POST   /gyms/{gymId}/equipment
 PUT    /equipment/{equipmentId}
 DELETE /equipment/{equipmentId}
 ```
+
+Rules:
+
+- gyms and equipment are owned by the current user; cross-user access returns 404
+- `GET /gyms/{gymId}` is owner-scoped (used for deep-link reload of a gym's equipment page)
+- deleting a gym soft-deletes the gym and its active equipment
+- equipment name is unique per gym (case-insensitive, active only); gym name is unique per user
 
 ---
 

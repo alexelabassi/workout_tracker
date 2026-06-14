@@ -50,9 +50,14 @@ class JwtServiceTest {
         JwtService service = serviceWith(Duration.ofMinutes(15), SECRET);
         String token = service.issueAccessToken(UUID.randomUUID(), "user@example.com", Role.USER);
 
-        char last = token.charAt(token.length() - 1);
-        char replacement = last == 'A' ? 'B' : 'A';
-        String tampered = token.substring(0, token.length() - 1) + replacement;
+        // Corrupt the first character of the signature segment. Its 6 base64url bits are all
+        // meaningful, so the decoded signature bytes always change (unlike the final char, whose
+        // trailing bits are unused and can leave the signature unchanged).
+        int signatureStart = token.lastIndexOf('.') + 1;
+        char first = token.charAt(signatureStart);
+        char replacement = first == 'A' ? 'B' : 'A';
+        String tampered =
+                token.substring(0, signatureStart) + replacement + token.substring(signatureStart + 1);
 
         assertThatThrownBy(() -> service.parseAccessToken(tampered)).isInstanceOf(JwtException.class);
     }

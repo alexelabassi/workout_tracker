@@ -5,6 +5,8 @@ import { ProtectedRoute } from "./features/auth/ProtectedRoute";
 import { DashboardPage } from "./features/dashboard/DashboardPage";
 import { ExercisesPage } from "./features/exercises/ExercisesPage";
 import { RoutinesPage } from "./features/routines/RoutinesPage";
+import { GymsPage } from "./features/gyms/GymsPage";
+import { GymEquipmentPage } from "./features/gyms/GymEquipmentPage";
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/exercises" element={<ExercisesPage />} />
         <Route path="/routines" element={<RoutinesPage />} />
+        <Route path="/gyms" element={<GymsPage />} />
+        <Route path="/gyms/:gymId" element={<GymEquipmentPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
