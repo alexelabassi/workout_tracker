@@ -4,6 +4,7 @@ import { RegisterPage } from "./features/auth/RegisterPage";
 import { ProtectedRoute } from "./features/auth/ProtectedRoute";
 import { DashboardPage } from "./features/dashboard/DashboardPage";
 import { ExercisesPage } from "./features/exercises/ExercisesPage";
+import { RoutinesPage } from "./features/routines/RoutinesPage";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/exercises" element={<ExercisesPage />} />
+        <Route path="/routines" element={<RoutinesPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
