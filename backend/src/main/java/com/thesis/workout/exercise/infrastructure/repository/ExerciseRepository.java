@@ -24,4 +24,12 @@ public interface ExerciseRepository extends JpaRepository<Exercise, UUID> {
             + "AND (e.visibility = :official OR e.ownerUserId = :userId) "
             + "ORDER BY e.name ASC")
     List<Exercise> findVisibleTo(@Param("userId") UUID userId, @Param("official") Visibility official);
+
+    /**
+     * A single exercise the user may reference: official (owner null) or their own custom one.
+     * Used when snapshotting an exercise into a template day.
+     */
+    @Query("SELECT e FROM Exercise e WHERE e.id = :id AND e.deletedAt IS NULL "
+            + "AND (e.ownerUserId IS NULL OR e.ownerUserId = :userId)")
+    Optional<Exercise> findVisibleByIdToUser(@Param("id") UUID id, @Param("userId") UUID userId);
 }

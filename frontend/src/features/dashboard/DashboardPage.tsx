@@ -60,6 +60,22 @@ export function DashboardPage() {
           <Link to="/gyms" className="button button--block">
             Manage gyms
           </Link>
+          <Link to="/templates" className="button button--block">
+            Manage templates
+          </Link>
+        </section>
+
+        <section className="card">
+          <header className="card__header">
+            <h2>Train</h2>
+          </header>
+          <p className="muted">Start a workout from a template day, or resume one in progress.</p>
+          <Link to="/workouts/start" className="button button--block">
+            Start workout
+          </Link>
+          <Link to="/workouts/live" className="button button--block button--ghost">
+            Resume active workout
+          </Link>
         </section>
 
         <HealthCard />
