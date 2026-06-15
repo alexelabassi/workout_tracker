@@ -1,0 +1,102 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "filter": {
+        "workout_synonyms": {
+          "type": "synonym_graph",
+          "synonyms": [
+            "pecs, pec, chest",
+            "quads, quad, quadriceps",
+            "hams, hammies, hamstring, hamstrings",
+            "glutes, glute, butt",
+            "delts, delt, shoulders, shoulder",
+            "lats, lat",
+            "abs, ab, core, abdominals",
+            "bis, bicep, biceps",
+            "tris, tricep, triceps",
+            "calf, calves",
+            "ohp, overhead press",
+            "rdl, romanian deadlift",
+            "bench, bench press"
+          ]
+        }
+      },
+      "analyzer": {
+        "workout_text": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding"]
+        },
+        "workout_text_search": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding", "workout_synonyms"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "templateId": { "type": "keyword" },
+      "ownerUserId": { "type": "keyword" },
+      "visibility": { "type": "keyword" },
+      "name": {
+        "type": "text",
+        "analyzer": "workout_text",
+        "search_analyzer": "workout_text_search",
+        "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "workout_text",
+        "search_analyzer": "workout_text_search"
+      },
+      "splitType": { "type": "keyword" },
+      "difficulty": { "type": "keyword" },
+      "daysPerWeek": { "type": "integer" },
+      "estimatedDurationMinutes": { "type": "integer" },
+      "publishedAt": { "type": "date" },
+      "createdAt": { "type": "date" },
+      "copiedFromTemplateId": { "type": "keyword" },
+      "exerciseNames": {
+        "type": "text",
+        "analyzer": "workout_text",
+        "search_analyzer": "workout_text_search",
+        "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+      },
+      "muscleGroups": { "type": "keyword" },
+      "muscleGroupsText": {
+        "type": "text",
+        "analyzer": "workout_text",
+        "search_analyzer": "workout_text_search"
+      },
+      "dayNames": {
+        "type": "text",
+        "analyzer": "workout_text",
+        "search_analyzer": "workout_text_search"
+      },
+      "dayFocuses": { "type": "keyword" },
+      "routineNameSnapshots": {
+        "type": "text",
+        "analyzer": "workout_text",
+        "search_analyzer": "workout_text_search"
+      },
+      "routineContentSnapshots": {
+        "type": "text",
+        "analyzer": "workout_text",
+        "search_analyzer": "workout_text_search"
+      },
+      "ratingScore": { "type": "double" },
+      "upvotesCount": { "type": "integer" },
+      "downvotesCount": { "type": "integer" },
+      "savesCount": { "type": "integer" },
+      "usesCount": { "type": "integer" },
+      "templateStructureScore": { "type": "integer" },
+      "analysisCategory": { "type": "keyword" },
+      "warningCodes": { "type": "keyword" },
+      "missingMajorMuscles": { "type": "keyword" }
+    }
+  }
+}

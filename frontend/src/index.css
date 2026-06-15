@@ -515,3 +515,55 @@ body {
   cursor: pointer;
   color: var(--muted);
 }
+
+/* Search input shares the row styling of the muscle-add control. */
+.muscle-add input[type="search"],
+.muscle-add input[type="text"] {
+  flex: 1 1 240px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: inherit;
+}
+
+/* OpenSearch facets rendered as filter chips. */
+.search-facets {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.search-facets__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.search-facets__label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.search-facets__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.search-facets__chips .button {
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+/* Highlighted matches returned by OpenSearch. */
+mark {
+  background: var(--accent, #ffd54a);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 3px;
+}

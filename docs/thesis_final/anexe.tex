@@ -1,0 +1,278 @@
+% ============================== ANEXE ==============================
+% Anexele nu se numără în limita de pagini a lucrării. Fiecare anexă este
+% referită cel puțin o dată în corpul lucrării (vezi Capitolul 3).
+
+\chapter*{Anexa 1 — Capturi de ecran ale interfeței}
+\addcontentsline{toc}{chapter}{Anexa 1 — Capturi de ecran ale interfeței}
+
+Această anexă conține capturi de ecran ale aplicației web. Substituenții de mai jos se vor
+înlocui cu imaginile reale (\code{\textbackslash includegraphics}) după capturarea lor în
+\code{images/}.
+
+\begin{figure}[!htb]
+  \capturaplaceholder{Tabloul de bord (dashboard) după autentificare: rezumatul activității și
+  punctele de intrare către funcționalități.}
+  \caption{Tabloul de bord al utilizatorului.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \capturaplaceholder{Constructorul de programe: zile, exerciții ordonate cu serii/repetări/pauză
+  planificate și rutine atașate.}
+  \caption{Constructorul de programe de antrenament.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \capturaplaceholder{Sesiunea live: înregistrarea seriilor (greutate, repetări, RPE) și adăugarea
+  de exerciții suplimentare.}
+  \caption{Execuția unei sesiuni de antrenament.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \capturaplaceholder{Analize de progres: volum în timp, antrenamente pe săptămână, distribuția pe
+  grupe musculare și progresia 1RM estimat (grafice Recharts).}
+  \caption{Pagina de analize și progres.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \capturaplaceholder{Marketplace cu căutare: câmp de interogare, fațete (dificultate, split, grupe
+  musculare) și evidențierea potrivirilor (\code{<mark>}).}
+  \caption{Marketplace-ul de programe cu căutare full-text și fațete.}
+\end{figure}
+
+\begin{figure}[!htb]
+  \capturaplaceholder{Modul de coaching: căutarea full-text în istoricul unui client, accesibilă
+  doar pe baza unei relații active.}
+  \caption{Căutarea în istoricul clientului (mod coaching).}
+\end{figure}
+
+\begin{figure}[!htb]
+  \capturaplaceholder{Panoul analizorului structural: scorul pe 100 de puncte, sub-scorurile și
+  avertismentele explicabile cu sugestii.}
+  \caption{Rezultatul analizorului structural de programe.}
+\end{figure}
+
+% ----------------------------------------------------------------------------
+\chapter*{Anexa 2 — Schema bazei de date}
+\addcontentsline{toc}{chapter}{Anexa 2 — Schema bazei de date}
+
+Schema este definită integral de migrarea Flyway \code{V1} (28 de tabele), populată cu date
+oficiale de \code{V2} și completată cu un index de concurență de \code{V3}. Tabelele, grupate pe
+funcționalități, sunt:
+
+\begin{itemize}
+  \item \textbf{Autentificare / coaching:} \code{app\_users}, \code{refresh\_tokens},
+        \code{coach\_profiles}, \code{coach\_client\_relationships}.
+  \item \textbf{Catalog / planificare:} \code{muscle\_groups}, \code{exercises},
+        \code{exercise\_muscle\_groups}, \code{routines}, \code{gyms}, \code{equipment}.
+  \item \textbf{Programe:} \code{workout\_templates}, \code{template\_stats}, \code{template\_days},
+        \code{template\_day\_exercises}, \code{template\_day\_exercise\_muscle\_groups},
+        \code{template\_day\_routines}.
+  \item \textbf{Sesiuni (istoric imuabil):} \code{workout\_sessions}, \code{session\_exercises},
+        \code{session\_exercise\_muscle\_groups}, \code{session\_routines}, \code{workout\_sets}.
+  \item \textbf{Marketplace:} \code{template\_votes}, \code{template\_saves},
+        \code{template\_use\_events}.
+  \item \textbf{Tabele pregătite pentru extinderi (neutilizate încă de cod):}
+        \code{coach\_session\_comments}, \code{coach\_template\_assignments},
+        \code{template\_analysis\_results}, \code{outbox\_events}.
+\end{itemize}
+
+Constrângerile cu rol esențial în integritate sunt: invariantul de vizibilitate publicată a
+programelor (\code{CHECK ((visibility='PUBLIC' AND published\_at IS NOT NULL) OR
+visibility='PRIVATE')}); anti-autocoaching (\code{CHECK (coach\_user\_id <> client\_user\_id)});
+indexul unic parțial pentru un singur antrenament activ per utilizator; indecșii unici parțiali de
+unicitate cu \code{WHERE deleted\_at IS NULL}; și cheile externe anulabile (\code{ON DELETE SET
+NULL}) către datele sursă, pereche cu coloanele de instantaneu. Definițiile-cheie sunt în Anexa~3.
+
+% ----------------------------------------------------------------------------
+\chapter*{Anexa 3 — Listări de cod reprezentative}
+\addcontentsline{toc}{chapter}{Anexa 3 — Listări de cod reprezentative}
+
+\noindent\textbf{Listarea 1.} Stilul determinist al analizorului: fiecare sub-scor pornește de la
+maxim și scade o valoare fixă pe constatare (extras simplificat din \code{TemplateAnalyzerService}).
+\begin{lstlisting}[language=Java]
+private int scoreVolumeAndCoverage() {
+    int score = 35;
+    // O grupa minora nu poate masca o regiune majora absenta:
+    if (!lowerBody) { add("NO_LOWER_BODY", HIGH, ...); score -= 12; }
+    if (!pulling)   { add("NO_PULL",       HIGH, ...); score -= 12; }
+    if (!pushing)   { add("NO_PUSH",       HIGH, ...); score -= 12; }
+    for (String bucket : ALL_BUCKETS) {
+        // serii saptamanale ponderate: PRIMARY = 1.0, SECONDARY = 0.5
+        double volume = weeklyWeightedSets(bucket);
+        if      (volume <= 3)  { add("MUSCLE_VOLUME_VERY_LOW", ...);  score -= 3; }
+        else if (volume > 25)  { add("MUSCLE_VOLUME_EXCESSIVE", ...); score -= 5; }
+        else if (volume > 20)  { add("MUSCLE_VOLUME_HIGH", ...);      score -= 2; }
+        // ... alte benzi de volum ...
+    }
+    return Math.max(0, score);
+}
+
+private static String category(int score) {
+    if (score >= 80) return "WELL_STRUCTURED";
+    return score >= 55 ? "DECENT_STRUCTURE" : "NEEDS_REVIEW";
+}
+\end{lstlisting}
+
+\noindent\textbf{Listarea 2.} Ierarhia de autorizare (din \code{SecurityConfig}): RBAC pe rute,
+peste care modul de coaching adaugă verificarea ReBAC la nivel de serviciu.
+\begin{lstlisting}[language=Java]
+.authorizeHttpRequests(auth -> auth
+    .requestMatchers(POST, "/api/auth/register", "/api/auth/login",
+                           "/api/auth/refresh",  "/api/auth/logout").permitAll()
+    .requestMatchers(GET,  "/api/health").permitAll()
+    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+    .requestMatchers("/api/coach/**").hasRole("COACH")
+    .requestMatchers("/api/**").authenticated()
+    .anyRequest().permitAll())
+\end{lstlisting}
+
+\noindent\textbf{Listarea 3.} Definiții SQL cheie: garda de concurență (V3) și tabela de outbox
+pregătită din V1 pentru extinderea cu outbox tranzacțional.
+\begin{lstlisting}[language=SQL]
+-- Un singur antrenament activ per utilizator (migrarea V3):
+CREATE UNIQUE INDEX ux_workout_sessions_one_active_per_user
+  ON workout_sessions (user_id) WHERE status = 'IN_PROGRESS';
+
+-- Tabela de outbox, definita in V1, neutilizata inca de cod:
+CREATE TABLE outbox_events (
+  id             uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  aggregate_type varchar(100) NOT NULL,
+  aggregate_id   uuid NOT NULL,
+  event_type     varchar(100) NOT NULL,
+  payload        jsonb NOT NULL DEFAULT '{}'::jsonb,
+  status         varchar(30) NOT NULL DEFAULT 'PENDING',
+  attempts       int NOT NULL DEFAULT 0,
+  available_at   timestamptz NOT NULL DEFAULT now(),
+  processed_at   timestamptz,
+  created_at     timestamptz NOT NULL DEFAULT now(),
+  last_error     text,
+  CONSTRAINT check_outbox_status
+    CHECK (status IN ('PENDING','PROCESSING','PROCESSED','FAILED'))
+);
+CREATE INDEX outbox_events_processing_idx
+  ON outbox_events (status, available_at, created_at);
+\end{lstlisting}
+
+% ----------------------------------------------------------------------------
+\chapter*{Anexa 4 — Rezultatele complete ale evaluării}
+\addcontentsline{toc}{chapter}{Anexa 4 — Rezultatele complete ale evaluării}
+
+Măsurătorile au fost realizate la 7 dimensiuni ale corpusului (1k–2M), cu 300 de iterații măsurate
+(încălzire 30, buget de timp 15\,s; \emph{n} indică numărul de eșantioane când bugetul a limitat
+celula). PostgreSQL: \code{tsvector}+GIN ordonat cu \code{ts\_rank\_cd}, fuzzy cu \code{pg\_trgm}.
+OpenSearch: aceleași mapări și interogări ca producția.
+
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}{@{}rrrrr@{}}
+  \toprule
+  Corpus & Construcție PG & Construcție OS & Dimensiune PG & Dimensiune OS \\
+  \midrule
+  1.000     & 216\,ms     & 203\,ms     & 1,6\,MB     & 0,3\,MB \\
+  10.000    & 1.926\,ms   & 975\,ms     & 14,6\,MB    & 2,9\,MB \\
+  50.000    & 7.966\,ms   & 3.481\,ms   & 68,7\,MB    & 14,3\,MB \\
+  100.000   & 14.006\,ms  & 6.349\,ms   & 135,5\,MB   & 28,5\,MB \\
+  500.000   & 68.752\,ms  & 37.987\,ms  & 664,7\,MB   & 140,8\,MB \\
+  1.000.000 & 125.774\,ms & 57.701\,ms  & 1.313,6\,MB & 349,1\,MB \\
+  2.000.000 & 239.192\,ms & 114.908\,ms & 2.632,5\,MB & 738,7\,MB \\
+  \bottomrule
+  \end{tabular}
+  \caption{Timpul de construcție a indexului și dimensiunea pe disc, pe dimensiuni de corpus.}
+\end{table}
+
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}{@{}rrr@{}}
+  \toprule
+  Corpus & PostgreSQL ($p_{50}/p_{95}/p_{99}$) & OpenSearch ($p_{50}/p_{95}/p_{99}$) \\
+  \midrule
+  1.000     & 1,46 / 2,68 / 3,12        & 3,25 / 5,70 / 10,56 \\
+  10.000    & 10,64 / 14,32 / 17,63     & 2,85 / 5,21 / 7,17 \\
+  50.000    & 48,70 / 66,59 / 77,97     & 5,17 / 10,05 / 13,98 \\
+  100.000   & 100,21 / 117,87 / 136,46  & 6,84 / 10,59 / 12,83 \\
+  500.000   & 779,47 / 1021,25 / 1229,16 & 22,75 / 38,09 / 67,26 \\
+  1.000.000 & 872,19 / 1199,43 / 1220,09 & 33,64 / 45,24 / 83,90 \\
+  2.000.000 & 1863,97 / 2783,12 / 2783,12 & 63,65 / 73,05 / 111,67 \\
+  \bottomrule
+  \end{tabular}
+  \caption{Latența căutării full-text „bench press” (ms), pe dimensiuni de corpus.}
+\end{table}
+
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}{@{}rrr@{}}
+  \toprule
+  Corpus & PostgreSQL ($p_{50}/p_{95}/p_{99}$) & OpenSearch ($p_{50}/p_{95}/p_{99}$) \\
+  \midrule
+  1.000     & 14,45 / 18,91 / 21,69          & 2,37 / 3,74 / 5,63 \\
+  10.000    & 127,93 / 134,06 / 136,22       & 3,23 / 7,38 / 10,94 \\
+  50.000    & 621,74 / 645,63 / 646,08       & 2,66 / 4,95 / 6,59 \\
+  100.000   & 1831,47 / 2169,61 / 2169,61    & 3,15 / 5,74 / 7,38 \\
+  500.000   & 2447,22 / 8354,43 / 8354,43    & 4,06 / 7,20 / 8,95 \\
+  1.000.000 & 7806,25 / 17790,10 / 17790,10  & 3,94 / 9,18 / 13,35 \\
+  2.000.000 & 15825,49 / 16399,71 / 16399,71 & 3,89 / 9,38 / 14,14 \\
+  \bottomrule
+  \end{tabular}
+  \caption{Latența căutării fuzzy „benhc” (greșeală de tastare, ms): degradarea \code{pg\_trgm} vs.\
+  latența practic constantă a OpenSearch.}
+\end{table}
+
+% ----------------------------------------------------------------------------
+\chapter*{Anexa 5 — Contractul API (selecție)}
+\addcontentsline{toc}{chapter}{Anexa 5 — Contractul API (selecție)}
+
+Toate endpoint-urile, cu excepția celor de autentificare și a stării de sănătate, cer un token JWT
+valid. Răspunsurile de eroare folosesc un plic uniform cu un cod stabil (de exemplu
+\code{TEMPLATE\_NOT\_FOUND}, \code{ACTIVE\_WORKOUT\_EXISTS}, \code{SEARCH\_UNAVAILABLE}).
+
+\begin{itemize}
+  \item \textbf{Autentificare:} \code{POST /api/auth/\{register,login,refresh,logout\}},
+        \code{GET /api/auth/me}.
+  \item \textbf{Planificare:} \code{/api/exercises}, \code{/api/routines}, \code{/api/gyms},
+        \code{/api/gyms/\{id\}/equipment}, \code{/api/equipment/\{id\}}.
+  \item \textbf{Programe:} \code{/api/templates}, \code{/api/templates/\{id\}},
+        \code{POST /api/templates/\{id\}/\{publish,unpublish\}}.
+  \item \textbf{Sesiuni:} \code{POST /api/workouts/start}, \code{GET /api/workouts/active},
+        \code{POST /api/workouts/\{id\}/\{finish,cancel\}},
+        \code{POST /api/session-exercises/\{id\}/sets}, \code{PUT/DELETE /api/sets/\{id\}}.
+  \item \textbf{Istoric și analize:} \code{GET /api/history}, \code{GET /api/analytics/overview}.
+  \item \textbf{Marketplace:} \code{GET /api/marketplace/templates},
+        \code{POST /api/marketplace/templates/\{id\}/\{vote,save,use\}}.
+  \item \textbf{Analizor:} \code{GET /api/templates/\{id\}/analysis}.
+  \item \textbf{Căutare:} \code{GET /api/search/templates}, \code{GET /api/search/workouts},
+        \code{POST /api/admin/search/reindex} (doar \code{ADMIN}).
+  \item \textbf{Coaching:} \code{/api/coach/clients/...} (rol \code{COACH} + relație activă),
+        \code{/api/coaching/\{invites,coaches\}}.
+\end{itemize}
+
+% ----------------------------------------------------------------------------
+\chapter*{Anexa 6 — Configurație și rulare}
+\addcontentsline{toc}{chapter}{Anexa 6 — Configurație și rulare}
+
+Stack-ul rulează prin Docker Compose (PostgreSQL 16, OpenSearch 2.13 cu un volum persistent, și
+aplicația). Indicatorul \code{app.search.enabled} controlează activarea căutării.
+
+\begin{lstlisting}
+# application.yml (extras)
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate        # schema detinuta de Flyway
+app:
+  security:
+    jwt:
+      issuer: workout-thesis
+      access-ttl: 15m
+      refresh-ttl: 14d
+  search:
+    enabled: ${APP_SEARCH_ENABLED:false}
+    uri: ${APP_SEARCH_URI:http://localhost:9200}
+    templates-index: templates_v1
+    sessions-index:  workout_sessions_v1
+\end{lstlisting}
+
+\noindent Rularea cu date demonstrative (istoric 2020--prezent) se face cu profilul \code{demo},
+care la pornire reconstruiește indexul de căutare:
+\begin{lstlisting}[language=bash]
+SPRING_PROFILES_ACTIVE=demo docker compose up --build
+\end{lstlisting}

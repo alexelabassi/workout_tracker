@@ -1,6 +1,7 @@
 package com.thesis.workout.marketplace.application;
 
 import com.thesis.workout.marketplace.application.exception.TemplateNotPublishableException;
+import com.thesis.workout.search.application.event.TemplateIndexEvent;
 import com.thesis.workout.template.application.TemplateAccess;
 import com.thesis.workout.template.application.TemplateService;
 import com.thesis.workout.template.domain.model.Template;
@@ -12,6 +13,7 @@ import com.thesis.workout.template.web.dto.TemplateDetailResponse;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,15 +30,18 @@ public class TemplatePublishingService {
     private final TemplateDayRepository templateDayRepository;
     private final TemplateDayExerciseRepository templateDayExerciseRepository;
     private final TemplateService templateService;
+    private final ApplicationEventPublisher events;
 
     public TemplatePublishingService(TemplateAccess templateAccess, TemplateRepository templateRepository,
             TemplateDayRepository templateDayRepository,
-            TemplateDayExerciseRepository templateDayExerciseRepository, TemplateService templateService) {
+            TemplateDayExerciseRepository templateDayExerciseRepository, TemplateService templateService,
+            ApplicationEventPublisher events) {
         this.templateAccess = templateAccess;
         this.templateRepository = templateRepository;
         this.templateDayRepository = templateDayRepository;
         this.templateDayExerciseRepository = templateDayExerciseRepository;
         this.templateService = templateService;
+        this.events = events;
     }
 
     @Transactional
@@ -45,6 +50,8 @@ public class TemplatePublishingService {
         requireNonEmpty(templateId);
         template.publish(Instant.now());
         templateRepository.saveAndFlush(template);
+        // Visibility changed PRIVATE->PUBLIC: structural reindex so the marketplace scope sees it.
+        events.publishEvent(TemplateIndexEvent.structural(templateId));
         return templateService.get(userId, templateId);
     }
 
@@ -53,6 +60,7 @@ public class TemplatePublishingService {
         Template template = templateAccess.requireOwnedTemplate(userId, templateId);
         template.unpublish();
         templateRepository.saveAndFlush(template);
+        events.publishEvent(TemplateIndexEvent.structural(templateId));
         return templateService.get(userId, templateId);
     }
 

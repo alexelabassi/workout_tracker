@@ -15,6 +15,39 @@ services:
       timeout: 5s
       retries: 10
 
+  # Single-node OpenSearch 2.x for the derived search/read model. Security plugin is disabled
+  # for the local/demo stack (no TLS, no auth) — never do this in production. Memory is capped
+  # so it co-exists with Postgres + the app on a laptop. OpenSearch Dashboards is intentionally
+  # omitted; enable it separately if you want a query console (see docs/SEARCH_AND_CACHING.md).
+  opensearch:
+    image: opensearchproject/opensearch:2.13.0
+    environment:
+      # Plain HTTP, no auth, no demo TLS config for the local/demo stack. DISABLE_SECURITY_PLUGIN
+      # (not plugins.security.disabled) is the knob the image's entrypoint reads, and skipping the
+      # demo-config installer avoids the 2.12+ admin-password requirement. The performance-analyzer
+      # agent is disabled because its CLI launcher crashes on some (aarch64) hosts.
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      # Persist the index so it survives container/host restarts. The index is still rebuildable
+      # from PostgreSQL (the demo seeder rebuilds on every app start), but persistence avoids an
+      # empty search index after an OpenSearch restart.
+      - opensearch-data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
   app:
     build:
       context: .
@@ -22,10 +55,15 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      opensearch:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/workout
       SPRING_DATASOURCE_USERNAME: workout
       SPRING_DATASOURCE_PASSWORD: workout
+      # Turn the OpenSearch search/read model on for the compose stack.
+      APP_SEARCH_ENABLED: "true"
+      APP_SEARCH_URI: http://opensearch:9200
       # Same-origin over HTTP at localhost:8080 in this compose setup, so the
       # refresh cookie stays non-Secure. Override for an HTTPS deployment.
       JWT_SECRET: ${JWT_SECRET:-dev-compose-secret-change-me-0123456789-abcdefghijklmnopqrstuvwxyz}
@@ -38,3 +76,4 @@ services:
 
 volumes:
   pgdata:
+  opensearch-data:

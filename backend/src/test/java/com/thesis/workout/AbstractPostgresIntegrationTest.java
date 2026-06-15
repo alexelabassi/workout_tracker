@@ -25,5 +25,9 @@ public abstract class AbstractPostgresIntegrationTest {
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES::getUsername);
         registry.add("spring.datasource.password", POSTGRES::getPassword);
+        // The default search suite runs without OpenSearch: keep the derived read model off so no
+        // search beans load and the existing tests never need an OpenSearch node. Search-specific
+        // tests opt in via AbstractSearchIntegrationTest.
+        registry.add("app.search.enabled", () -> "false");
     }
 }

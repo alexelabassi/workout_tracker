@@ -10,6 +10,7 @@ import com.thesis.workout.marketplace.infrastructure.repository.TemplateSaveRepo
 import com.thesis.workout.marketplace.infrastructure.repository.TemplateVoteRepository;
 import com.thesis.workout.marketplace.web.dto.MarketplaceInteractionResponse;
 import com.thesis.workout.marketplace.web.dto.MarketplaceStatsResponse;
+import com.thesis.workout.search.application.event.TemplateIndexEvent;
 import com.thesis.workout.template.application.exception.TemplateNotFoundException;
 import com.thesis.workout.template.domain.model.Template;
 import com.thesis.workout.template.domain.model.TemplateStats;
@@ -18,6 +19,7 @@ import com.thesis.workout.template.infrastructure.repository.TemplateRepository;
 import com.thesis.workout.template.infrastructure.repository.TemplateStatsRepository;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,14 +35,16 @@ public class TemplateInteractionService {
     private final TemplateVoteRepository voteRepository;
     private final TemplateSaveRepository saveRepository;
     private final TemplateStatsRepository statsRepository;
+    private final ApplicationEventPublisher events;
 
     public TemplateInteractionService(TemplateRepository templateRepository,
             TemplateVoteRepository voteRepository, TemplateSaveRepository saveRepository,
-            TemplateStatsRepository statsRepository) {
+            TemplateStatsRepository statsRepository, ApplicationEventPublisher events) {
         this.templateRepository = templateRepository;
         this.voteRepository = voteRepository;
         this.saveRepository = saveRepository;
         this.statsRepository = statsRepository;
+        this.events = events;
     }
 
     @Transactional
@@ -63,6 +67,7 @@ public class TemplateInteractionService {
             applyVote(templateId, voteType, +1);
             applyVote(templateId, opposite(voteType), -1);
         }
+        events.publishEvent(TemplateIndexEvent.stats(templateId));
         return state(templateId, userId);
     }
 
@@ -73,6 +78,7 @@ public class TemplateInteractionService {
             voteRepository.delete(vote);
             applyVote(templateId, vote.getVoteType(), -1);
         });
+        events.publishEvent(TemplateIndexEvent.stats(templateId));
         return state(templateId, userId);
     }
 
@@ -84,6 +90,7 @@ public class TemplateInteractionService {
             saveRepository.save(TemplateSave.of(userId, templateId));
             statsRepository.applySaveDelta(templateId, +1);
         }
+        events.publishEvent(TemplateIndexEvent.stats(templateId));
         return state(templateId, userId);
     }
 
@@ -95,6 +102,7 @@ public class TemplateInteractionService {
             saveRepository.deleteById(id);
             statsRepository.applySaveDelta(templateId, -1);
         }
+        events.publishEvent(TemplateIndexEvent.stats(templateId));
         return state(templateId, userId);
     }
 

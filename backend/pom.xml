@@ -23,6 +23,8 @@
         <node.version>v20.18.1</node.version>
         <frontend-maven-plugin.version>1.15.1</frontend-maven-plugin.version>
         <jjwt.version>0.12.6</jjwt.version>
+        <opensearch-java.version>2.13.0</opensearch-java.version>
+        <opensearch-testcontainers.version>2.1.3</opensearch-testcontainers.version>
     </properties>
 
     <dependencies>
@@ -59,6 +61,22 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!--
+            OpenSearch derived read model. The official low-level Java client (not Spring Data
+            Elasticsearch) on the Apache HttpClient5 transport. PostgreSQL stays authoritative;
+            this index is eventually-consistent and rebuildable. Pinned to the 2.x line to match
+            the 2.x cluster shipped in docker-compose.
+        -->
+        <dependency>
+            <groupId>org.opensearch.client</groupId>
+            <artifactId>opensearch-java</artifactId>
+            <version>${opensearch-java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
         </dependency>
 
         <dependency>
@@ -99,6 +117,12 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opensearch</groupId>
+            <artifactId>opensearch-testcontainers</artifactId>
+            <version>${opensearch-testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

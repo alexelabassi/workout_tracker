@@ -94,6 +94,26 @@ export function DashboardPage() {
           </Link>
         </section>
 
+        <section className="card">
+          <header className="card__header">
+            <h2>Coaching</h2>
+            {user?.role === "COACH" && <span className="badge">Coach</span>}
+          </header>
+          <p className="muted">
+            {user?.role === "COACH"
+              ? "Manage your clients and review their training, or manage coaches for your own account."
+              : "Accept a coach's invite to share your training, or manage your active coaches."}
+          </p>
+          {user?.role === "COACH" && (
+            <Link to="/coach" className="button button--block">
+              Coach area
+            </Link>
+          )}
+          <Link to="/coaching" className="button button--block button--ghost">
+            Manage invites &amp; coaches
+          </Link>
+        </section>
+
         <HealthCard />
       </main>
 

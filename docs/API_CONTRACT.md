@@ -148,14 +148,33 @@ workoutsPerWeek[], primaryMuscleSetDistribution[], bestSets[], oneRepMaxOverTime
 are ranked by estimated 1RM (Epley); `oneRepMaxOverTime` is a per-exercise time series of each
 day's best estimated 1RM (strength progression). Analytics count FINISHED sessions only.
 
-## Deferred to Phase 11 (OpenSearch)
+## Search — Phase 11 (OpenSearch) — IMPLEMENTED
+
+OpenSearch-backed search over a derived, eventually-consistent read model. PostgreSQL stays
+authoritative; when `app.search.enabled=false` (default) or OpenSearch is down, these return
+**503 `SEARCH_UNAVAILABLE`** and the client falls back to the SQL browse/list. See
+`docs/SEARCH_AND_CACHING.md` (As Built) for the design.
 
 ```http
-GET /history/search
+GET /api/search/templates?scope=my|marketplace&q=&difficulty=&splitType=&daysPerWeek=
+        &muscleGroup=&analysisCategory=&minScore=&page=&size=
+GET /api/search/workouts?q=&status=&dateFrom=&dateTo=&muscleGroup=&exercise=&gym=
+        &equipment=&minVolume=&maxVolume=&minDuration=&maxDuration=&page=&size=
+POST /api/admin/search/reindex      # ROLE_ADMIN only (ordinary users -> 403)
 ```
 
-Filters: `dateFrom, dateTo, exercise, gym, equipment, template, textQuery`.
-Full-text / filtered history search is implemented later with OpenSearch, not in Phase 6.
+- `scope` security is enforced from the JWT (cannot be overridden): `marketplace` ⇒ PUBLIC only,
+  `my` ⇒ caller's own; `/workouts` is always the caller's own history.
+- Response envelope:
+  `{ items: [...], facets: [{ field, buckets: [{ key, count }] }], page, size, totalHits }`.
+  Each item carries per-field `highlights` (`<mark>`); marketplace template items also carry
+  `authorDisplayName`, `myVote`, `saved`. Returned items are re-validated against PostgreSQL
+  (defense in depth), so `items.length` may be ≤ `totalHits`.
+- Behaviour: boosted multi-field full-text, `fuzziness=AUTO` typo tolerance (guarded for short
+  queries), search-time synonyms, structured filters, terms + date-histogram facets, marketplace
+  popularity boost via `function_score`.
+
+The earlier `GET /history/search` placeholder is superseded by `GET /api/search/workouts`.
 
 ---
 

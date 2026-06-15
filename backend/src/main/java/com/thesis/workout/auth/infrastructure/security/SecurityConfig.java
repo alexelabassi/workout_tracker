@@ -58,6 +58,14 @@ public class SecurityConfig {
                                 "/api/auth/refresh",
                                 "/api/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
+                        // Admin-only operations (e.g. manual search reindex). No admin account is
+                        // created by registration, so this is locked down by default; ordinary
+                        // users get 403 and the demo stack rebuilds the index in-process instead.
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // Coach area requires the COACH role (RBAC); a per-request ACTIVE-relationship
+                        // check (ReBAC) in CoachAccess further restricts each coach to their own clients.
+                        // Client-side relationship management (/api/coaching/**) is open to any authed user.
+                        .requestMatchers("/api/coach/**").hasRole("COACH")
                         .requestMatchers("/api/**").authenticated()
                         // Everything else is the bundled SPA (static assets + client routes).
                         .anyRequest().permitAll())

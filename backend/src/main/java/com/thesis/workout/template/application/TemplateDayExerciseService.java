@@ -3,12 +3,14 @@ package com.thesis.workout.template.application;
 import com.thesis.workout.exercise.application.exception.ExerciseNotFoundException;
 import com.thesis.workout.exercise.domain.model.Exercise;
 import com.thesis.workout.exercise.infrastructure.repository.ExerciseRepository;
+import com.thesis.workout.search.application.event.TemplateIndexEvent;
 import com.thesis.workout.template.domain.model.TemplateDay;
 import com.thesis.workout.template.domain.model.TemplateDayExercise;
 import com.thesis.workout.template.infrastructure.repository.TemplateDayExerciseRepository;
 import com.thesis.workout.template.infrastructure.repository.TemplateRepository;
 import com.thesis.workout.template.web.dto.TemplateDayExerciseResponse;
 import java.util.UUID;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +27,18 @@ public class TemplateDayExerciseService {
     private final TemplateRepository templateRepository;
     private final ExerciseRepository exerciseRepository;
     private final TemplateAccess templateAccess;
+    private final ApplicationEventPublisher events;
 
     public TemplateDayExerciseService(TemplateDayExerciseRepository templateDayExerciseRepository,
             TemplateRepository templateRepository,
             ExerciseRepository exerciseRepository,
-            TemplateAccess templateAccess) {
+            TemplateAccess templateAccess,
+            ApplicationEventPublisher events) {
         this.templateDayExerciseRepository = templateDayExerciseRepository;
         this.templateRepository = templateRepository;
         this.exerciseRepository = exerciseRepository;
         this.templateAccess = templateAccess;
+        this.events = events;
     }
 
     @Transactional
@@ -50,6 +55,7 @@ public class TemplateDayExerciseService {
         TemplateDayExercise saved = templateDayExerciseRepository.saveAndFlush(exercise);
         TemplateDayExerciseResponse response = TemplateDayExerciseResponse.from(saved);
         templateRepository.recomputeAggregates(day.getTemplateId());
+        events.publishEvent(TemplateIndexEvent.structural(day.getTemplateId()));
         return response;
     }
 
@@ -71,6 +77,7 @@ public class TemplateDayExerciseService {
         TemplateDayExercise saved = templateDayExerciseRepository.saveAndFlush(exercise);
         TemplateDayExerciseResponse response = TemplateDayExerciseResponse.from(saved);
         templateRepository.recomputeAggregates(templateId);
+        events.publishEvent(TemplateIndexEvent.structural(templateId));
         return response;
     }
 
@@ -80,6 +87,7 @@ public class TemplateDayExerciseService {
         UUID templateId = templateAccess.templateIdOfDay(exercise.getTemplateDayId());
         templateDayExerciseRepository.delete(exercise);
         templateRepository.recomputeAggregates(templateId);
+        events.publishEvent(TemplateIndexEvent.structural(templateId));
     }
 
     private Exercise visibleExercise(UUID userId, UUID exerciseId) {

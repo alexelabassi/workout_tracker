@@ -1,0 +1,80 @@
+\chapter{Introducere}
+\label{cap:introducere}
+
+\section{Tipul lucrării și încadrarea temei}
+
+Lucrarea de față este o \emph{lucrare de licență} cu caracter aplicativ, încadrată în subdomeniul
+ingineriei sistemelor software de tip web (\emph{full-stack}), cu accent pe persistența datelor,
+modele de citire derivate și regăsirea informației (\emph{information retrieval}). Tema o reprezintă
+proiectarea și implementarea unei platforme pentru gestiunea antrenamentelor de forță, a cărei
+componentă centrală, din perspectivă științifică, este un \emph{model de citire pentru căutare}
+construit peste motorul OpenSearch, însoțit de o evaluare empirică comparativă față de capacitățile
+de căutare native ale bazei de date relaționale PostgreSQL.
+
+\section{Prezentarea generală a temei}
+
+Aplicațiile uzuale de monitorizare a antrenamentelor se împart, de regulă, în două categorii:
+jurnale pasive, care doar stochează ce a făcut utilizatorul, și aplicații care oferă recomandări
+de tip „antrenor cu inteligență artificială”, opace și neverificabile. Prima categorie nu ajută la
+planificare; a doua sugerează o autoritate pe care nu o poate justifica. În plus, ambele tratează de
+obicei istoricul ca pe niște date „vii”, dependente de planurile curente: dacă utilizatorul își
+modifică sau șterge un program, sesiunile trecute pot deveni incoerente.
+
+Platforma propusă adoptă o poziție diferită. În primul rând, tratează \emph{adevărul istoric} ca o
+cerință de integritate de prim rang: la execuția unui antrenament, planul este „înghețat” în
+instantanee imuabile, astfel încât istoricul rămâne corect indiferent de schimbările ulterioare. În
+al doilea rând, oferă \emph{feedback structural explicabil}: o analiză deterministă, bazată pe
+reguli informate de dovezi din literatura antrenamentului de forță, care nu pretinde a fi sfat
+medical. În al treilea rând, scalează regăsirea informației dincolo de filtrarea SQL simplă, printr-un
+model de citire dedicat căutării, și \emph{măsoară} riguros când această alegere de arhitectură se
+justifică.
+
+\section{Scopul și motivația alegerii temei}
+
+Scopul lucrării este construirea unui sistem de calitate apropiată de cea de producție — nu un
+prototip de tip „temă de an” — care să demonstreze stăpânirea unor concepte importante din
+ingineria software: securitate (autentificare cu token-uri, control al accesului bazat pe roluri și
+pe relații), integritatea datelor (instantanee imuabile, constrângeri la nivel de bază de date),
+modele de citire derivate și consistență eventuală, precum și o disciplină de testare riguroasă.
+
+Motivația alegerii componentei de căutare ca temă centrală este dublă. Pe de o parte, căutarea
+full-text tolerantă la greșeli, cu relevanță, fațete și evidențiere a potrivirilor, este o cerință
+reală pentru un istoric de antrenament de mari dimensiuni („găsește acel antrenament din 2020”). Pe
+de altă parte, alegerea între a folosi capacitățile native ale bazei de date și a introduce un motor
+de căutare dedicat este o decizie de arhitectură frecventă și adesea luată „din reflex”. Lucrarea o
+transformă într-o întrebare măsurabilă: \emph{de la ce scară devine justificat un motor de căutare
+dedicat?}
+
+\section{Contribuția proprie (pe scurt)}
+
+Contribuția proprie constă în proiectarea și implementarea integrală a sistemului și, în mod
+particular:
+\begin{itemize}
+  \item un model de date relațional cu integritate puternică (instantanee imuabile, ștergere logică,
+        indecși unici parțiali, constrângeri \code{CHECK}), validat de Hibernate în mod \code{validate};
+  \item un model de securitate cu token-uri JWT și rotație a token-urilor de reîmprospătare, control
+        al accesului bazat pe roluri (RBAC) și pe relații (ReBAC) pentru modul de coaching, sigur față
+        de vulnerabilitatea IDOR (răspuns 404, nu 403);
+  \item un analizor structural determinist și explicabil al programelor de antrenament, cu un scor pe
+        100 de puncte descompus în cinci sub-scoruri și avertismente justificate;
+  \item un model de citire derivat pentru căutare, construit peste OpenSearch, menținut consistent
+        prin evenimente după-commit, cu securitate în două straturi;
+  \item o evaluare empirică OpenSearch vs.\ PostgreSQL pe un corpus sintetic scalat de la 1.000 la
+        2.000.000 de documente, cu o linie de bază PostgreSQL corectă (\code{tsvector}+GIN,
+        \code{pg\_trgm});
+  \item o suită de teste de integrare pe baze de date reale (PostgreSQL și OpenSearch prin
+        Testcontainers, fără mock-uri și fără H2).
+\end{itemize}
+
+\section{Structura lucrării}
+
+Lucrarea este organizată după cum urmează. Capitolul~\ref{cap:preliminarii} (\emph{Preliminarii})
+prezintă noțiunile și tehnologiile pe care se bazează tema și stadiul actual al subdomeniului.
+Capitolul~\ref{cap:contributie} (\emph{Contribuția proprie}) descrie arhitectura sistemului, modelul
+de date și principiul instantaneelor, modelul de securitate, analizorul informat de dovezi, modelul
+de citire pentru căutare, evaluarea empirică OpenSearch vs.\ PostgreSQL, modul de coaching, strategia
+de testare și direcțiile de dezvoltare deja proiectate și pregătite în schemă.
+Capitolul~\ref{cap:concluzii} (\emph{Concluzii}) sintetizează rezultatele și discută dezvoltările
+ulterioare. Detaliile voluminoase — capturi de ecran ale interfeței, schema completă a bazei de
+date, listări de cod, tabelele complete ale evaluării și contractul API — sunt grupate în anexe și
+referite din text.

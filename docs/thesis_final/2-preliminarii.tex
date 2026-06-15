@@ -1,0 +1,91 @@
+\chapter{Preliminarii}
+\label{cap:preliminarii}
+
+Acest capitol prezintă noțiunile și tehnologiile pe care se sprijină lucrarea, stadiul actual al
+subdomeniului și obiectivele formulate în raport cu acest context.
+
+\section{Tehnologii de bază}
+
+\paragraph{Backend.} Aplicația server este construită în Java~21 cu Spring Boot~3
+\cite{springboot}, folosind module pentru web (REST), securitate, validare și acces la date prin
+Spring Data JPA / Hibernate. Persistența se face în PostgreSQL~16 \cite{postgresql}, iar schema este
+gestionată exclusiv prin migrări Flyway. O disciplină importantă este modul
+\code{ddl-auto: validate}: Hibernate nu generează și nu modifică niciodată schema, ci doar o
+validează la pornire, ceea ce surprinde din start orice nepotrivire între entități și schema reală.
+
+\paragraph{Frontend.} Interfața este o aplicație de tip \emph{single-page} scrisă în React cu
+TypeScript \cite{react}, livrată chiar de către backend de la aceeași origine, ceea ce simplifică
+modelul de securitate al cookie-urilor.
+
+\paragraph{Autentificare.} Sistemul folosește \emph{JSON Web Tokens} (JWT) \cite{rfc7519}: un
+token de acces de scurtă durată, semnat simetric, transportat în antetul \code{Authorization}, și un
+token de reîmprospătare opac, stocat doar ca amprentă criptografică. Parolele sunt stocate ca
+amprente generate cu o funcție de derivare a cheilor rezistentă la atacuri de tip dicționar.
+
+\section{Regăsirea informației și căutarea full-text}
+
+\emph{Regăsirea informației} (information retrieval) studiază modul în care se identifică, dintr-o
+colecție de documente, pe cele relevante pentru o interogare. Spre deosebire de o potrivire exactă
+SQL, căutarea full-text presupune: analiză lexicală (tokenizare, normalizare, eliminarea
+diacriticelor), un \emph{index inversat} care leagă termenii de documentele care îi conțin, o funcție
+de \emph{relevanță} care ordonează rezultatele și mecanisme de toleranță la erori.
+
+\paragraph{Relevanță și ordonare.} Motoarele moderne folosesc funcția de scor \emph{BM25}
+\cite{robertson2009bm25}, o rafinare probabilistică a familiei TF-IDF care echilibrează frecvența
+termenilor cu lungimea documentului. Calitatea ordonării se evaluează cu metrici precum
+\emph{precision@k} și \emph{nDCG} (normalized discounted cumulative gain) \cite{jarvelin2002ndcg},
+care recompensează plasarea documentelor relevante cât mai sus în lista de rezultate.
+
+\paragraph{Toleranța la greșeli.} Căutarea „fuzzy” acceptă potriviri aproximative pe baza distanței
+de editare (Levenshtein), esențială pentru greșeli de tastare (de exemplu \emph{benhc}
+$\rightarrow$ \emph{bench}). În bazele relaționale, un mecanism echivalent este oferit de extensia
+\code{pg\_trgm} (similaritate pe trigrame).
+
+\paragraph{Căutarea în PostgreSQL vs.\ motoare dedicate.} PostgreSQL oferă căutare full-text nativă
+prin tipul \code{tsvector}, funcții de ordonare precum \code{ts\_rank\_cd} și indecși GIN
+\cite{postgresFTS}. Aceasta este suficientă la scară mică și are avantajul de a păstra totul într-un
+singur sistem. Motoarele dedicate, precum OpenSearch \cite{opensearch} (un fork open-source al
+Elasticsearch, construit peste biblioteca Lucene), oferă în schimb analizoare configurabile,
+sinonime, scoruri BM25, fațete prin agregări și toleranță la greșeli performantă la scară mare.
+Alegerea între cele două este o decizie de arhitectură pe care lucrarea o tratează experimental.
+
+\section{Modele de citire derivate și consistență eventuală}
+
+Pentru a separa calea de scriere (tranzacțională, normalizată) de calea de citire (optimizată pentru
+interogări), o practică des întâlnită este construirea unui \emph{model de citire derivat} dintr-o
+sursă de adevăr unică — o formă relaxată a tiparului CQRS (Command Query Responsibility Segregation)
+\cite{kleppmann2017ddia}. Modelul derivat (aici, indexul OpenSearch) este \emph{eventual consistent}
+cu sursa de adevăr (PostgreSQL) și poate fi reconstruit oricând. Problema centrală a acestei abordări
+este propagarea fiabilă a modificărilor către modelul derivat (problema \emph{dual-write}), discutată
+în Capitolul~\ref{cap:contributie}.
+
+\section{Imuabilitatea istoricului}
+
+Ideea că datele istorice trebuie tratate ca fapte imuabile, niciodată suprascrise, este un principiu
+de proiectare bine fundamentat în sistemele orientate pe date \cite{helland2015immutability}. În
+domeniul de față, un antrenament efectuat este un fapt: el nu trebuie să se modifice atunci când
+planul din care a pornit este editat ulterior. Lucrarea implementează acest principiu prin
+\emph{instantanee} (snapshots) și chei externe anulabile, detaliate în
+Secțiunea~\ref{sec:instantanee}.
+
+\section{Fundamentarea analizorului de programe}
+
+Analiza structurală a programelor pornește de la rezultate din literatura antrenamentului de forță,
+în special relația doză–răspuns dintre volumul săptămânal (numărul de serii pe grupă musculară) și
+hipertrofie \cite{schoenfeld2017dose}. Aceste rezultate sunt folosite ca \emph{euristici} pentru a
+semnala dezechilibre structurale (de exemplu, volum foarte scăzut sau excesiv, lipsa unui tipar de
+mișcare), nu ca prescripții individualizate. Analizorul este, prin urmare, determinist, explicabil și
+prudent, însoțindu-și mereu rezultatul de un avertisment privind limitele sale.
+
+\section{Obiectivele lucrării în raport cu contextul}
+
+Pornind de la acest context, obiectivele lucrării sunt:
+\begin{enumerate}
+  \item construirea unei platforme full-stack funcționale, cu integritate puternică a datelor și un
+        model de securitate riguros;
+  \item proiectarea unui model de citire pentru căutare, derivat și eventual consistent, cu securitate
+        care nu poate fi ocolită din parametrii cererii;
+  \item evaluarea empirică, pe un corpus scalabil, a momentului în care un motor de căutare dedicat
+        devine justificat față de capacitățile native ale PostgreSQL;
+  \item demonstrarea corectitudinii prin teste de integrare pe infrastructură reală, nu pe substitute.
+\end{enumerate}

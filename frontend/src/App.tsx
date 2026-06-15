@@ -16,6 +16,10 @@ import { HistoryPage } from "./features/history/HistoryPage";
 import { AnalyticsPage } from "./features/analytics/AnalyticsPage";
 import { MarketplacePage } from "./features/marketplace/MarketplacePage";
 import { MarketplaceDetailPage } from "./features/marketplace/MarketplaceDetailPage";
+import { CoachingPage } from "./features/coaching/CoachingPage";
+import { CoachClientsPage } from "./features/coaching/CoachClientsPage";
+import { CoachClientDetailPage } from "./features/coaching/CoachClientDetailPage";
+import { CoachClientSessionPage } from "./features/coaching/CoachClientSessionPage";
 
 export default function App() {
   return (
@@ -37,6 +41,10 @@ export default function App() {
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/marketplace" element={<MarketplacePage />} />
         <Route path="/marketplace/:templateId" element={<MarketplaceDetailPage />} />
+        <Route path="/coaching" element={<CoachingPage />} />
+        <Route path="/coach" element={<CoachClientsPage />} />
+        <Route path="/coach/clients/:clientId" element={<CoachClientDetailPage />} />
+        <Route path="/coach/clients/:clientId/sessions/:sessionId" element={<CoachClientSessionPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

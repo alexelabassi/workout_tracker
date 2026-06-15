@@ -1,5 +1,6 @@
 package com.thesis.workout.template.application;
 
+import com.thesis.workout.search.application.event.TemplateIndexEvent;
 import com.thesis.workout.template.application.exception.TemplateNotFoundException;
 import com.thesis.workout.template.domain.model.Template;
 import com.thesis.workout.template.domain.model.TemplateDay;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,19 +41,22 @@ public class TemplateService {
     private final TemplateDayExerciseRepository templateDayExerciseRepository;
     private final TemplateDayRoutineRepository templateDayRoutineRepository;
     private final TemplateAccess templateAccess;
+    private final ApplicationEventPublisher events;
 
     public TemplateService(TemplateRepository templateRepository,
             TemplateStatsRepository templateStatsRepository,
             TemplateDayRepository templateDayRepository,
             TemplateDayExerciseRepository templateDayExerciseRepository,
             TemplateDayRoutineRepository templateDayRoutineRepository,
-            TemplateAccess templateAccess) {
+            TemplateAccess templateAccess,
+            ApplicationEventPublisher events) {
         this.templateRepository = templateRepository;
         this.templateStatsRepository = templateStatsRepository;
         this.templateDayRepository = templateDayRepository;
         this.templateDayExerciseRepository = templateDayExerciseRepository;
         this.templateDayRoutineRepository = templateDayRoutineRepository;
         this.templateAccess = templateAccess;
+        this.events = events;
     }
 
     @Transactional(readOnly = true)
@@ -89,6 +94,7 @@ public class TemplateService {
                 command.estimatedDurationMinutes());
         Template saved = templateRepository.saveAndFlush(template);
         templateStatsRepository.save(TemplateStats.zeroFor(saved.getId()));
+        events.publishEvent(TemplateIndexEvent.structural(saved.getId()));
         return assembleDetail(saved);
     }
 
@@ -102,13 +108,16 @@ public class TemplateService {
                 command.daysPerWeek(),
                 command.difficulty(),
                 command.estimatedDurationMinutes());
-        return assembleDetail(templateRepository.saveAndFlush(template));
+        TemplateDetailResponse response = assembleDetail(templateRepository.saveAndFlush(template));
+        events.publishEvent(TemplateIndexEvent.structural(templateId));
+        return response;
     }
 
     @Transactional
     public void delete(UUID userId, UUID templateId) {
         Template template = templateAccess.requireOwnedTemplate(userId, templateId);
         template.softDelete(Instant.now());
+        events.publishEvent(TemplateIndexEvent.remove(templateId));
     }
 
     private TemplateDetailResponse assembleDetail(Template template) {

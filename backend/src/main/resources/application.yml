@@ -35,3 +35,15 @@ app:
       name: refresh_token
     cors:
       allowed-origins: ${AUTH_CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  search:
+    # OpenSearch-backed derived search read model. Disabled by default so the app (and the full
+    # Testcontainers test suite) runs without an OpenSearch node; docker-compose flips it on.
+    # When disabled, /api/search/** returns 503 and the UI falls back to the SQL browse/list.
+    enabled: ${APP_SEARCH_ENABLED:false}
+    uri: ${APP_SEARCH_URI:http://localhost:9200}
+    connect-timeout-ms: 2000
+    socket-timeout-ms: 5000
+    templates-index: templates_v1
+    templates-alias: templates
+    sessions-index: workout_sessions_v1
+    sessions-alias: workout_sessions

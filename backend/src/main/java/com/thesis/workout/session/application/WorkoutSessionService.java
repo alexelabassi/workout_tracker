@@ -22,6 +22,7 @@ import com.thesis.workout.session.web.dto.SessionExerciseResponse;
 import com.thesis.workout.session.web.dto.SessionRoutineResponse;
 import com.thesis.workout.session.web.dto.WorkoutSessionDetailResponse;
 import com.thesis.workout.session.web.dto.WorkoutSetResponse;
+import com.thesis.workout.search.application.event.WorkoutSessionIndexEvent;
 import com.thesis.workout.template.application.TemplateAccess;
 import com.thesis.workout.template.domain.model.Template;
 import com.thesis.workout.template.domain.model.TemplateDay;
@@ -35,6 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +60,7 @@ public class WorkoutSessionService {
     private final TemplateDayRoutineRepository templateDayRoutineRepository;
     private final ExerciseRepository exerciseRepository;
     private final GymRepository gymRepository;
+    private final ApplicationEventPublisher events;
 
     public WorkoutSessionService(WorkoutSessionRepository sessionRepository,
             SessionExerciseRepository sessionExerciseRepository,
@@ -68,7 +71,8 @@ public class WorkoutSessionService {
             TemplateDayExerciseRepository templateDayExerciseRepository,
             TemplateDayRoutineRepository templateDayRoutineRepository,
             ExerciseRepository exerciseRepository,
-            GymRepository gymRepository) {
+            GymRepository gymRepository,
+            ApplicationEventPublisher events) {
         this.sessionRepository = sessionRepository;
         this.sessionExerciseRepository = sessionExerciseRepository;
         this.sessionRoutineRepository = sessionRoutineRepository;
@@ -79,6 +83,7 @@ public class WorkoutSessionService {
         this.templateDayRoutineRepository = templateDayRoutineRepository;
         this.exerciseRepository = exerciseRepository;
         this.gymRepository = gymRepository;
+        this.events = events;
     }
 
     @Transactional
@@ -145,6 +150,8 @@ public class WorkoutSessionService {
     public WorkoutSessionDetailResponse finish(UUID userId, UUID sessionId) {
         WorkoutSession session = requireActiveSession(userId, sessionId);
         session.finish(Instant.now());
+        // Terminal status reached: the session is now history and joins the workout search index.
+        events.publishEvent(WorkoutSessionIndexEvent.upsert(sessionId));
         return assembleDetail(session);
     }
 
@@ -152,6 +159,7 @@ public class WorkoutSessionService {
     public WorkoutSessionDetailResponse cancel(UUID userId, UUID sessionId) {
         WorkoutSession session = requireActiveSession(userId, sessionId);
         session.cancel(Instant.now());
+        events.publishEvent(WorkoutSessionIndexEvent.upsert(sessionId));
         return assembleDetail(session);
     }
 
@@ -160,6 +168,8 @@ public class WorkoutSessionService {
     public WorkoutSessionDetailResponse updateNotes(UUID userId, UUID sessionId, String notes) {
         WorkoutSession session = access.requireOwnedSession(userId, sessionId);
         session.updateNotes(notes == null || notes.isBlank() ? null : notes.trim());
+        // Keep the indexed notes fresh for terminal sessions; a no-op for an in-progress one.
+        events.publishEvent(WorkoutSessionIndexEvent.upsert(sessionId));
         return assembleDetail(session);
     }
 

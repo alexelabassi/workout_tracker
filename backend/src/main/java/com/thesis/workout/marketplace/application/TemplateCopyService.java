@@ -4,6 +4,7 @@ import com.thesis.workout.exercise.domain.model.Visibility;
 import com.thesis.workout.exercise.infrastructure.repository.ExerciseRepository;
 import com.thesis.workout.marketplace.domain.model.TemplateUseEvent;
 import com.thesis.workout.marketplace.infrastructure.repository.TemplateUseEventRepository;
+import com.thesis.workout.search.application.event.TemplateIndexEvent;
 import com.thesis.workout.template.application.TemplateService;
 import com.thesis.workout.template.application.exception.TemplateNotFoundException;
 import com.thesis.workout.template.domain.model.Template;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,13 +48,14 @@ public class TemplateCopyService {
     private final TemplateUseEventRepository templateUseEventRepository;
     private final ExerciseRepository exerciseRepository;
     private final TemplateService templateService;
+    private final ApplicationEventPublisher events;
 
     public TemplateCopyService(TemplateRepository templateRepository,
             TemplateStatsRepository templateStatsRepository, TemplateDayRepository templateDayRepository,
             TemplateDayExerciseRepository templateDayExerciseRepository,
             TemplateDayRoutineRepository templateDayRoutineRepository,
             TemplateUseEventRepository templateUseEventRepository, ExerciseRepository exerciseRepository,
-            TemplateService templateService) {
+            TemplateService templateService, ApplicationEventPublisher events) {
         this.templateRepository = templateRepository;
         this.templateStatsRepository = templateStatsRepository;
         this.templateDayRepository = templateDayRepository;
@@ -61,6 +64,7 @@ public class TemplateCopyService {
         this.templateUseEventRepository = templateUseEventRepository;
         this.exerciseRepository = exerciseRepository;
         this.templateService = templateService;
+        this.events = events;
     }
 
     @Transactional
@@ -124,6 +128,11 @@ public class TemplateCopyService {
         templateStatsRepository.incrementUses(sourceTemplateId);
         templateUseEventRepository.save(TemplateUseEvent.record(
                 userId, sourceTemplateId, copy.getId(), source.getName(), copy.getName()));
+
+        // The copy is a brand-new private template (index it under scope=my); the source only had
+        // its use counter bumped, so a counters-only update suffices for the marketplace document.
+        events.publishEvent(TemplateIndexEvent.structural(copy.getId()));
+        events.publishEvent(TemplateIndexEvent.stats(sourceTemplateId));
 
         return templateService.get(userId, copy.getId());
     }

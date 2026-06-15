@@ -1,5 +1,6 @@
 package com.thesis.workout.template.application;
 
+import com.thesis.workout.search.application.event.TemplateIndexEvent;
 import com.thesis.workout.template.application.exception.TemplateDayNumberTakenException;
 import com.thesis.workout.template.domain.model.TemplateDay;
 import com.thesis.workout.template.infrastructure.repository.TemplateDayExerciseRepository;
@@ -11,6 +12,7 @@ import com.thesis.workout.template.web.dto.TemplateDayResponse;
 import com.thesis.workout.template.web.dto.TemplateDayRoutineResponse;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,17 +30,20 @@ public class TemplateDayService {
     private final TemplateDayRoutineRepository templateDayRoutineRepository;
     private final TemplateRepository templateRepository;
     private final TemplateAccess templateAccess;
+    private final ApplicationEventPublisher events;
 
     public TemplateDayService(TemplateDayRepository templateDayRepository,
             TemplateDayExerciseRepository templateDayExerciseRepository,
             TemplateDayRoutineRepository templateDayRoutineRepository,
             TemplateRepository templateRepository,
-            TemplateAccess templateAccess) {
+            TemplateAccess templateAccess,
+            ApplicationEventPublisher events) {
         this.templateDayRepository = templateDayRepository;
         this.templateDayExerciseRepository = templateDayExerciseRepository;
         this.templateDayRoutineRepository = templateDayRoutineRepository;
         this.templateRepository = templateRepository;
         this.templateAccess = templateAccess;
+        this.events = events;
     }
 
     @Transactional
@@ -49,7 +54,9 @@ public class TemplateDayService {
         TemplateDay day = TemplateDay.createFor(
                 templateId, command.dayNumber(), command.name().trim(), command.focus(),
                 command.estimatedDurationMinutes(), normalize(command.notes()));
-        return dayResponse(save(day));
+        TemplateDayResponse response = dayResponse(save(day));
+        events.publishEvent(TemplateIndexEvent.structural(templateId));
+        return response;
     }
 
     @Transactional
@@ -59,7 +66,9 @@ public class TemplateDayService {
 
         day.updateDetails(command.dayNumber(), command.name().trim(), command.focus(),
                 command.estimatedDurationMinutes(), normalize(command.notes()));
-        return dayResponse(save(day));
+        TemplateDayResponse response = dayResponse(save(day));
+        events.publishEvent(TemplateIndexEvent.structural(day.getTemplateId()));
+        return response;
     }
 
     @Transactional
@@ -68,6 +77,7 @@ public class TemplateDayService {
         UUID templateId = day.getTemplateId();
         templateDayRepository.delete(day);
         templateRepository.recomputeAggregates(templateId);
+        events.publishEvent(TemplateIndexEvent.structural(templateId));
     }
 
     private TemplateDay save(TemplateDay day) {
