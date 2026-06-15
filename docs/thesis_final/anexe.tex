@@ -225,25 +225,24 @@ Toate endpoint-urile, cu excepția celor de autentificare și a stării de săn�
 valid. Răspunsurile de eroare folosesc un plic uniform cu un cod stabil (de exemplu
 \code{TEMPLATE\_NOT\_FOUND}, \code{ACTIVE\_WORKOUT\_EXISTS}, \code{SEARCH\_UNAVAILABLE}).
 
-\begin{itemize}
-  \item \textbf{Autentificare:} \code{POST /api/auth/\{register,login,refresh,logout\}},
-        \code{GET /api/auth/me}.
-  \item \textbf{Planificare:} \code{/api/exercises}, \code{/api/routines}, \code{/api/gyms},
-        \code{/api/gyms/\{id\}/equipment}, \code{/api/equipment/\{id\}}.
-  \item \textbf{Programe:} \code{/api/templates}, \code{/api/templates/\{id\}},
-        \code{POST /api/templates/\{id\}/\{publish,unpublish\}}.
-  \item \textbf{Sesiuni:} \code{POST /api/workouts/start}, \code{GET /api/workouts/active},
-        \code{POST /api/workouts/\{id\}/\{finish,cancel\}},
-        \code{POST /api/session-exercises/\{id\}/sets}, \code{PUT/DELETE /api/sets/\{id\}}.
-  \item \textbf{Istoric și analize:} \code{GET /api/history}, \code{GET /api/analytics/overview}.
-  \item \textbf{Marketplace:} \code{GET /api/marketplace/templates},
-        \code{POST /api/marketplace/templates/\{id\}/\{vote,save,use\}}.
-  \item \textbf{Analizor:} \code{GET /api/templates/\{id\}/analysis}.
-  \item \textbf{Căutare:} \code{GET /api/search/templates}, \code{GET /api/search/workouts},
-        \code{POST /api/admin/search/reindex} (doar \code{ADMIN}).
-  \item \textbf{Coaching:} \code{/api/coach/clients/...} (rol \code{COACH} + relație activă),
-        \code{/api/coaching/\{invites,coaches\}}.
-\end{itemize}
+\begin{lstlisting}
+Autentificare : POST /api/auth/{register,login,refresh,logout};  GET /api/auth/me
+Planificare   : /api/exercises;  /api/routines;  /api/gyms;
+                /api/gyms/{id}/equipment;  /api/equipment/{id}
+Programe      : /api/templates;  /api/templates/{id};
+                POST /api/templates/{id}/{publish,unpublish}
+Sesiuni       : POST /api/workouts/start;  GET /api/workouts/active;
+                POST /api/workouts/{id}/{finish,cancel};
+                POST /api/session-exercises/{id}/sets;  PUT|DELETE /api/sets/{id}
+Istoric       : GET /api/history;  GET /api/analytics/overview
+Marketplace   : GET /api/marketplace/templates;
+                POST /api/marketplace/templates/{id}/{vote,save,use}
+Analizor      : GET /api/templates/{id}/analysis
+Cautare       : GET /api/search/templates;  GET /api/search/workouts;
+                POST /api/admin/search/reindex      (doar ADMIN)
+Coaching      : /api/coach/clients/... (rol COACH + relatie activa);
+                /api/coaching/{invites,coaches}
+\end{lstlisting}
 
 % ----------------------------------------------------------------------------
 \chapter*{Anexa 6 — Configurație și rulare}

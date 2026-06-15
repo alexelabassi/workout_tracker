@@ -32,6 +32,7 @@
 
 % Bibliografie
 \usepackage[
+    backend=bibtex,
     maxbibnames=50,
     sorting=nty
 ]{biblatex}
@@ -43,6 +44,9 @@
 
 % Geometria paginii
 \usepackage{geometry}
+
+% Marjă de elasticitate pentru a evita cutiile supradimensionate (overfull hbox)
+\setlength{\emergencystretch}{3em}
 
 % Grafică
 \usepackage{graphicx}
@@ -112,8 +116,9 @@
   (se va înlocui cu \texttt{\textbackslash includegraphics} după adăugarea capturii în \texttt{images/})}}
   \end{center}}
 
-% Cod inline scurt
-\newcommand{\code}[1]{\texttt{#1}}
+% Cod inline scurt; permite ruperea liniei după underscore pentru identificatori lungi
+\newcommand{\codeus}{\textunderscore\allowbreak}
+\newcommand{\code}[1]{\texttt{\let\_\codeus #1}}
 
 % Metadate
 \title{Platformă bazată pe dovezi pentru monitorizarea antrenamentelor, descoperirea de programe, coaching și căutare în istoricul de antrenament}
