@@ -1,39 +1,40 @@
 \begin{abstractpage}
 
 \begin{abstract}{romanian}
-Lucrarea prezintă proiectarea și implementarea unei platforme full-stack pentru antrenamente de
-forță, construită pe principiul \emph{adevărului istoric}: planurile de antrenament se transformă,
-la execuție, în istoric imuabil prin \emph{instantanee} (snapshots), astfel încât editarea sau
-ștergerea ulterioară a datelor sursă nu poate modifica ce a fost înregistrat. Sistemul oferă
-gestiunea programelor de antrenament, execuția sesiunilor live, analize de progres, un marketplace
-de programe (publicare, vot, salvare, copiere), o analiză structurală deterministă și explicabilă a
-programelor (bazată pe euristici informate de dovezi, fără pretenții medicale), un mod de
-\emph{coaching} cu acces controlat la datele clientului și o componentă de \emph{căutare} full-text
-peste programe și istoricul de antrenament. Componenta de căutare este un model de citire derivat,
-construit peste OpenSearch, menținut consistent prin evenimente după-commit, cu securitate în două
-straturi. Contribuția centrală este o \emph{evaluare empirică} OpenSearch vs.\ PostgreSQL pe un
-corpus sintetic scalat până la 2 milioane de documente. Backend-ul este Spring Boot~3 / Java~21 cu
-PostgreSQL~16 ca sursă unică de adevăr, iar corectitudinea este verificată prin teste de integrare
-pe baze de date reale (Testcontainers, fără mock-uri). Rezultatele arată un punct de echilibru în
-jurul a 10.000 de documente și un avantaj decisiv al motorului de căutare la căutarea tolerantă la
-greșeli de tastare.
+Lucrarea descrie o aplicație web pentru antrenamente de forță, construită în jurul unei idei simple:
+istoricul de antrenament trebuie să rămână corect în timp. Atunci când un antrenament este efectuat,
+planul din care a pornit este copiat („înghețat”) sub formă de instantanee, așa că dacă utilizatorul
+modifică sau șterge mai târziu datele de la care a plecat, ce a fost deja înregistrat nu se mai
+schimbă. Aplicația permite gestionarea programelor de antrenament, executarea sesiunilor, urmărirea
+progresului, un marketplace de programe (publicare, vot, salvare, copiere), o analiză a structurii
+programului bazată pe reguli simple și explicabile (pornite din literatura de specialitate, fără
+pretenții medicale), un mod de coaching prin care un antrenor poate vedea datele unui client doar cu
+acordul lui, și o căutare full-text peste programe și peste istoric. Căutarea este un model de citire
+separat, construit peste OpenSearch și ținut la zi prin evenimente declanșate după ce datele se
+salvează în baza de date. Partea principală a lucrării este o comparație concretă între OpenSearch și
+PostgreSQL, făcută pe un set de date generat și crescut până la 2 milioane de documente. Backend-ul
+este scris în Spring Boot~3 / Java~21, cu PostgreSQL~16 ca sursă unică de adevăr, iar corectitudinea
+este verificată cu teste de integrare care rulează pe baze de date reale (Testcontainers, fără
+mock-uri). Rezultatele arată că cele două soluții se echivalează în jurul a 10.000 de documente și că
+cea mai mare diferență apare la căutarea care tolerează greșelile de tastare.
 \end{abstract}
 
 \begin{abstract}{english}
-This thesis presents the design and implementation of a full-stack strength-training platform built
-on the principle of \emph{historical truth}: when a workout is executed, the plan is frozen into
-immutable \emph{snapshots}, so later edits or deletions of the source data can never alter what was
-recorded. The system provides workout-program management, live session execution, progress
-analytics, a program marketplace (publish, vote, save, copy), a deterministic and explainable
-structural analysis of programs (evidence-informed heuristics, no medical claims), a \emph{coaching}
-mode with controlled access to a client's data, and a full-text \emph{search} component over
-programs and training history. The search component is a derived read model built on OpenSearch,
-kept consistent through after-commit events, with two-layer security. The central contribution is an
-\emph{empirical evaluation} of OpenSearch versus PostgreSQL on a synthetic corpus scaled up to two
-million documents. The backend is Spring Boot~3 / Java~21 with PostgreSQL~16 as the single source of
-truth, and correctness is verified through integration tests on real databases (Testcontainers, no
-mocks). The results show a crossover point around ten thousand documents and a decisive advantage
-for the search engine on typo-tolerant (fuzzy) queries.
+This thesis describes a web application for strength training, built around one simple idea: the
+training history has to stay correct over time. When a workout is performed, the plan it started from
+is copied (``frozen'') as snapshots, so if the user later edits or deletes the data they started
+from, what was already recorded does not change. The application lets users manage training programs,
+run sessions, follow their progress, use a program marketplace (publish, vote, save, copy), get an
+analysis of the program structure based on simple, explainable rules (taken from the training
+literature, with no medical claims), use a coaching mode where a coach can see a client's data only
+with that client's consent, and search the programs and the history with full-text search. The search
+is a separate read model, built on top of OpenSearch and kept up to date through events fired after
+the data is saved to the database. The main part of the thesis is a concrete comparison between
+OpenSearch and PostgreSQL, run on a generated data set scaled up to 2 million documents. The backend
+is written in Spring Boot~3 / Java~21, with PostgreSQL~16 as the single source of truth, and
+correctness is checked with integration tests that run on real databases (Testcontainers, no mocks).
+The results show that the two options are roughly equivalent around 10{,}000 documents and that the
+biggest difference shows up on typo-tolerant (fuzzy) search.
 \end{abstract}
 
 \end{abstractpage}

@@ -1,91 +1,89 @@
 \chapter{Preliminarii}
 \label{cap:preliminarii}
 
-Acest capitol prezintă noțiunile și tehnologiile pe care se sprijină lucrarea, stadiul actual al
-subdomeniului și obiectivele formulate în raport cu acest context.
+În acest capitol explic, pe scurt, tehnologiile și ideile pe care se bazează lucrarea, unde se află
+acum domeniul și ce obiective mi-am propus pornind de la acest context.
 
 \section{Tehnologii de bază}
 
-\paragraph{Backend.} Aplicația server este construită în Java~21 cu Spring Boot~3
-\cite{springboot}, folosind module pentru web (REST), securitate, validare și acces la date prin
-Spring Data JPA / Hibernate. Persistența se face în PostgreSQL~16 \cite{postgresql}, iar schema este
-gestionată exclusiv prin migrări Flyway. O disciplină importantă este modul
-\code{ddl-auto: validate}: Hibernate nu generează și nu modifică niciodată schema, ci doar o
-validează la pornire, ceea ce surprinde din start orice nepotrivire între entități și schema reală.
+\paragraph{Backend.} Partea de server este scrisă în Java~21 cu Spring Boot~3 \cite{springboot} și
+folosește module pentru web (REST), securitate, validare și acces la date prin Spring Data JPA /
+Hibernate. Datele sunt ținute în PostgreSQL~16 \cite{postgresql}, iar schema este gestionată numai
+prin migrări Flyway. Un detaliu pe care l-am respectat este modul \code{ddl-auto: validate}: Hibernate
+nu creează și nu modifică niciodată schema, ci doar verifică la pornire că entitățile se potrivesc cu
+ea. Așa prind din start orice nepotrivire.
 
-\paragraph{Frontend.} Interfața este o aplicație de tip \emph{single-page} scrisă în React cu
-TypeScript \cite{react}, livrată chiar de către backend de la aceeași origine, ceea ce simplifică
-modelul de securitate al cookie-urilor.
+\paragraph{Frontend.} Interfața este o aplicație de tip single-page scrisă în React cu TypeScript
+\cite{react}. Este servită chiar de backend, de la aceeași adresă, ceea ce simplifică partea de
+cookie-uri și de securitate.
 
-\paragraph{Autentificare.} Sistemul folosește \emph{JSON Web Tokens} (JWT) \cite{rfc7519}: un
-token de acces de scurtă durată, semnat simetric, transportat în antetul \code{Authorization}, și un
-token de reîmprospătare opac, stocat doar ca amprentă criptografică. Parolele sunt stocate ca
-amprente generate cu o funcție de derivare a cheilor rezistentă la atacuri de tip dicționar.
+\paragraph{Autentificare.} Folosesc \emph{JSON Web Tokens} (JWT) \cite{rfc7519}: un token de acces de
+scurtă durată, semnat, trimis în antetul \code{Authorization}, și un token de reîmprospătare opac, din
+care în baza de date păstrez doar o amprentă. Parolele sunt stocate ca amprente generate cu o funcție
+gândită să reziste la atacuri prin dicționar.
 
 \section{Regăsirea informației și căutarea full-text}
 
-\emph{Regăsirea informației} (information retrieval) studiază modul în care se identifică, dintr-o
-colecție de documente, pe cele relevante pentru o interogare. Spre deosebire de o potrivire exactă
-SQL, căutarea full-text presupune: analiză lexicală (tokenizare, normalizare, eliminarea
-diacriticelor), un \emph{index inversat} care leagă termenii de documentele care îi conțin, o funcție
-de \emph{relevanță} care ordonează rezultatele și mecanisme de toleranță la erori.
+\emph{Regăsirea informației} (information retrieval) se ocupă de cum găsești, dintr-o mulțime de
+documente, pe cele potrivite pentru o căutare. Spre deosebire de o potrivire exactă în SQL, căutarea
+full-text presupune mai multe lucruri: împărțirea textului în cuvinte și normalizarea lui (inclusiv
+scoaterea diacriticelor), un \emph{index inversat} care leagă fiecare cuvânt de documentele în care
+apare, o funcție care ordonează rezultatele după cât de potrivite sunt și un mod de a tolera greșelile.
 
 \paragraph{Relevanță și ordonare.} Motoarele moderne folosesc funcția de scor \emph{BM25}
-\cite{robertson2009bm25}, o rafinare probabilistică a familiei TF-IDF care echilibrează frecvența
-termenilor cu lungimea documentului. Calitatea ordonării se evaluează cu metrici precum
-\emph{precision@k} și \emph{nDCG} (normalized discounted cumulative gain) \cite{jarvelin2002ndcg},
-care recompensează plasarea documentelor relevante cât mai sus în lista de rezultate.
+\cite{robertson2009bm25}, o variantă mai bună din familia TF-IDF, care ține cont și de cât de des apare
+un cuvânt, și de cât de lung este documentul. Cât de bună este ordonarea se măsoară cu indicatori ca
+\emph{precision@k} și \emph{nDCG} \cite{jarvelin2002ndcg}, care răsplătesc rezultatele relevante când
+apar mai sus în listă.
 
-\paragraph{Toleranța la greșeli.} Căutarea „fuzzy” acceptă potriviri aproximative pe baza distanței
-de editare (Levenshtein), esențială pentru greșeli de tastare (de exemplu \emph{benhc}
-$\rightarrow$ \emph{bench}). În bazele relaționale, un mecanism echivalent este oferit de extensia
-\code{pg\_trgm} (similaritate pe trigrame).
+\paragraph{Toleranța la greșeli.} Căutarea „fuzzy” acceptă potriviri aproximative, pe baza distanței de
+editare (Levenshtein). Este utilă pentru greșelile de tastare (de exemplu \emph{benhc}
+$\rightarrow$ \emph{bench}). În bazele de date relaționale, un lucru asemănător se obține cu extensia
+\code{pg\_trgm}, care compară cuvintele după trigrame.
 
-\paragraph{Căutarea în PostgreSQL vs.\ motoare dedicate.} PostgreSQL oferă căutare full-text nativă
-prin tipul \code{tsvector}, funcții de ordonare precum \code{ts\_rank\_cd} și indecși GIN
-\cite{postgresFTS}. Aceasta este suficientă la scară mică și are avantajul de a păstra totul într-un
-singur sistem. Motoarele dedicate, precum OpenSearch \cite{opensearch} (un fork open-source al
-Elasticsearch, construit peste biblioteca Lucene), oferă în schimb analizoare configurabile,
-sinonime, scoruri BM25, fațete prin agregări și toleranță la greșeli performantă la scară mare.
-Alegerea între cele două este o decizie de arhitectură pe care lucrarea o tratează experimental.
+\paragraph{Căutarea în PostgreSQL vs.\ motoare dedicate.} PostgreSQL știe să facă singur căutare
+full-text, prin tipul \code{tsvector}, funcții de ordonare ca \code{ts\_rank\_cd} și indecși GIN
+\cite{postgresFTS}. La dimensiuni mici este suficient și are avantajul că totul stă într-un singur loc.
+Motoarele dedicate, cum este OpenSearch \cite{opensearch} (o variantă open-source a Elasticsearch,
+construită peste biblioteca Lucene), oferă în schimb analizoare configurabile, sinonime, scoruri BM25,
+fațete prin agregări și o căutare cu greșeli care rămâne rapidă chiar și la volume mari. Care variantă
+e mai bună depinde de scară, iar asta am verificat experimental.
 
-\section{Modele de citire derivate și consistență eventuală}
+\section{Modele de citire separate și consistență eventuală}
 
-Pentru a separa calea de scriere (tranzacțională, normalizată) de calea de citire (optimizată pentru
-interogări), o practică des întâlnită este construirea unui \emph{model de citire derivat} dintr-o
-sursă de adevăr unică — o formă relaxată a tiparului CQRS (Command Query Responsibility Segregation)
-\cite{kleppmann2017ddia}. Modelul derivat (aici, indexul OpenSearch) este \emph{eventual consistent}
-cu sursa de adevăr (PostgreSQL) și poate fi reconstruit oricând. Problema centrală a acestei abordări
-este propagarea fiabilă a modificărilor către modelul derivat (problema \emph{dual-write}), discutată
-în Capitolul~\ref{cap:contributie}.
+Ca să separ partea de scriere (tranzacțională, normalizată) de partea de citire (optimizată pentru
+interogări), am folosit un \emph{model de citire separat}, construit dintr-o singură sursă de adevăr.
+Este o formă mai relaxată a tiparului CQRS \cite{kleppmann2017ddia}. Modelul separat (la mine, indexul
+OpenSearch) este \emph{eventual consistent} cu sursa de adevăr (PostgreSQL) și poate fi reconstruit
+oricând. Partea grea aici este să duci modificările în mod sigur către modelul separat (problema
+\emph{dual-write}), pe care o discut în Capitolul~\ref{cap:contributie}.
 
 \section{Imuabilitatea istoricului}
 
-Ideea că datele istorice trebuie tratate ca fapte imuabile, niciodată suprascrise, este un principiu
-de proiectare bine fundamentat în sistemele orientate pe date \cite{helland2015immutability}. În
-domeniul de față, un antrenament efectuat este un fapt: el nu trebuie să se modifice atunci când
-planul din care a pornit este editat ulterior. Lucrarea implementează acest principiu prin
-\emph{instantanee} (snapshots) și chei externe anulabile, detaliate în
-Secțiunea~\ref{sec:instantanee}.
+Ideea că datele istorice ar trebui tratate ca fapte care nu se mai rescriu este un principiu cunoscut
+în sistemele care lucrează cu multe date \cite{helland2015immutability}. La mine, un antrenament
+efectuat este un fapt: nu trebuie să se schimbe doar pentru că am editat ulterior planul din care a
+pornit. Am pus asta în practică prin \emph{instantanee} (snapshots) și chei externe care pot fi
+anulate, detaliate în Secțiunea~\ref{sec:instantanee}.
 
-\section{Fundamentarea analizorului de programe}
+\section{De unde vin regulile analizorului}
 
-Analiza structurală a programelor pornește de la rezultate din literatura antrenamentului de forță,
-în special relația doză–răspuns dintre volumul săptămânal (numărul de serii pe grupă musculară) și
-hipertrofie \cite{schoenfeld2017dose}. Aceste rezultate sunt folosite ca \emph{euristici} pentru a
-semnala dezechilibre structurale (de exemplu, volum foarte scăzut sau excesiv, lipsa unui tipar de
-mișcare), nu ca prescripții individualizate. Analizorul este, prin urmare, determinist, explicabil și
-prudent, însoțindu-și mereu rezultatul de un avertisment privind limitele sale.
+Analiza structurii unui program pleacă de la rezultate din literatura antrenamentului de forță, mai
+ales de la legătura dintre volumul săptămânal (numărul de serii pe grupă musculară) și creșterea
+musculară \cite{schoenfeld2017dose}. Folosesc aceste rezultate ca \emph{reguli} pentru a semnala
+probleme de structură (de exemplu volum prea mic sau prea mare, sau lipsa unui tipar de mișcare), nu
+ca rețete individuale. De aceea analizorul este determinist, ușor de explicat și prudent, iar la
+fiecare rezultat adaugă un avertisment despre limitele lui.
 
-\section{Obiectivele lucrării în raport cu contextul}
+\section{Obiectivele lucrării}
 
-Pornind de la acest context, obiectivele lucrării sunt:
+Pornind de aici, obiectivele mele au fost:
 \begin{enumerate}
-  \item construirea unei platforme full-stack funcționale, cu integritate puternică a datelor și un
-        model de securitate riguros;
-  \item proiectarea unui model de citire pentru căutare, derivat și eventual consistent, cu securitate
-        care nu poate fi ocolită din parametrii cererii;
-  \item evaluarea empirică, pe un corpus scalabil, a momentului în care un motor de căutare dedicat
-        devine justificat față de capacitățile native ale PostgreSQL;
-  \item demonstrarea corectitudinii prin teste de integrare pe infrastructură reală, nu pe substitute.
+  \item să construiesc o platformă full-stack funcțională, cu date bine protejate și o securitate
+        serioasă;
+  \item să fac un model de citire pentru căutare, separat și eventual consistent, a cărui securitate
+        nu poate fi ocolită din parametrii cererii;
+  \item să verific concret, pe un set de date care crește, de la ce dimensiune merită un motor de
+        căutare dedicat față de ce poate face PostgreSQL singur;
+  \item să demonstrez corectitudinea prin teste de integrare pe infrastructură reală, nu pe substitute.
 \end{enumerate}

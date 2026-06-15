@@ -3,44 +3,43 @@
 
 \section{Concluzii privind realizarea temei}
 
-Lucrarea a realizat o platformă coerentă, centrată pe integritatea datelor, pentru antrenamentele de
-forță: planurile sunt transformate în istoric imuabil prin instantanee, analizele și feedback-ul sunt
-derivate onest din date reale, iar un marketplace permite partajarea și copierea independentă a
-programelor. Ingineria a pus accent pe corectitudine (teste pe baze de date reale), integritatea
-datelor (instantanee pe două niveluri, ștergere logică, constrângeri la nivel de bază de date),
-securitate (autentificare JWT cu rotație și acces sigur față de IDOR, RBAC plus ReBAC pentru coaching)
-și explicabilitate (un analizor determinist, însoțit de avertismente), în locul unor funcționalități
-superficiale.
+Am construit o platformă coerentă pentru antrenamente de forță, gândită în jurul integrității datelor:
+planurile devin istoric care nu se mai schimbă, prin instantanee; analizele și feedback-ul ies din
+date reale; iar un marketplace permite ca programele să fie partajate și copiate independent. M-am
+concentrat pe corectitudine (teste pe baze de date reale), pe integritatea datelor (instantanee pe
+două niveluri, ștergere logică, constrângeri în baza de date), pe securitate (autentificare JWT cu
+rotație și acces sigur față de IDOR, RBAC plus ReBAC pentru coaching) și pe explicabilitate (un
+analizor determinist, cu avertismente), nu pe funcționalități de fațadă.
 
-Componenta de căutare a fost tratată ca o problemă de inginerie a sistemelor: un model de citire
-derivat, eventual consistent și reconstruibil, cu securitate care nu poate fi ocolită din parametrii
-cererii. Cea mai importantă contribuție din punct de vedere științific este \emph{evaluarea empirică}
-OpenSearch vs.\ PostgreSQL pe un corpus scalat până la două milioane de documente, care a identificat
-un punct de echilibru în jurul a 10.000 de documente și a arătat că diferența decisivă apare la
-căutarea tolerantă la greșeli, unde abordarea relațională se degradează la mai multe secunde, în timp
-ce motorul dedicat rămâne practic constant. Astfel, o decizie de arhitectură luată adesea „din
-reflex” a fost transformată într-una informată și măsurabilă.
+Căutarea am tratat-o ca pe o problemă de inginerie a sistemelor: un model de citire separat, eventual
+consistent și reconstruibil, cu o securitate care nu poate fi ocolită din parametrii cererii. Cea mai
+importantă contribuție din punct de vedere științific este \emph{comparația concretă} dintre OpenSearch
+și PostgreSQL, făcută pe un set de date crescut până la două milioane de documente. Ea arată că cele
+două soluții se echivalează în jurul a 10.000 de documente și că diferența mare apare la căutarea cu
+greșeli de tastare, unde varianta din baza de date ajunge la mai multe secunde, în timp ce motorul
+dedicat rămâne aproape constant. Astfel, o decizie de arhitectură luată de obicei „din reflex” devine
+una cu temei și cu cifre.
 
 \section{Aprecieri personale privind relevanța rezultatelor}
 
-Consider că valoarea lucrării nu stă în numărul de funcționalități, ci în disciplina cu care au fost
-construite: o singură sursă de adevăr validată strict, o suită de teste de integrare pe infrastructură
-reală și o evaluare cantitativă a unei alegeri de arhitectură. Aceste rezultate sunt direct
-transferabile: tiparul de instantanee pentru adevăr istoric, modelul de citire derivat și consistent
-și metodologia de comparare a soluțiilor de căutare se aplică multor altor domenii (comerț
-electronic, sisteme de documente, jurnale de activitate).
+Cred că valoarea lucrării nu stă în numărul de funcționalități, ci în felul în care au fost făcute: o
+singură sursă de adevăr verificată strict, o suită de teste de integrare pe infrastructură reală și o
+măsurătoare clară a unei alegeri de arhitectură. Aceste rezultate se pot folosi și în altă parte:
+ideea instantaneelor pentru păstrarea istoricului, modelul de citire separat și eventual consistent și
+metoda de comparare a soluțiilor de căutare se aplică în multe alte domenii (comerț electronic,
+sisteme de documente, jurnale de activitate).
 
 \section{Dezvoltări ulterioare}
 
-Arhitectura a fost proiectată pentru extindere, iar schema bazei de date anticipează deja mai multe
+Arhitectura a fost gândită ca să poată fi extinsă, iar schema bazei de date pregătește deja mai multe
 direcții (tabelele \code{outbox\_events}, \code{template\_analysis\_results},
-\code{coach\_session\_comments} și \code{coach\_template\_assignments} există din prima migrare, încă
-neutilizate de cod). Direcțiile imediate, prezentate ca proiectare în Secțiunea~\ref{sec:directii},
-sunt: (1) un strat de cache Redis de tip cache-aside pentru marketplace, cu invalidare condusă de
-evenimente și protecție împotriva efectului de turmă; (2) un \emph{outbox tranzacțional} pentru
-indexare, care rezolvă problema dual-write reutilizând tabela și indexatorul idempotent existente;
-(3) o evaluare a calității relevanței (precision@k, nDCG), complementară evaluării de viteză deja
-realizate; (4) paginare prin chei (keyset) pentru pagini adânci; (5) limitarea ratei la autentificare
-și migrarea la Argon2id; și (6) observabilitate prin trasare distribuită și metrici, partiționarea
-temporală a istoricului, o coadă de lucru bazată pe \code{SKIP LOCKED} și vederi materializate pentru
-analize. Fiecare dintre acestea extinde, nu remodelează, fundația existentă.
+\code{coach\_session\_comments} și \code{coach\_template\_assignments} există din prima migrare, dar
+încă nu sunt folosite de cod). Ce aș face în continuare, descris ca proiectare în
+Secțiunea~\ref{sec:directii}: (1) un strat de cache Redis de tip cache-aside pentru marketplace, cu
+invalidare condusă de evenimente și protecție împotriva efectului de turmă; (2) un \emph{outbox
+tranzacțional} pentru indexare, care rezolvă problema dual-write folosind tabela și indexatorul
+idempotent deja existente; (3) o evaluare a calității relevanței (precision@k, nDCG), care completează
+măsurarea de viteză deja făcută; (4) paginare prin chei pentru paginile adânci; (5) limitarea ratei la
+autentificare și trecerea la Argon2id; și (6) observabilitate prin trasare și metrici, partiționarea pe
+timp a istoricului, o coadă de lucru bazată pe \code{SKIP LOCKED} și vederi materializate pentru
+analize. Fiecare dintre acestea extinde, nu schimbă, ce am construit până acum.

@@ -129,11 +129,14 @@
 \begin{document}
 
 % ---------------------------------------------------------------- front matter
+% Dezactivează ancorele de pagină hyperref pe materia preliminară (titlu, rezumat,
+% cuprins), unde numerotarea este manipulată, pentru a evita ancore duplicate.
+\hypersetup{pageanchor=false}
 \cleardoublepage
 \let\ps@plain
 
 % Pagina de titlu
-\include{0-title}
+\input{0-title}
 \restoregeometry
 \newgeometry{margin=2.5cm}
 
@@ -147,7 +150,7 @@
 \addtocounter{page}{1}
 
 % Rezumatul (RO + EN)
-\include{0-abstract}
+\input{0-abstract}
 
 % Cuprinsul
 \tableofcontents
@@ -156,16 +159,18 @@
 \cleardoublepage
 \pagestyle{main}
 \let\ps@plain\ps@main
+% Reactivează ancorele de pagină pentru corpul lucrării (referințe corecte).
+\hypersetup{pageanchor=true}
 
-\include{1-introducere}
-\include{2-preliminarii}
-\include{3-contributie}
-\include{4-concluzii}
+\input{1-introducere}
+\input{2-preliminarii}
+\input{3-contributie}
+\input{4-concluzii}
 
 % Bibliografie (nu se numerotează ca un capitol)
 \printbibliography[heading=bibintoc]
 
 % Anexe
-\include{anexe}
+\input{anexe}
 
 \end{document}
