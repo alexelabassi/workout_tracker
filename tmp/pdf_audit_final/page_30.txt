@@ -1,6 +1,0 @@
-GET /api/coach/clients/{id}/search
-POST /api/coach/clients/invite
-DELETE /api/coach/clients/{id}
-GET /api/coaching/invites
-GET /api/coaching/coaches
-30
