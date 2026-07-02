@@ -1,0 +1,38 @@
+nu mai permite modificarea seriilor; un program copiat din marketplace devine o copie privată
+independentă. Aceste reguli sunt implementate atât în servicii, cât și, unde este posibil, în baza
+de date.
+Backend-ul este organizat pe funcționalități: auth, exercise, routine, gym,
+template, session, history, analytics, marketplace, analyzer,
+search, coaching și shared. În interiorul fiecărei funcționalități se păstrează aceeași
+separare: model de domeniu, servicii de aplicație, repository-uri și controllere. Frontend-ul
+React urmează aceeași împărțire pe funcționalități, fără expunerea directă a entităților JPA prin
+API.
+O selecție a contractului API este prezentată în Anexa 4. Ea arată cum sunt grupate fluxu-
+rile principale: autentificare, planificare, sesiuni live, istoric, marketplace, analizator, căutare și
+coaching.
+3.2 Fluxul complet de utilizare
+Pentru a înțelege platforma, trebuie urmărit mai întâi parcursul obișnuit al unui utilizator.
+După autentificare, acesta lucrează cu propriile resurse: exerciții, rutine, săli de antrenament și
+echipamente. Exercițiile pot fi cele oferite de aplicație sau pot fi create de utilizator, iar fiecare
+exercițiu este asociat cu grupe musculare primare și secundare. Rutinele sunt gândite ca secvențe
+reutilizabile, folosite mai ales la începutul sau la finalul unei zile de antrenament. Sălile conțin
+echipamentele disponibile, iar echipamentele pot fi apoi folosite la înregistrarea seturilor dintr-o
+sesiune.
+Pornind de la aceste resurse, utilizatorul își construiește programele de antrenament. În
+aplicație, acestea sunt reprezentate prin template-uri împărțite pe zile. Fiecare zi poate avea
+exerciții planificate, valori țintă și rutine atașate. Când utilizatorul începe efectiv antrenamentul,
+o zi de template este transformată într-o sesiune activă. În acel moment, aplicația copiază datele
+importante în snapshot-uri, astfel încât sesiunea să păstreze forma pe care o avea programul la
+momentul pornirii. În timpul antrenamentului, utilizatorul adaugă seturile efectuate, împreună
+cu informații precum greutatea, numărul de repetări, durata, distanța, nivelul de efort perceput,
+notele și echipamentul folosit. Dacă este nevoie, pot fi adăugate și exerciții suplimentare, care
+nu existau în template-ul inițial.
+După terminarea antrenamentului, sesiunea poate fi finalizată sau anulată. O sesiune fina-
+lizată intră în istoricul utilizatorului și poate fi consultată ulterior, fie într-o listă paginată, fie
+prin pagina de detalii a sesiunii. Analizele aplicației folosesc aceste sesiuni finalizate pentru a
+calcula volumul în timp, frecvența antrenamentelor, distribuția pe grupe musculare și estimări
+ale progresului în forță. Separat, template-urile pot fi verificate de un analizator determinist,
+care evaluează structura programului pe baza unor reguli explicabile.
+Platforma include și un marketplace pentru programe publice. Un utilizator poate publica
+un template, iar ceilalți îl pot vota, salva sau copia. În momentul copierii, programul devine
+11

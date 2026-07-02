@@ -1,0 +1,9 @@
+% Language definition file (part of polyglossia v2.10 -- 2026/04/18)
+%
+\ProvidesFile{gloss-kurmanji.ldf}[polyglossia: module for Kurmanji Kurdish]
+
+% We provide this gloss for babel compatibility.
+
+\InheritGlossFile{kurdish}
+
+\endinput

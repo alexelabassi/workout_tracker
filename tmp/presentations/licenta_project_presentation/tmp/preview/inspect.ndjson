@@ -1,0 +1,152 @@
+{"kind":"slide","id":"sl/s158ek","slide":1,"title":"Platformă web sigură pentru planificarea, monitorizarea și analiza antrenamen...","textShapes":8}
+{"kind":"textbox","id":"sh/xczed8v6","slide":1,"textChars":91,"textLines":1}
+{"kind":"textbox","id":"sh/qpg3ex0n","slide":1,"textChars":82,"textLines":1}
+{"kind":"shape","id":"sh/fa9w3m94","slide":1,"bbox":[74,470,340,92]}
+{"kind":"textbox","id":"sh/8jqh0fep","slide":1,"textChars":14,"textLines":1}
+{"kind":"textbox","id":"sh/x4nap4r6","slide":1,"textChars":93,"textLines":1}
+{"kind":"shape","id":"sh/qd4vmtwr","slide":1,"bbox":[455,470,340,92]}
+{"kind":"textbox","id":"sh/fyxobm58","slide":1,"textChars":11,"textLines":1}
+{"kind":"textbox","id":"sh/87ed8bat","slide":1,"textChars":122,"textLines":1}
+{"kind":"textbox","id":"sh/xs72x4na","slide":1,"textChars":28,"textLines":1}
+{"kind":"textbox","id":"sh/xkf6dcbu","slide":1,"textChars":2,"textLines":1}
+{"kind":"notes","id":"nt/s158ek","slide":1,"text":"Deschid cu ideea că nu prezint un CRUD, ci o platformă completă. | Accentul e..."}
+{"kind":"slide","id":"sl/utlwvk","slide":2,"title":"Platformă web pentru antrenamente de forță","textShapes":11}
+{"kind":"textbox","id":"sh/36hcrmhk","slide":2,"textChars":42,"textLines":1}
+{"kind":"textbox","id":"sh/wra5gbq1","slide":2,"textChars":80,"textLines":1}
+{"kind":"shape","id":"sh/lc7u54zi","slide":2,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/ed8bat47","slide":2,"bbox":[70,220,330,260]}
+{"kind":"textbox","id":"sh/7u54zido","slide":2,"textChars":27,"textLines":1}
+{"kind":"textbox","id":"sh/wfyxobm5","slide":2,"textChars":120,"textLines":4}
+{"kind":"shape","id":"sh/l0rqd4vm","slide":2,"bbox":[475,220,330,260]}
+{"kind":"textbox","id":"sh/e1w7mp0b","slide":2,"textChars":31,"textLines":1}
+{"kind":"textbox","id":"sh/7mp0bi9s","slide":2,"textChars":161,"textLines":4}
+{"kind":"shape","id":"sh/zed8v6ps","slide":2,"bbox":[880,220,300,260]}
+{"kind":"textbox","id":"sh/6xkf6dcb","slide":2,"textChars":21,"textLines":1}
+{"kind":"textbox","id":"sh/hk3q5o7q","slide":2,"textChars":133,"textLines":3}
+{"kind":"textbox","id":"sh/oza1gvy9","slide":2,"textChars":118,"textLines":1}
+{"kind":"textbox","id":"sh/zqtcj6to","slide":2,"textChars":28,"textLines":1}
+{"kind":"textbox","id":"sh/65wjudg7","slide":2,"textChars":2,"textLines":1}
+{"kind":"notes","id":"nt/utlwvk","slide":2,"text":"Aici explic tensiunea principală: planul e editabil, istoricul trebuie să răm..."}
+{"kind":"slide","id":"sl/zit9xa","slide":3,"title":"Platformă web pentru antrenamente de forță","textShapes":20}
+{"kind":"textbox","id":"sh/h4byhgn2","slide":3,"textChars":42,"textLines":1}
+{"kind":"textbox","id":"sh/adsji5sn","slide":3,"textChars":67,"textLines":1}
+{"kind":"shape","id":"sh/3ylc7u54","slide":3,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/s72x4nap","slide":3,"bbox":[62,268,150,104]}
+{"kind":"textbox","id":"sh/lszqtcj6","slide":3,"textChars":7,"textLines":1}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":3,"textChars":33,"textLines":4}
+{"kind":"shape","id":"sh/3m94fu18","slide":3,"bbox":[255,268,150,104]}
+{"kind":"textbox","id":"sh/s36hcrmh","slide":3,"textChars":8,"textLines":1}
+{"kind":"textbox","id":"sh/hoza1gvy","slide":3,"textChars":54,"textLines":3}
+{"kind":"shape","id":"sh/58z25kb6","slide":3,"bbox":[448,268,150,104]}
+{"kind":"textbox","id":"sh/gn29gr2p","slide":3,"textChars":12,"textLines":1}
+{"kind":"textbox","id":"sh/n29gr2p8","slide":3,"textChars":42,"textLines":3}
+{"kind":"shape","id":"sh/yhgn29gr","slide":3,"bbox":[641,268,150,104]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":3,"textChars":6,"textLines":1}
+{"kind":"textbox","id":"sh/gbq1oryt","slide":3,"textChars":32,"textLines":4}
+{"kind":"shape","id":"sh/nuxc3ylc","slide":3,"bbox":[834,268,150,104]}
+{"kind":"textbox","id":"sh/y90je9cv","slide":3,"textChars":7,"textLines":1}
+{"kind":"textbox","id":"sh/5sneloj2","slide":3,"textChars":21,"textLines":3}
+{"kind":"shape","id":"sh/cbulwval","slide":3,"bbox":[1027,268,150,104]}
+{"kind":"textbox","id":"sh/8nqxs72x","slide":3,"textChars":7,"textLines":1}
+{"kind":"textbox","id":"sh/18jqh0fe","slide":3,"textChars":27,"textLines":3}
+{"kind":"shape","id":"sh/qh0fepkz","slide":3,"bbox":[212,320,43,0]}
+{"kind":"shape","id":"sh/j2t83itg","slide":3,"bbox":[405,320,43,0]}
+{"kind":"shape","id":"sh/8bat47y1","slide":3,"bbox":[598,320,43,0]}
+{"kind":"shape","id":"sh/1w7mp0bi","slide":3,"bbox":[791,320,43,0]}
+{"kind":"shape","id":"sh/q5o7qpg3","slide":3,"bbox":[984,320,43,0]}
+{"kind":"shape","id":"sh/jqh0fepk","slide":3,"bbox":[105,465,460,96]}
+{"kind":"textbox","id":"sh/c3ylc7u5","slide":3,"textChars":20,"textLines":1}
+{"kind":"textbox","id":"sh/1kre1w7m","slide":3,"textChars":115,"textLines":1}
+{"kind":"shape","id":"sh/re1w7mp0","slide":3,"bbox":[665,465,460,96]}
+{"kind":"textbox","id":"sh/2t83itgf","slide":3,"textChars":16,"textLines":1}
+{"kind":"textbox","id":"sh/9knih4by","slide":3,"textChars":89,"textLines":1}
+{"kind":"textbox","id":"sh/kzupwb2h","slide":3,"textChars":28,"textLines":1}
+{"kind":"textbox","id":"sh/rqd4vmtw","slide":3,"textChars":2,"textLines":1}
+{"kind":"notes","id":"nt/zit9xa","slide":3,"text":"Acesta este slide-ul pe care îl folosesc ca hartă mentală pentru toată aplica..."}
+{"kind":"slide","id":"sl/o0by7e","slide":4,"title":"Platformă web pentru antrenamente de forță","textShapes":16}
+{"kind":"textbox","id":"sh/oza1gvy9","slide":4,"textChars":42,"textLines":1}
+{"kind":"textbox","id":"sh/zed8v6ps","slide":4,"textChars":78,"textLines":1}
+{"kind":"shape","id":"sh/6xkf6dcb","slide":4,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/hwfyxobm","slide":4,"bbox":[74,230,190,110]}
+{"kind":"textbox","id":"sh/obm58z25","slide":4,"textChars":18,"textLines":1}
+{"kind":"textbox","id":"sh/zqtcj6to","slide":4,"textChars":46,"textLines":3}
+{"kind":"shape","id":"sh/65wjudg7","slide":4,"bbox":[332,230,190,110]}
+{"kind":"textbox","id":"sh/h0fepkzu","slide":4,"textChars":15,"textLines":1}
+{"kind":"textbox","id":"sh/sfil0rqd","slide":4,"textChars":41,"textLines":4}
+{"kind":"shape","id":"sh/qtcj6tov","slide":4,"bbox":[590,188,210,112]}
+{"kind":"textbox","id":"sh/je9cvixc","slide":4,"textChars":13,"textLines":1}
+{"kind":"textbox","id":"sh/8z25kb6x","slide":4,"textChars":52,"textLines":3}
+{"kind":"shape","id":"sh/1gvy90je","slide":4,"bbox":[590,355,210,112]}
+{"kind":"textbox","id":"sh/q1orytsv","slide":4,"textChars":15,"textLines":1}
+{"kind":"textbox","id":"sh/fmlkjm1c","slide":4,"textChars":33,"textLines":4}
+{"kind":"shape","id":"sh/87ed8bat","slide":4,"bbox":[868,270,220,110]}
+{"kind":"textbox","id":"sh/xs72x4na","slide":4,"textChars":14,"textLines":1}
+{"kind":"textbox","id":"sh/qd4vmtwr","slide":4,"textChars":39,"textLines":3}
+{"kind":"shape","id":"sh/fyxobm58","slide":4,"bbox":[264,285,68,0]}
+{"kind":"shape","id":"sh/7y1kre1w","slide":4,"bbox":[522,244,68,41]}
+{"kind":"shape","id":"sh/ed8v6psf","slide":4,"bbox":[522,285,68,126]}
+{"kind":"shape","id":"sh/p4r65wju","slide":4,"bbox":[522,285,346,40]}
+{"kind":"shape","id":"sh/wjudg7ad","slide":4,"bbox":[91,510,1015,72]}
+{"kind":"textbox","id":"sh/7qpg3ex0","slide":4,"textChars":20,"textLines":1}
+{"kind":"textbox","id":"sh/i5sneloj","slide":4,"textChars":143,"textLines":1}
+{"kind":"textbox","id":"sh/pwb2hwfy","slide":4,"textChars":28,"textLines":1}
+{"kind":"textbox","id":"sh/0bi9s36h","slide":4,"textChars":2,"textLines":1}
+{"kind":"notes","id":"nt/o0by7e","slide":4,"text":"Spun clar: PostgreSQL este autoritativ. OpenSearch nu înlocuiește baza de dat..."}
+{"kind":"slide","id":"sl/91op1g","slide":5,"title":"Platformă web pentru antrenamente de forță","textShapes":16}
+{"kind":"textbox","id":"sh/9cvixcze","slide":5,"textChars":42,"textLines":1}
+{"kind":"textbox","id":"sh/ylc7u54z","slide":5,"textChars":79,"textLines":1}
+{"kind":"shape","id":"sh/r65wjudg","slide":5,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/g3ex0nux","slide":5,"bbox":[80,220,260,140]}
+{"kind":"textbox","id":"sh/5o7qpg3e","slide":5,"textChars":21,"textLines":1}
+{"kind":"textbox","id":"sh/yxobm58z","slide":5,"textChars":80,"textLines":4}
+{"kind":"shape","id":"sh/nih4byhg","slide":5,"bbox":[432,220,210,140]}
+{"kind":"textbox","id":"sh/g7adsji5","slide":5,"textChars":20,"textLines":1}
+{"kind":"textbox","id":"sh/9s36hcrm","slide":5,"textChars":66,"textLines":4}
+{"kind":"shape","id":"sh/d8v6psfi","slide":5,"bbox":[735,220,310,140]}
+{"kind":"textbox","id":"sh/onyd0z61","slide":5,"textChars":15,"textLines":1}
+{"kind":"textbox","id":"sh/z25kb6xk","slide":5,"textChars":64,"textLines":4}
+{"kind":"shape","id":"sh/6hcrmhk3","slide":5,"bbox":[340,290,92,0]}
+{"kind":"shape","id":"sh/dg7adsji","slide":5,"bbox":[642,290,93,0]}
+{"kind":"shape","id":"sh/ovahoza1","slide":5,"bbox":[93,425,330,112]}
+{"kind":"textbox","id":"sh/vahoza1g","slide":5,"textChars":7,"textLines":1}
+{"kind":"textbox","id":"sh/6tovahoz","slide":5,"textChars":99,"textLines":5}
+{"kind":"shape","id":"sh/dsji5sne","slide":5,"bbox":[474,425,330,112]}
+{"kind":"textbox","id":"sh/o7qpg3ex","slide":5,"textChars":18,"textLines":1}
+{"kind":"textbox","id":"sh/kjm1cfa9","slide":5,"textChars":110,"textLines":1}
+{"kind":"shape","id":"sh/94fu18jq","slide":5,"bbox":[855,425,330,112]}
+{"kind":"textbox","id":"sh/2hwfyxob","slide":5,"textChars":14,"textLines":1}
+{"kind":"textbox","id":"sh/r2p8nqxs","slide":5,"textChars":97,"textLines":5}
+{"kind":"textbox","id":"sh/gvy90je9","slide":5,"textChars":28,"textLines":1}
+{"kind":"textbox","id":"sh/9gr2p8nq","slide":5,"textChars":2,"textLines":1}
+{"kind":"notes","id":"nt/91op1g","slide":5,"text":"Aici explic foarte simplu că snapshot în proiect înseamnă câmp copiat, nu bac..."}
+{"kind":"slide","id":"sl/sn2z5a","slide":6,"title":"Platformă web pentru antrenamente de forță","textShapes":16}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":6,"textChars":42,"textLines":1}
+{"kind":"textbox","id":"sh/0rqd4vmt","slide":6,"textChars":67,"textLines":1}
+{"kind":"shape","id":"sh/tcj6tova","slide":6,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/idonyd0z","slide":6,"bbox":[80,220,200,130]}
+{"kind":"textbox","id":"sh/byhgn29g","slide":6,"textChars":13,"textLines":1}
+{"kind":"textbox","id":"sh/0je9cvix","slide":6,"textChars":49,"textLines":3}
+{"kind":"shape","id":"sh/t47y1kre","slide":6,"bbox":[350,220,210,130]}
+{"kind":"textbox","id":"sh/i9s36hcr","slide":6,"textChars":13,"textLines":1}
+{"kind":"textbox","id":"sh/bulwval8","slide":6,"textChars":69,"textLines":4}
+{"kind":"shape","id":"sh/j6tovaho","slide":6,"bbox":[630,220,200,130]}
+{"kind":"textbox","id":"sh/ulwval87","slide":6,"textChars":4,"textLines":1}
+{"kind":"textbox","id":"sh/1cfa9w3m","slide":6,"textChars":71,"textLines":3}
+{"kind":"shape","id":"sh/crmhk3q5","slide":6,"bbox":[900,220,210,130]}
+{"kind":"textbox","id":"sh/ji5snelo","slide":6,"textChars":15,"textLines":1}
+{"kind":"textbox","id":"sh/uxc3ylc7","slide":6,"textChars":69,"textLines":3}
+{"kind":"shape","id":"sh/1kre1w7m","slide":6,"bbox":[280,285,70,0]}
+{"kind":"shape","id":"sh/c3ylc7u5","slide":6,"bbox":[560,285,70,0]}
+{"kind":"shape","id":"sh/jqh0fepk","slide":6,"bbox":[830,285,70,0]}
+{"kind":"shape","id":"sh/q5o7qpg3","slide":6,"bbox":[118,425,440,110]}
+{"kind":"textbox","id":"sh/itgfmlkj","slide":6,"textChars":9,"textLines":1}
+{"kind":"textbox","id":"sh/7ed8bat4","slide":6,"textChars":156,"textLines":1}
+{"kind":"shape","id":"sh/0z61032l","slide":6,"bbox":[690,425,440,110]}
+{"kind":"textbox","id":"sh/pkzupwb2","slide":6,"textChars":13,"textLines":1}
+{"kind":"textbox","id":"sh/ih4byhgn","slide":6,"textChars":110,"textLines":1}
+{"kind":"textbox","id":"sh/72x4nap4","slide":6,"textChars":28,"textLines":1}
+{"kind":"textbox","id":"sh/0nuxc3yl","slide":6,"textChars":2,"textLines":1}
+{"kind":"notes","id":"nt/sn2z5a","slide":6,"text":"Spun diferența dintre autentificare și autorizare. | Explic de ce refresh tok..."}
+{"kind":"slide","id":"sl/qob23g","slide":7,"title":"Platformă web pentru antrenamente de forță","textShapes":11}
+{"kind":"textbox","id":"sh/gn29gr2p","slide":7,"textChars":42,"textLines":1}
+{"kind":"notice","message":"Truncated: omitted 91 lines. Increase maxChars or narrow target."}

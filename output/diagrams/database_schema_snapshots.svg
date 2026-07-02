@@ -1,0 +1,364 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2880" height="1320" viewBox="0 0 2880 1320">
+<rect width="2880" height="1320" fill="#fbfbf8"/>
+<defs><filter id="shadow" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.12"/></filter></defs>
+<text x="80" y="54" font-family="Segoe UI, Arial" font-size="34" font-weight="700" fill="#14151a">Database schema - snapshot tables highlighted</text>
+<text x="80" y="88" font-family="Segoe UI, Arial" font-size="18" fill="#60646f">Generated from V1__full_initial_schema.sql: 28 tables, 48 foreign-key references.</text>
+<rect x="1710" y="38" width="24" height="16" rx="4" fill="#fff1db" stroke="#d97706" stroke-width="2"/>
+<text x="1744" y="51" font-family="Segoe UI, Arial" font-size="16" fill="#14151a">session/history snapshot tables</text>
+<rect x="1710" y="66" width="24" height="16" rx="4" fill="#fff9d8" stroke="#ca8a04" stroke-width="2"/>
+<text x="1744" y="79" font-family="Segoe UI, Arial" font-size="16" fill="#14151a">template/marketplace snapshot tables</text>
+<rect x="1710" y="94" width="24" height="16" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="1744" y="107" font-family="Segoe UI, Arial" font-size="16" fill="#14151a">regular tables</text>
+<rect x="70" y="102" width="380" height="780" rx="18" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+<text x="86" y="130" font-family="Segoe UI, Arial" font-size="17" font-weight="700" fill="#60646f">Users / auth / coaching</text>
+<rect x="500" y="102" width="760" height="900" rx="18" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+<text x="516" y="130" font-family="Segoe UI, Arial" font-size="17" font-weight="700" fill="#60646f">Planning resources</text>
+<rect x="1260" y="102" width="740" height="1120" rx="18" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+<text x="1276" y="130" font-family="Segoe UI, Arial" font-size="17" font-weight="700" fill="#60646f">Templates / marketplace / analyzer</text>
+<rect x="2060" y="250" width="760" height="980" rx="18" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+<text x="2076" y="278" font-family="Segoe UI, Arial" font-size="17" font-weight="700" fill="#60646f">Workout history</text>
+<rect x="2460" y="102" width="380" height="145" rx="18" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+<text x="2476" y="130" font-family="Segoe UI, Arial" font-size="17" font-weight="700" fill="#60646f">Async/search support</text>
+<line x1="245.0" y1="330.0" x2="245.0" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="245.0,248.0 248.5,254.1 241.5,254.1" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="245.0" y1="510.0" x2="245.0" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="245.0,248.0 248.5,254.1 241.5,254.1" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="245.0" y1="510.0" x2="245.0" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="245.0,248.0 248.5,254.1 241.5,254.1" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="245.0" y1="710.0" x2="245.0" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="245.0,248.0 248.5,254.1 241.5,254.1" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="245.0" y1="710.0" x2="245.0" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="245.0,248.0 248.5,254.1 241.5,254.1" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="245.0" y1="710.0" x2="245.0" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="245.0,248.0 248.5,254.1 241.5,254.1" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="520.0" y1="334.0" x2="362.3" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="362.3,248.0 369.3,247.8 366.0,254.0" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="900.0" y1="361.8" x2="850.0" y2="376.2" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="850.0,376.2 854.8,371.2 856.8,377.9" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="900.0" y1="253.2" x2="831.6" y2="228.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="831.6,228.0 838.5,226.8 836.0,233.4" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="611.1" y1="600.0" x2="301.3" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="301.3,248.0 308.0,250.2 302.7,254.9" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="639.1" y1="820.0" x2="284.7" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="284.7,248.0 290.8,251.3 284.9,255.0" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="959.4" y1="820.0" x2="316.9" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="316.9,248.0 323.7,249.4 319.1,254.6" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="900.0" y1="905.3" x2="850.0" y2="902.7" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="850.0,902.7 856.2,899.5 855.9,906.5" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1280.0" y1="209.9" x2="410.0" y2="188.1" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="410.0,188.1 416.1,184.8 416.0,191.8" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1445.0" y1="214.0" x2="1445.0" y2="214.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="1445.0,214.0 1438.9,217.5 1438.9,210.5" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1660.0" y1="208.3" x2="1610.0" y2="209.7" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="1610.0,209.7 1616.0,206.0 1616.2,213.0" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1445.0" y1="380.0" x2="1445.0" y2="308.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="1445.0,308.0 1449.5,315.8 1440.5,315.8" fill="#d97706" fill-opacity="0.76"/>
+<line x1="1445.0" y1="625.0" x2="1445.0" y2="548.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="1445.0,548.0 1449.5,555.8 1440.5,555.8" fill="#d97706" fill-opacity="0.76"/>
+<line x1="1280.0" y1="662.8" x2="850.0" y2="490.2" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="850.0,490.2 856.9,489.2 854.3,495.7" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1660.0" y1="706.4" x2="1610.0" y2="711.6" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="1610.0,711.6 1617.3,706.3 1618.2,715.3" fill="#d97706" fill-opacity="0.76"/>
+<line x1="1445.0" y1="900.0" x2="1445.0" y2="548.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="1445.0,548.0 1449.5,555.8 1440.5,555.8" fill="#d97706" fill-opacity="0.76"/>
+<line x1="1280.0" y1="918.9" x2="850.0" y2="749.1" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="850.0,749.1 856.9,748.1 854.4,754.6" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="2080.0" y1="358.3" x2="410.0" y2="199.7" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="410.0,199.7 418.2,195.9 417.3,204.9" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2080.0" y1="341.0" x2="1610.0" y2="247.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="1610.0,247.0 1618.5,244.1 1616.8,252.9" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2080.0" y1="392.6" x2="1610.0" y2="445.4" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="1610.0,445.4 1617.2,440.1 1618.2,449.0" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2080.0" y1="429.0" x2="850.0" y2="839.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="850.0,839.0 856.0,832.3 858.8,840.8" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2245.0" y1="540.0" x2="2245.0" y2="478.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="2245.0,478.0 2249.5,485.8 2240.5,485.8" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2080.0" y1="661.5" x2="1610.0" y2="711.5" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="1610.0,711.5 1617.3,706.2 1618.2,715.1" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2080.0" y1="620.7" x2="850.0" y2="447.3" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="850.0,447.3 858.3,443.9 857.1,452.8" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2480.0" y1="620.5" x2="2410.0" y2="627.5" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="2410.0,627.5 2417.3,622.2 2418.2,631.2" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2245.0" y1="810.0" x2="2245.0" y2="478.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="2245.0,478.0 2249.5,485.8 2240.5,485.8" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2080.0" y1="871.8" x2="850.0" y2="706.2" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="850.0,706.2 858.3,702.8 857.1,711.7" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2245.0" y1="1060.0" x2="2245.0" y2="748.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="2245.0,748.0 2249.5,755.8 2240.5,755.8" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2080.0" y1="1129.0" x2="1230.0" y2="949.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.76" />
+<polygon points="1230.0,949.0 1238.6,946.2 1236.7,955.0" fill="#d97706" fill-opacity="0.76"/>
+<line x1="2480.0" y1="835.9" x2="410.0" y2="232.1" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="410.0,232.1 416.8,230.5 414.8,237.2" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="2480.0" y1="835.9" x2="410.0" y2="232.1" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="410.0,232.1 416.8,230.5 414.8,237.2" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="2587.0" y1="810.0" x2="2326.6" y2="478.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="2326.6,478.0 2333.1,480.6 2327.6,484.9" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1660.0" y1="345.2" x2="410.0" y2="202.8" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="410.0,202.8 416.4,200.0 415.6,207.0" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1662.9" y1="300.0" x2="1610.0" y2="279.1" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="1610.0,279.1 1616.9,278.1 1614.4,284.6" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1660.0" y1="484.0" x2="410.0" y2="219.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="410.0,219.0 416.7,216.8 415.2,223.7" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1757.7" y1="465.0" x2="1562.1" y2="308.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="1562.1,308.0 1569.0,309.1 1564.7,314.5" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1660.0" y1="846.7" x2="381.6" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="381.6,248.0 388.6,247.4 385.7,253.7" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1774.7" y1="830.0" x2="1495.3" y2="308.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="1495.3,308.0 1501.3,311.7 1495.1,315.0" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1774.7" y1="830.0" x2="1495.3" y2="308.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="1495.3,308.0 1501.3,311.7 1495.1,315.0" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="2480.0" y1="1059.4" x2="408.4" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="408.4,248.0 415.3,247.0 412.8,253.5" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="2480.0" y1="1059.4" x2="408.4" y2="248.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="408.4,248.0 415.3,247.0 412.8,253.5" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="2534.2" y1="1040.0" x2="1569.0" y2="308.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="1569.0,308.0 1575.9,308.9 1571.7,314.5" fill="#9ca3af" fill-opacity="0.38"/>
+<line x1="1789.9" y1="1040.0" x2="1484.3" y2="308.0" stroke="#9ca3af" stroke-width="1.25" stroke-opacity="0.38" />
+<polygon points="1484.3,308.0 1489.8,312.2 1483.4,314.9" fill="#9ca3af" fill-opacity="0.38"/>
+<rect x="80" y="120" width="330" height="128" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="94" y="146" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">app_users</text>
+<line x1="80" y1="158" x2="410" y2="158" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="94" y="182" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="94" y="202" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">email</text>
+<text x="94" y="222" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">role</text>
+<text x="94" y="238" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 4 other columns</text>
+<rect x="80" y="330" width="330" height="148" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="94" y="356" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">refresh_tokens</text>
+<line x1="80" y1="368" x2="410" y2="368" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="94" y="392" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="94" y="412" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK user_id</text>
+<text x="94" y="432" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">token_hash</text>
+<text x="94" y="452" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">revoked_at</text>
+<text x="94" y="468" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 2 other columns</text>
+<rect x="80" y="510" width="330" height="128" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="94" y="536" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">coach_profiles</text>
+<line x1="80" y1="548" x2="410" y2="548" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="94" y="572" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK/FK coach_user_id</text>
+<text x="94" y="592" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK created_by_admin_id</text>
+<text x="94" y="612" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">active</text>
+<text x="94" y="628" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 3 other columns</text>
+<rect x="80" y="710" width="330" height="168" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="94" y="736" font-family="Segoe UI, Arial" font-size="16" font-weight="700" fill="#14151a">coach_client_relationships</text>
+<line x1="80" y1="748" x2="410" y2="748" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="94" y="772" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="94" y="792" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK coach_user_id</text>
+<text x="94" y="812" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK client_user_id</text>
+<text x="94" y="832" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">status</text>
+<text x="94" y="852" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK created_by_user_id</text>
+<text x="94" y="868" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 4 other columns</text>
+<rect x="520" y="120" width="330" height="108" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="534" y="146" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">muscle_groups</text>
+<line x1="520" y1="158" x2="850" y2="158" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="534" y="182" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK code</text>
+<text x="534" y="202" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">display_name</text>
+<rect x="520" y="330" width="330" height="188" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="534" y="356" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">exercises</text>
+<line x1="520" y1="368" x2="850" y2="368" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="534" y="392" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="534" y="412" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK owner_user_id</text>
+<text x="534" y="432" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">name</text>
+<text x="534" y="452" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">exercise_type</text>
+<text x="534" y="472" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">visibility</text>
+<text x="534" y="492" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">deleted_at</text>
+<text x="534" y="508" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 3 other columns</text>
+<rect x="900" y="250" width="330" height="128" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="914" y="276" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">exercise_muscle_groups</text>
+<line x1="900" y1="288" x2="1230" y2="288" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="914" y="312" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK exercise_id</text>
+<text x="914" y="332" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK muscle_group_code</text>
+<text x="914" y="352" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">role</text>
+<rect x="520" y="600" width="330" height="168" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="534" y="626" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">routines</text>
+<line x1="520" y1="638" x2="850" y2="638" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="534" y="662" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="534" y="682" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK user_id</text>
+<text x="534" y="702" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">name</text>
+<text x="534" y="722" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">routine_type</text>
+<text x="534" y="742" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">deleted_at</text>
+<text x="534" y="758" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 3 other columns</text>
+<rect x="520" y="820" width="330" height="148" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="534" y="846" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">gyms</text>
+<line x1="520" y1="858" x2="850" y2="858" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="534" y="882" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="534" y="902" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK user_id</text>
+<text x="534" y="922" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">name</text>
+<text x="534" y="942" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">deleted_at</text>
+<text x="534" y="958" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 3 other columns</text>
+<rect x="900" y="820" width="330" height="188" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="914" y="846" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">equipment</text>
+<line x1="900" y1="858" x2="1230" y2="858" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="914" y="882" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="914" y="902" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK user_id</text>
+<text x="914" y="922" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK gym_id</text>
+<text x="914" y="942" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">name</text>
+<text x="914" y="962" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">equipment_type</text>
+<text x="914" y="982" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">deleted_at</text>
+<text x="914" y="998" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 4 other columns</text>
+<rect x="1280" y="120" width="330" height="188" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="1294" y="146" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">workout_templates</text>
+<line x1="1280" y1="158" x2="1610" y2="158" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="1294" y="182" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="1294" y="202" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK user_id</text>
+<text x="1294" y="222" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">name</text>
+<text x="1294" y="242" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">visibility</text>
+<text x="1294" y="262" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK copied_from_template_id</text>
+<text x="1294" y="282" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">aggregated_exercise_names</text>
+<text x="1294" y="298" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 14 other columns</text>
+<rect x="1660" y="120" width="330" height="168" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="1674" y="146" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_stats</text>
+<line x1="1660" y1="158" x2="1990" y2="158" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="1674" y="182" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK/FK template_id</text>
+<text x="1674" y="202" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">upvotes_count</text>
+<text x="1674" y="222" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">saves_count</text>
+<text x="1674" y="242" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">uses_count</text>
+<text x="1674" y="262" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">trending_score</text>
+<text x="1674" y="278" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 6 other columns</text>
+<rect x="1280" y="380" width="330" height="168" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="1294" y="406" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_days</text>
+<line x1="1280" y1="418" x2="1610" y2="418" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="1294" y="442" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="1294" y="462" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK template_id</text>
+<text x="1294" y="482" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">day_number</text>
+<text x="1294" y="502" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">name</text>
+<text x="1294" y="522" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">focus</text>
+<text x="1294" y="538" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 6 other columns</text>
+<rect x="1280" y="625" width="330" height="208" rx="12" fill="#fff9d8" stroke="#ca8a04" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="1294" y="651" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_day_exercises</text>
+<text x="1596" y="651" text-anchor="end" font-family="Segoe UI, Arial" font-size="12" font-weight="700" fill="#ca8a04">snapshot</text>
+<line x1="1280" y1="663" x2="1610" y2="663" stroke="#ca8a04" stroke-width="1.4"/>
+<text x="1294" y="687" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="1294" y="707" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK template_day_id</text>
+<text x="1294" y="727" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK exercise_id</text>
+<text x="1294" y="747" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP exercise_name_snapshot</text>
+<text x="1294" y="767" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP exercise_type_snapshot</text>
+<text x="1294" y="787" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">planned_sets</text>
+<text x="1294" y="807" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">planned_reps</text>
+<text x="1294" y="823" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 9 other columns</text>
+<rect x="1660" y="625" width="330" height="128" rx="12" fill="#fff9d8" stroke="#ca8a04" stroke-width="2.2" stroke-dasharray="8 5" filter="url(#shadow)"/>
+<text x="1674" y="651" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="#14151a">template_day_exercise_muscle_groups</text>
+<line x1="1660" y1="663" x2="1990" y2="663" stroke="#ca8a04" stroke-width="1.4"/>
+<text x="1674" y="687" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK template_day_exercise_id</text>
+<text x="1674" y="707" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">muscle_group_code</text>
+<text x="1674" y="727" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">role</text>
+<rect x="1280" y="900" width="330" height="168" rx="12" fill="#fff9d8" stroke="#ca8a04" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="1294" y="926" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_day_routines</text>
+<text x="1596" y="926" text-anchor="end" font-family="Segoe UI, Arial" font-size="12" font-weight="700" fill="#ca8a04">snapshot</text>
+<line x1="1280" y1="938" x2="1610" y2="938" stroke="#ca8a04" stroke-width="1.4"/>
+<text x="1294" y="962" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="1294" y="982" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK template_day_id</text>
+<text x="1294" y="1002" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK routine_id</text>
+<text x="1294" y="1022" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP routine_name_snapshot</text>
+<text x="1294" y="1042" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP routine_content_snapshot</text>
+<text x="1294" y="1058" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 2 other columns</text>
+<rect x="2080" y="270" width="330" height="208" rx="12" fill="#fff1db" stroke="#d97706" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="2094" y="296" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">workout_sessions</text>
+<text x="2396" y="296" text-anchor="end" font-family="Segoe UI, Arial" font-size="12" font-weight="700" fill="#d97706">history snapshot</text>
+<line x1="2080" y1="308" x2="2410" y2="308" stroke="#d97706" stroke-width="1.4"/>
+<text x="2094" y="332" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="2094" y="352" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK user_id</text>
+<text x="2094" y="372" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK template_id</text>
+<text x="2094" y="392" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP template_name_snapshot</text>
+<text x="2094" y="412" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP template_day_name_snapshot</text>
+<text x="2094" y="432" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP gym_name_snapshot</text>
+<text x="2094" y="452" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">status</text>
+<text x="2094" y="468" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 7 other columns</text>
+<rect x="2080" y="540" width="330" height="208" rx="12" fill="#fff1db" stroke="#d97706" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="2094" y="566" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">session_exercises</text>
+<text x="2396" y="566" text-anchor="end" font-family="Segoe UI, Arial" font-size="12" font-weight="700" fill="#d97706">history snapshot</text>
+<line x1="2080" y1="578" x2="2410" y2="578" stroke="#d97706" stroke-width="1.4"/>
+<text x="2094" y="602" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="2094" y="622" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK session_id</text>
+<text x="2094" y="642" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK original_template_day_exercise_id</text>
+<text x="2094" y="662" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK original_exercise_id</text>
+<text x="2094" y="682" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP exercise_name_snapshot</text>
+<text x="2094" y="702" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP planned_sets_snapshot</text>
+<text x="2094" y="722" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP planned_reps_snapshot</text>
+<text x="2094" y="738" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 11 other columns</text>
+<rect x="2480" y="540" width="330" height="128" rx="12" fill="#fff1db" stroke="#d97706" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="2494" y="566" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="#14151a">session_exercise_muscle_groups</text>
+<line x1="2480" y1="578" x2="2810" y2="578" stroke="#d97706" stroke-width="1.4"/>
+<text x="2494" y="602" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK session_exercise_id</text>
+<text x="2494" y="622" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP muscle_group_code_snapshot</text>
+<text x="2494" y="642" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP role_snapshot</text>
+<rect x="2080" y="810" width="330" height="168" rx="12" fill="#fff1db" stroke="#d97706" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="2094" y="836" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">session_routines</text>
+<text x="2396" y="836" text-anchor="end" font-family="Segoe UI, Arial" font-size="12" font-weight="700" fill="#d97706">history snapshot</text>
+<line x1="2080" y1="848" x2="2410" y2="848" stroke="#d97706" stroke-width="1.4"/>
+<text x="2094" y="872" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="2094" y="892" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK session_id</text>
+<text x="2094" y="912" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK original_routine_id</text>
+<text x="2094" y="932" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP routine_name_snapshot</text>
+<text x="2094" y="952" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP routine_content_snapshot</text>
+<text x="2094" y="968" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 5 other columns</text>
+<rect x="2080" y="1060" width="330" height="208" rx="12" fill="#fff1db" stroke="#d97706" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="2094" y="1086" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">workout_sets</text>
+<text x="2396" y="1086" text-anchor="end" font-family="Segoe UI, Arial" font-size="12" font-weight="700" fill="#d97706">history snapshot</text>
+<line x1="2080" y1="1098" x2="2410" y2="1098" stroke="#d97706" stroke-width="1.4"/>
+<text x="2094" y="1122" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="2094" y="1142" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK session_exercise_id</text>
+<text x="2094" y="1162" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">set_number</text>
+<text x="2094" y="1182" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">weight</text>
+<text x="2094" y="1202" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">reps</text>
+<text x="2094" y="1222" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK equipment_id</text>
+<text x="2094" y="1242" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP equipment_name_snapshot</text>
+<text x="2094" y="1258" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 12 other columns</text>
+<rect x="2480" y="810" width="330" height="148" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="2494" y="836" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">coach_session_comments</text>
+<line x1="2480" y1="848" x2="2810" y2="848" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="2494" y="872" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="2494" y="892" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK coach_user_id</text>
+<text x="2494" y="912" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK client_user_id</text>
+<text x="2494" y="932" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK session_id</text>
+<text x="2494" y="948" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 4 other columns</text>
+<rect x="1660" y="300" width="330" height="128" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="1674" y="326" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_votes</text>
+<line x1="1660" y1="338" x2="1990" y2="338" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="1674" y="362" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK user_id</text>
+<text x="1674" y="382" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK template_id</text>
+<text x="1674" y="402" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">vote_type</text>
+<text x="1674" y="418" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 1 other columns</text>
+<rect x="1660" y="465" width="330" height="108" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="1674" y="491" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_saves</text>
+<line x1="1660" y1="503" x2="1990" y2="503" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="1674" y="527" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK user_id</text>
+<text x="1674" y="547" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK template_id</text>
+<text x="1674" y="563" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 1 other columns</text>
+<rect x="1660" y="830" width="330" height="188" rx="12" fill="#fff9d8" stroke="#ca8a04" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="1674" y="856" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_use_events</text>
+<text x="1976" y="856" text-anchor="end" font-family="Segoe UI, Arial" font-size="12" font-weight="700" fill="#ca8a04">snapshot</text>
+<line x1="1660" y1="868" x2="1990" y2="868" stroke="#ca8a04" stroke-width="1.4"/>
+<text x="1674" y="892" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="1674" y="912" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK user_id</text>
+<text x="1674" y="932" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK source_template_id</text>
+<text x="1674" y="952" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK copied_template_id</text>
+<text x="1674" y="972" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP source_template_name_snapshot</text>
+<text x="1674" y="992" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#d97706">SNAP copied_template_name_snapshot</text>
+<text x="1674" y="1008" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 1 other columns</text>
+<rect x="2480" y="1040" width="330" height="168" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="2494" y="1066" font-family="Segoe UI, Arial" font-size="16" font-weight="700" fill="#14151a">coach_template_assignments</text>
+<line x1="2480" y1="1078" x2="2810" y2="1078" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="2494" y="1102" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="2494" y="1122" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK coach_user_id</text>
+<text x="2494" y="1142" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK client_user_id</text>
+<text x="2494" y="1162" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK template_id</text>
+<text x="2494" y="1182" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">status</text>
+<text x="2494" y="1198" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 4 other columns</text>
+<rect x="1660" y="1040" width="330" height="168" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="1674" y="1066" font-family="Segoe UI, Arial" font-size="16" font-weight="700" fill="#14151a">template_analysis_results</text>
+<line x1="1660" y1="1078" x2="1990" y2="1078" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="1674" y="1102" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="1674" y="1122" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">FK template_id</text>
+<text x="1674" y="1142" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">score</text>
+<text x="1674" y="1162" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">category</text>
+<text x="1674" y="1182" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">warnings</text>
+<text x="1674" y="1198" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 4 other columns</text>
+<rect x="2480" y="120" width="330" height="168" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2" filter="url(#shadow)"/>
+<text x="2494" y="146" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">outbox_events</text>
+<line x1="2480" y1="158" x2="2810" y2="158" stroke="#cbd5e1" stroke-width="1.4"/>
+<text x="2494" y="182" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">PK id</text>
+<text x="2494" y="202" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">aggregate_type</text>
+<text x="2494" y="222" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">aggregate_id</text>
+<text x="2494" y="242" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">event_type</text>
+<text x="2494" y="262" font-family="Consolas, Menlo, monospace" font-size="13.5" fill="#14151a">status</text>
+<text x="2494" y="278" font-family="Segoe UI, Arial" font-size="12" fill="#60646f">+ 6 other columns</text>
+</svg>

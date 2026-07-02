@@ -1,0 +1,62 @@
+\xpg@aux {}{romanian}
+\xpg@aux {}{romanian}
+\xpg@aux {}{romanian}
+\xpg@aux {}{english}
+\xpg@aux {}{romanian}
+\contentsline {chapter}{\numberline {1}Introducere}{6}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Tipul lucrării și încadrarea temei}{6}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Prezentarea generală a temei}{6}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Scopul și motivația alegerii temei}{7}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Contribuția proprie (pe scurt)}{7}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Structura lucrării}{8}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Preliminarii}{9}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Tehnologii de bază}{9}{section.2.1}%
+\contentsline {paragraph}{Backend.}{9}{section*.2}%
+\contentsline {paragraph}{Frontend.}{9}{section*.3}%
+\contentsline {paragraph}{Autentificare.}{9}{section*.4}%
+\contentsline {section}{\numberline {2.2}Regăsirea informației și căutarea full-text}{9}{section.2.2}%
+\contentsline {paragraph}{Relevanță și ordonare.}{10}{section*.5}%
+\contentsline {paragraph}{Toleranța la greșeli.}{10}{section*.6}%
+\contentsline {paragraph}{Căutarea în PostgreSQL vs.\ motoare dedicate.}{10}{section*.7}%
+\contentsline {section}{\numberline {2.3}Modele de citire separate și consistență eventuală}{10}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Imuabilitatea istoricului}{10}{section.2.4}%
+\contentsline {section}{\numberline {2.5}De unde vin regulile analizorului}{11}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Obiectivele lucrării}{11}{section.2.6}%
+\contentsline {chapter}{\numberline {3}Contribuția proprie}{12}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Cerințe și prezentare generală a sistemului}{12}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Arhitectura sistemului}{12}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Modelul de date și principiul instantaneelor}{13}{section.3.3}%
+\contentsline {paragraph}{Principiul instantaneelor.}{13}{section*.8}%
+\contentsline {paragraph}{Ștergere logică, unicitate și constrângeri.}{14}{section*.9}%
+\contentsline {paragraph}{Concurență.}{14}{section*.10}%
+\contentsline {section}{\numberline {3.4}Modelul de securitate}{14}{section.3.4}%
+\contentsline {paragraph}{Autorizare și siguranță IDOR.}{15}{section*.11}%
+\contentsline {section}{\numberline {3.5}Funcționalitățile aplicației}{15}{section.3.5}%
+\contentsline {paragraph}{Date de planificare și programe.}{15}{section*.12}%
+\contentsline {paragraph}{Execuția live și istoricul.}{15}{section*.13}%
+\contentsline {paragraph}{Analize de progres.}{15}{section*.14}%
+\contentsline {paragraph}{Marketplace.}{15}{section*.15}%
+\contentsline {section}{\numberline {3.6}Analizorul structural informat de dovezi}{16}{section.3.6}%
+\contentsline {section}{\numberline {3.7}Modelul de citire pentru căutare (OpenSearch)}{16}{section.3.7}%
+\contentsline {paragraph}{Cum scriu în index și cum țin totul consistent.}{17}{section*.16}%
+\contentsline {paragraph}{Securitate pe două straturi.}{17}{section*.17}%
+\contentsline {paragraph}{Reconstrucție și reziliență.}{17}{section*.18}%
+\contentsline {paragraph}{Căutarea făcută de antrenor.}{17}{section*.19}%
+\contentsline {section}{\numberline {3.8}Evaluarea empirică: OpenSearch vs.\ PostgreSQL}{18}{section.3.8}%
+\contentsline {paragraph}{Metodologie.}{18}{section*.20}%
+\contentsline {paragraph}{Rezultate.}{18}{section*.21}%
+\contentsline {paragraph}{Interpretare.}{19}{section*.22}%
+\contentsline {section}{\numberline {3.9}Modul de coaching: RBAC plus ReBAC}{19}{section.3.9}%
+\contentsline {section}{\numberline {3.10}Strategia de testare}{19}{section.3.10}%
+\contentsline {section}{\numberline {3.11}Direcții de dezvoltare proiectate}{19}{section.3.11}%
+\contentsline {chapter}{\numberline {4}Concluzii}{21}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Concluzii privind realizarea temei}{21}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Aprecieri personale privind relevanța rezultatelor}{21}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Dezvoltări ulterioare}{22}{section.4.3}%
+\contentsline {chapter}{Bibliografie}{23}{chapter*.23}%
+\contentsline {chapter}{Anexa 1 — Capturi de ecran ale interfeței}{25}{chapter*.24}%
+\contentsline {chapter}{Anexa 2 — Schema bazei de date}{28}{chapter*.25}%
+\contentsline {chapter}{Anexa 3 — Listări de cod reprezentative}{29}{chapter*.26}%
+\contentsline {chapter}{Anexa 4 — Rezultatele complete ale evaluării}{31}{chapter*.27}%
+\contentsline {chapter}{Anexa 5 — Contractul API (selecție)}{33}{chapter*.28}%
+\contentsline {chapter}{Anexa 6 — Configurație și rulare}{34}{chapter*.29}%

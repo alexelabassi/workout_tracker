@@ -1,0 +1,9 @@
+% Language definition file (part of polyglossia v2.10 -- 2026/04/18)
+%
+\ProvidesFile{gloss-medievallatin.ldf}[polyglossia: module for medieval Latin]
+
+% We provide this as a babel alias
+
+\InheritGlossFile{latin}
+
+\endinput

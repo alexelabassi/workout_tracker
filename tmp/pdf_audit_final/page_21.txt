@@ -1,0 +1,42 @@
+search și GROUP BY pentru fațete. Varianta OpenSearch folosește mapările și interogările
+aplicației.
+Setul de date este generat determinist și crește de la 1.000 la 2.000.000 de documente. Am
+măsurat cinci scenarii: două căutări full-text, o căutare fuzzy cu greșeală de tastare, o căutare
+filtrată și o agregare pe fațete. Tabelul 3.1 arată rezultatele la dimensiunea maximă, iar tabelele
+complete sunt în Anexa 3.
+Scenariu la 2M documente PostgreSQL OpenSearch
+Full-text „bench press” (𝑝 ) 1864 ms 64 ms
+50
+Full-text „squat” (𝑝 ) 1437 ms 4 ms
+50
+Fuzzy „benhc” (𝑝 ) 15825 ms 4 ms
+50
+Filtrat (press + INTERMEDIATE + PPL) (𝑝 ) 2295 ms 7 ms
+50
+Fațetă după dificultate (𝑝 ) 1193 ms 2 ms
+50
+Timp de construcție a indexului 239 s 115 s
+Dimensiune pe disc 2632 MB 739 MB
+Tabela 3.1: Comparație OpenSearch vs. PostgreSQL la 2.000.000 de documente.
+Rezultatul principal este că cele două soluții se echivalează în jurul a 10.000 de documente.
+Sub acest prag, PostgreSQL este mai simplu și uneori mai rapid. Peste el, OpenSearch câștigă
+clar, mai ales la căutarea tolerantă la greșeli de tastare. Aceasta justifică arhitectura cu model de
+citire separat, dar și arată că un motor separat nu trebuie introdus fără un motiv concret.
+3.13 Testare și verificarea corectitudinii
+Suita de teste este gândită să ruleze pe o infrastructură cât mai apropiată de cea reală. Tes-
+tele de integrare pornesc PostgreSQL 16 prin Testcontainers, iar testele pentru căutare pornesc
+și un container OpenSearch și activează modulul de search. Am evitat folosirea unei baze H2
+sau a unor repository-uri false, deoarece multe reguli importante ale aplicației depind direct de
+PostgreSQL: indecși unici parțiali, constrângeri CHECK, comportamentul cheilor externe, com-
+portamente de tip ON DELETE SET NULL, query-uri native, tranzacții și extensii precum
+pg_trgm. O bază de date diferită ar fi făcut testele mai rapide, dar ar fi verificat un sistem
+diferit de cel folosit efectiv.
+Testele sunt organizate pe fluxuri funcționale, nu doar pe metode izolate. Există teste pentru
+autentificare, exerciții, rutine, săli și echipamente, template-uri, sesiuni live, istoric și analytics,
+marketplace, coaching, analizator și căutare. În acest fel sunt verificate nu doar serviciile indi-
+viduale, ci și interacțiunea dintre controllere, servicii, repository-uri, validări și constrângerile
+bazei de date.
+O parte importantă a testelor urmărește regulile de securitate și integritate. Sunt verificate
+situații precum accesarea resurselor altui utilizator, pornirea a două sesiuni active pentru același
+utilizator, stabilitatea snapshot-urilor după modificarea datelor sursă, interdicția de a modifica
+21

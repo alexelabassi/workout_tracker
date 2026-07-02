@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2880" height="1320" viewBox="0 0 2880 1320">
+<rect width="2880" height="1320" fill="#fbfbf8"/>
+<text x="80" y="54" font-family="Segoe UI, Arial" font-size="34" font-weight="700" fill="#14151a">Database schema overview - snapshot tables highlighted</text>
+<text x="80" y="88" font-family="Segoe UI, Arial" font-size="18" fill="#60646f">All 28 PostgreSQL tables from Flyway V1, with 48 foreign-key references.</text>
+<rect x="1710" y="38" width="24" height="16" rx="4" fill="#fff1db" stroke="#d97706" stroke-width="2"/>
+<text x="1744" y="51" font-family="Segoe UI, Arial" font-size="16" fill="#14151a">session/history snapshot tables</text>
+<rect x="1710" y="66" width="24" height="16" rx="4" fill="#fff9d8" stroke="#ca8a04" stroke-width="2"/>
+<text x="1744" y="79" font-family="Segoe UI, Arial" font-size="16" fill="#14151a">template/marketplace snapshot tables</text>
+<rect x="1710" y="94" width="24" height="16" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="1744" y="107" font-family="Segoe UI, Arial" font-size="16" fill="#14151a">regular tables</text>
+<rect x="70" y="102" width="380" height="780" rx="18" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+<text x="86" y="130" font-family="Segoe UI, Arial" font-size="17" font-weight="700" fill="#60646f">Users / auth / coaching</text>
+<rect x="500" y="102" width="760" height="900" rx="18" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+<text x="516" y="130" font-family="Segoe UI, Arial" font-size="17" font-weight="700" fill="#60646f">Planning resources</text>
+<rect x="1260" y="102" width="740" height="1120" rx="18" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+<text x="1276" y="130" font-family="Segoe UI, Arial" font-size="17" font-weight="700" fill="#60646f">Templates / marketplace / analyzer</text>
+<rect x="2060" y="250" width="760" height="980" rx="18" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+<text x="2076" y="278" font-family="Segoe UI, Arial" font-size="17" font-weight="700" fill="#60646f">Workout history</text>
+<rect x="2460" y="102" width="380" height="145" rx="18" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+<text x="2476" y="130" font-family="Segoe UI, Arial" font-size="17" font-weight="700" fill="#60646f">Async/search support</text>
+<line x1="245.0" y1="330.0" x2="245.0" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="245.0,182.0 248.0,187.2 242.0,187.2" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="245.0" y1="510.0" x2="245.0" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="245.0,182.0 248.0,187.2 242.0,187.2" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="245.0" y1="510.0" x2="245.0" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="245.0,182.0 248.0,187.2 242.0,187.2" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="245.0" y1="710.0" x2="245.0" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="245.0,182.0 248.0,187.2 242.0,187.2" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="245.0" y1="710.0" x2="245.0" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="245.0,182.0 248.0,187.2 242.0,187.2" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="245.0" y1="710.0" x2="245.0" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="245.0,182.0 248.0,187.2 242.0,187.2" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="620.0" y1="330.0" x2="310.0" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="310.0,182.0 315.9,181.5 313.3,186.9" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="917.8" y1="312.0" x2="832.2" y2="330.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="832.2,330.0 836.7,326.0 838.0,331.9" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="974.4" y1="250.0" x2="775.6" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="775.6,182.0 781.5,180.8 779.6,186.5" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="656.6" y1="600.0" x2="273.4" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="273.4,182.0 279.1,183.8 274.7,187.9" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="665.5" y1="820.0" x2="264.5" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="264.5,182.0 269.8,184.8 264.7,188.0" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1028.7" y1="820.0" x2="281.3" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="281.3,182.0 287.2,183.1 283.3,187.7" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="900.0" y1="851.0" x2="850.0" y2="851.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="850.0,851.0 855.2,848.0 855.2,854.0" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1280.0" y1="151.0" x2="410.0" y2="151.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="410.0,151.0 415.2,148.0 415.2,154.0" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1445.0" y1="151.0" x2="1445.0" y2="151.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="1445.0,151.0 1439.8,154.0 1439.8,148.0" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1660.0" y1="151.0" x2="1610.0" y2="151.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="1610.0,151.0 1615.2,148.0 1615.2,154.0" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1445.0" y1="380.0" x2="1445.0" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="1445.0,182.0 1448.0,187.2 1442.0,187.2" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1445.0" y1="625.0" x2="1445.0" y2="442.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="1445.0,442.0 1449.0,448.9 1441.0,448.9" fill="#d97706" fill-opacity="0.72"/>
+<line x1="1365.1" y1="625.0" x2="764.9" y2="392.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="764.9,392.0 772.8,390.8 769.9,398.2" fill="#d97706" fill-opacity="0.72"/>
+<line x1="1660.0" y1="656.0" x2="1610.0" y2="656.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="1610.0,656.0 1616.9,652.0 1616.9,660.0" fill="#d97706" fill-opacity="0.72"/>
+<line x1="1445.0" y1="900.0" x2="1445.0" y2="442.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="1445.0,442.0 1449.0,448.9 1441.0,448.9" fill="#d97706" fill-opacity="0.72"/>
+<line x1="1366.5" y1="900.0" x2="763.5" y2="662.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="763.5,662.0 771.4,660.8 768.5,668.3" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2080.0" y1="288.6" x2="410.0" y2="163.4" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="410.0,163.4 417.2,159.9 416.6,167.9" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2080.0" y1="270.1" x2="1610.0" y2="181.9" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="1610.0,181.9 1617.5,179.3 1616.1,187.1" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2080.0" y1="323.7" x2="1610.0" y2="388.3" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="1610.0,388.3 1616.3,383.4 1617.4,391.3" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2157.1" y1="332.0" x2="772.9" y2="820.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="772.9,820.0 778.1,813.9 780.8,821.5" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2245.0" y1="540.0" x2="2245.0" y2="332.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="2245.0,332.0 2249.0,338.9 2241.0,338.9" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2080.0" y1="588.5" x2="1610.0" y2="638.5" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="1610.0,638.5 1616.5,633.8 1617.3,641.7" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2080.0" y1="548.8" x2="850.0" y2="383.2" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="850.0,383.2 857.4,380.2 856.3,388.1" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2480.0" y1="571.0" x2="2410.0" y2="571.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="2410.0,571.0 2416.9,567.0 2416.9,575.0" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2245.0" y1="810.0" x2="2245.0" y2="332.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="2245.0,332.0 2249.0,338.9 2241.0,338.9" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2080.0" y1="818.8" x2="850.0" y2="653.2" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="850.0,653.2 857.4,650.2 856.3,658.1" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2245.0" y1="1060.0" x2="2245.0" y2="602.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="2245.0,602.0 2249.0,608.9 2241.0,608.9" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2092.6" y1="1060.0" x2="1217.4" y2="882.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="1217.4,882.0 1225.0,879.5 1223.4,887.3" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2537.2" y1="810.0" x2="352.8" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="352.8,182.0 358.6,180.6 357.0,186.3" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="2537.2" y1="810.0" x2="352.8" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="352.8,182.0 358.6,180.6 357.0,186.3" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="2622.0" y1="810.0" x2="2268.0" y2="332.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="2268.0,332.0 2273.5,334.4 2268.6,338.0" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1660.0" y1="312.2" x2="410.0" y2="169.8" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="410.0,169.8 415.5,167.4 414.8,173.4" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1759.6" y1="300.0" x2="1510.4" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="1510.4,182.0 1516.4,181.5 1513.9,186.9" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1683.0" y1="465.0" x2="387.0" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="387.0,182.0 392.7,180.2 391.4,186.0" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1790.9" y1="465.0" x2="1479.1" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="1479.1,182.0 1485.0,183.3 1481.0,187.7" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1756.0" y1="830.0" x2="314.0" y2="182.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="314.0,182.0 321.9,181.2 318.7,188.5" fill="#d97706" fill-opacity="0.72"/>
+<line x1="1808.4" y1="830.0" x2="1461.6" y2="182.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="1461.6,182.0 1468.4,186.2 1461.3,190.0" fill="#d97706" fill-opacity="0.72"/>
+<line x1="1808.4" y1="830.0" x2="1461.6" y2="182.0" stroke="#d97706" stroke-width="2.0" stroke-opacity="0.72" />
+<polygon points="1461.6,182.0 1468.4,186.2 1461.3,190.0" fill="#d97706" fill-opacity="0.72"/>
+<line x1="2564.1" y1="1040.0" x2="325.9" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="325.9,182.0 331.8,181.1 329.6,186.7" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="2564.1" y1="1040.0" x2="325.9" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="325.9,182.0 331.8,181.1 329.6,186.7" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="2604.6" y1="1040.0" x2="1485.4" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="1485.4,182.0 1491.4,182.8 1487.7,187.5" fill="#9ca3af" fill-opacity="0.32"/>
+<line x1="1812.2" y1="1040.0" x2="1457.8" y2="182.0" stroke="#9ca3af" stroke-width="1.15" stroke-opacity="0.32" />
+<polygon points="1457.8,182.0 1462.6,185.7 1457.0,187.9" fill="#9ca3af" fill-opacity="0.32"/>
+<rect x="80" y="120" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="245.0" y="158" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">app_users</text>
+<rect x="80" y="330" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="245.0" y="368" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">refresh_tokens</text>
+<rect x="80" y="510" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="245.0" y="548" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">coach_profiles</text>
+<rect x="80" y="710" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="245.0" y="748" text-anchor="middle" font-family="Segoe UI, Arial" font-size="16" font-weight="700" fill="#14151a">coach_client_relationships</text>
+<rect x="520" y="120" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="685.0" y="158" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">muscle_groups</text>
+<rect x="520" y="330" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="685.0" y="368" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">exercises</text>
+<rect x="900" y="250" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="1065.0" y="288" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">exercise_muscle_groups</text>
+<rect x="520" y="600" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="685.0" y="638" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">routines</text>
+<rect x="520" y="820" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="685.0" y="858" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">gyms</text>
+<rect x="900" y="820" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="1065.0" y="858" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">equipment</text>
+<rect x="1280" y="120" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="1445.0" y="158" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">workout_templates</text>
+<rect x="1660" y="120" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="1825.0" y="158" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_stats</text>
+<rect x="1280" y="380" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="1445.0" y="418" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_days</text>
+<rect x="1280" y="625" width="330" height="62" rx="12" fill="#fff9d8" stroke="#ca8a04" stroke-width="2.2"/>
+<text x="1445.0" y="663" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_day_exercises</text>
+<rect x="1660" y="625" width="330" height="62" rx="12" fill="#fff9d8" stroke="#ca8a04" stroke-width="2.2"/>
+<text x="1825.0" y="663" text-anchor="middle" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="#14151a">template_day_exercise_muscle_groups</text>
+<rect x="1280" y="900" width="330" height="62" rx="12" fill="#fff9d8" stroke="#ca8a04" stroke-width="2.2"/>
+<text x="1445.0" y="938" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_day_routines</text>
+<rect x="2080" y="270" width="330" height="62" rx="12" fill="#fff1db" stroke="#d97706" stroke-width="2.2"/>
+<text x="2245.0" y="308" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">workout_sessions</text>
+<rect x="2080" y="540" width="330" height="62" rx="12" fill="#fff1db" stroke="#d97706" stroke-width="2.2"/>
+<text x="2245.0" y="578" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">session_exercises</text>
+<rect x="2480" y="540" width="330" height="62" rx="12" fill="#fff1db" stroke="#d97706" stroke-width="2.2"/>
+<text x="2645.0" y="578" text-anchor="middle" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="#14151a">session_exercise_muscle_groups</text>
+<rect x="2080" y="810" width="330" height="62" rx="12" fill="#fff1db" stroke="#d97706" stroke-width="2.2"/>
+<text x="2245.0" y="848" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">session_routines</text>
+<rect x="2080" y="1060" width="330" height="62" rx="12" fill="#fff1db" stroke="#d97706" stroke-width="2.2"/>
+<text x="2245.0" y="1098" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">workout_sets</text>
+<rect x="2480" y="810" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="2645.0" y="848" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">coach_session_comments</text>
+<rect x="1660" y="300" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="1825.0" y="338" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_votes</text>
+<rect x="1660" y="465" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="1825.0" y="503" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_saves</text>
+<rect x="1660" y="830" width="330" height="62" rx="12" fill="#fff9d8" stroke="#ca8a04" stroke-width="2.2"/>
+<text x="1825.0" y="868" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">template_use_events</text>
+<rect x="2480" y="1040" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="2645.0" y="1078" text-anchor="middle" font-family="Segoe UI, Arial" font-size="16" font-weight="700" fill="#14151a">coach_template_assignments</text>
+<rect x="1660" y="1040" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="1825.0" y="1078" text-anchor="middle" font-family="Segoe UI, Arial" font-size="16" font-weight="700" fill="#14151a">template_analysis_results</text>
+<rect x="2480" y="120" width="330" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.2"/>
+<text x="2645.0" y="158" text-anchor="middle" font-family="Segoe UI, Arial" font-size="18" font-weight="700" fill="#14151a">outbox_events</text>
+</svg>

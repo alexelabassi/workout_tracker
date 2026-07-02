@@ -1,0 +1,35 @@
+gol. Un utilizator poate naviga programele publice, le poate sorta după noutate, scor sau tendință,
+le poate vota, salva și copia. Copierea este o operație de tip deep copy: se creează un program
+privat nou, cu zile, exerciții, rutine și snapshot-uri proprii. Nu se expun date private ale autorului,
+iar copia poate fi folosită independent de original.
+Pentru interacțiuni, votul propriu asupra propriului program este respins, salvarea este idem-
+potentă, iar contoarele sunt menținute în template_stats. Evenimentele de folosire sunt
+păstrate în template_use_events, astfel încât popularitatea programelor poate fi folo-
+sită la sortare și căutare.
+3.9 Analizatorul de programe
+Analizatorul este expus prin GET /api/templates/{id}/analysis. El citește
+structura programului dintr-un model de aplicație, nu din DTO-uri web, și produce un scor între
+0 și 100. Scorul este împărțit în cinci sub-scoruri: volum și acoperire, frecvență, echilibru, de-
+signul sesiunii și specificitate / pauză. Fiecare sub-scor pornește de la maxim și scade penalizări
+fixe pentru problemele găsite.
+Volumul este calculat doar pentru exercițiile de forță. Seriile sunt ponderate în funcție de
+rolul muscular: o grupă primară primește 1.0, iar una secundară 0.5. Exercițiile fără serii pla-
+nificate nu primesc valori inventate; ele sunt excluse din volum și marcate ca date incomplete.
+Categoriile rezultate sunt WELL_STRUCTURED pentru scoruri de cel puțin 80, DECENT_
+STRUCTURE pentru scoruri de cel puțin 55 și NEEDS_REVIEW pentru restul.
+Răspunsul include avertismente cu severitate, explicații și sugestii. Exemple de reguli sunt
+lipsa unei regiuni importante, volum prea mic sau excesiv, dezechilibru push/pull, dezechilibru
+lower/upper, sesiuni prea lungi sau pauze prea scurte. Analizatorul include și limitări explicite:
+nu vede tehnica, recuperarea, somnul, alimentația sau efortul real, deci nu oferă sfat medical.
+3.10 Modul de coaching
+Modul de coaching combină RBAC și ReBAC. Rutele /api/coach/** cer rolul
+COACH, dar acest rol nu este suficient pentru a vedea datele unui client. Pentru fiecare citire
+legată de un client, serviciul verifică existența unei relații active între antrenor și client. Dacă
+relația lipsește sau nu este activă, răspunsul este 404.
+Relațiile au un ciclu de viață clar: PENDING, ACTIVE, REJECTED și REVOKED. An-
+trenorul trimite invitația, clientul o acceptă sau o respinge, iar oricare dintre părți poate revoca
+accesul. O constrângere din baza de date interzice relația cu sine însuși, iar un index unic parțial
+permite o singură relație vie pentru aceeași pereche.
+Accesul antrenorului este doar de citire: lista de clienți activi, istoricul clientului, analizele,
+detaliile unei sesiuni și căutarea în istoricul clientului. Nu există endpoint prin care antrenorul
+19

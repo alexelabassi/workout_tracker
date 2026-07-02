@@ -1,0 +1,16 @@
+arată că PostgreSQL este suficient pentru colecții mici, dar că un motor dedicat devine justificat
+la volume mari, mai ales pentru căutarea tolerantă la greșeli de tastare.
+4.2 Relevanța rezultatelor
+Consider că valoarea lucrării vine din faptul că proiectul nu demonstrează o singură tehno-
+logie izolată, ci o arhitectură coerentă. Fiecare zonă importantă are o regulă clară: PostgreSQL
+este sursa de adevăr, Flyway controlează schema, sesiunile finalizate sunt istorice, accesul este
+mereu verificat în funcție de utilizatorul curent, iar indexul de căutare poate fi reconstruit. Acest
+tip de proiectare este important pentru aplicații reale, unde o funcționalitate aparent simplă poa-
+te deveni problematică dacă istoricul se modifică retroactiv sau dacă un utilizator poate vedea
+datele altcuiva schimbând un ID.
+Rezultatele sunt transferabile și în afara domeniului fitness. Separarea dintre date editabile
+și snapshot-urile istorice apare și în comerț electronic, programări, facturare sau documente.
+Modelul de citire pentru căutare se aplică oricărui sistem în care datele relaționale trebuie găsite
+rapid prin text și filtre. Regulile de acces pentru coaching seamănă cu multe situații în care un
+utilizator are acces delegat, dar limitat, la datele altuia.
+23

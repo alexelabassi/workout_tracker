@@ -1,0 +1,34 @@
+2.4 Căutare full-text și modele de citire
+PostgreSQL poate face căutare full-text prin tsvector, indecși GIN și funcții de ranking
+[5]. Pentru colecții mici sau pentru interogări simple, aceasta poate fi o soluție suficientă și
+mai ușor de operat decât un motor separat. Când apar însă cerințe precum toleranță la greșeli
+de tastare, sinonime, scoruri de relevanță pe mai multe câmpuri, evidențierea fragmentelor și
+fațete, un motor dedicat precum OpenSearch [3] devine mai potrivit.
+În această lucrare, OpenSearch nu înlocuiește PostgreSQL. El este un model de citire deri-
+vat: documentele indexate sunt reconstruibile din baza de date relațională, iar rezultatele sunt
+validate din nou în PostgreSQL înainte de a fi returnate. Această abordare introduce consistență
+eventuală, dar păstrează o sursă unică de adevăr și permite refacerea indexului în caz de eroare.
+2.5 Analiză deterministă a programelor
+Aplicația include și un analizator al structurii programelor. Scopul lui nu este să ofere re-
+comandări medicale și nici să înlocuiască un antrenor, ci să dea un feedback explicabil des-
+pre structură: volumul săptămânal, acoperirea grupelor musculare, frecvența, echilibrul între
+regiuni, lungimea sesiunilor și pauzele. Regulile sunt inspirate din literatura despre volumul
+antrenamentului [4] și din formule simple pentru estimarea progresului, cum este formula lui
+Epley pentru 1RM [1].
+Am ales o abordare deterministă, bazată pe scăderi fixe dintr-un scor, deoarece este mai ușor
+de explicat și de testat decât o soluție de tip „AI coach”. Pentru o lucrare de licență și pentru
+un produs care atinge antrenamentul fizic, această onestitate este importantă: sistemul poate
+semnala probleme de structură, dar nu poate cunoaște recuperarea, tehnica, somnul, alimentația
+sau nivelul real de efort al utilizatorului.
+Capitolul 3. Contribuția proprie
+3.1 Vedere de ansamblu asupra aplicației
+Platforma implementată urmărește întregul ciclu al unui antrenament. Utilizatorul își de-
+finește mai întâi datele de bază: exerciții, grupe musculare, rutine, săli și echipamente. Apoi
+construiește programe pe mai multe zile. O zi de program poate conține exerciții planificate,
+valori țintă și rutine de început sau final. Dintr-o astfel de zi se pornește o sesiune live, în care se
+adaugă seriile efectuate și notele din timpul antrenamentului. După finalizare, sesiunea devine
+istoric și intră în paginile de progres, căutare și coaching.
+Aplicația nu este construită ca un CRUD simplu. Fiecare zonă are reguli de domeniu: un
+utilizator nu poate porni două antrenamente active în același timp; un program public trebuie
+să aibă o dată de publicare; un antrenor nu poate deveni propriul client; o sesiune finalizată
+10

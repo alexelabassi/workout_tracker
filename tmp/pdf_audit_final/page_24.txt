@@ -1,0 +1,15 @@
+Bibliografie
+[1] Boyd Epley, Poundage Chart. Boyd Epley Workout, Lincoln, NE: Body Enterprises, 1985.
+[2] Michael B. Jones, John Bradley și Nat Sakimura, JSON Web Token (JWT), RFC 7519,
+Internet Engineering Task Force (IETF), 2015, URL: https://www.rfc-editor.
+org/rfc/rfc7519 (accesat în 16.6.2026).
+[3] OpenSearch Project, OpenSearch Documentation, 2024, URL: https://opensearch.
+org/docs/latest/ (accesat în 16.6.2026).
+[4] Brad J. Schoenfeld, Dan Ogborn și James W. Krieger, „Dose-response Relationship Be-
+tween Weekly Resistance Training Volume and Increases in Muscle Mass: A Systematic
+Review and Meta-analysis”, în Journal of Sports Sciences 35.11 (2017), pp. 1073–1082,
+DOI: 10.1080/02640414.2016.1210197.
+[5] The PostgreSQL Global Development Group, PostgreSQL Documentation: Full Text Sear-
+ch, 2024, URL: https://www.postgresql.org/docs/16/textsearch.
+html (accesat în 16.6.2026).
+24

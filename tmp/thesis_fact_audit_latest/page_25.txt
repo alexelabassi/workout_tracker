@@ -1,0 +1,40 @@
+Anexa 1 – Schema bazei de date
+Schema este creată de migrarea Flyway V1, care definește 28 de tabele. Migrarea V2 adaugă
+datele oficiale pentru grupe musculare și exerciții, iar migrarea V3 adaugă indexul unic parțial
+care garantează că un utilizator poate avea o singură sesiune activă.
+Zonă Tabele principale
+Autentificare și coaching app_users, refresh_tokens, coach_profiles,
+coach_client_relationships
+Catalog și planificare muscle_groups, exercises, exercise_muscle_
+groups, routines, gyms, equipment
+Programe workout_templates, template_stats,
+template_days, template_day_exercises,
+template_day_exercise_muscle_groups,
+template_day_routines
+Sesiuni istorice workout_sessions, session_exercises,
+session_exercise_muscle_groups, session_
+routines, workout_sets
+Marketplace template_votes, template_saves, template_
+use_events
+Extensii pregătite coach_session_comments, coach_template_
+assignments, template_analysis_results,
+outbox_events
+Tabela 1.1: Gruparea tabelelor din schema PostgreSQL.
+Constrângerile importante includ: valori admise pentru enumerări, days_per_
+week BETWEEN 1 AND 7, rpe BETWEEN 1.0 AND 10.0, finished_at >=
+started_at, contoare nenegative, interdicția ca un utilizator să fie propriul antrenor,
+publicarea doar cu published_at nenul și indecși unici parțiali pentru resursele șterse
+logic.
+CREATE UNIQUE INDEX ux_workout_sessions_one_active_per_user
+ON workout_sessions (user_id)
+WHERE status = 'IN_PROGRESS';
+CREATE UNIQUE INDEX gyms_user_name_active_idx
+ON gyms (user_id, lower(name))
+WHERE deleted_at IS NULL;
+ALTER TABLE workout_templates
+ADD CONSTRAINT check_template_visibility_published
+CHECK (
+(visibility = 'PUBLIC' AND published_at IS NOT NULL)
+OR visibility = 'PRIVATE'
+);
+25

@@ -1,0 +1,34 @@
+Capitolul 1. Introducere
+1.1 Tipul lucrării și încadrarea temei
+Lucrarea de față este o aplicație web full-stack dedicată domeniului fitness, având ca obiectiv
+dezvoltarea unei platforme pentru planificarea, desfășurarea și analiza antrenamentelor. Proiec-
+tul nu se limitează doar la un jurnal de antrenamente, ci reprezintă un sistem mai amplu, o
+platformă completă, prin care utilizatorii își pot construi programele de antrenament, pot urmări
+execuția antrenamentelor, pot analiza progresul pe baza datelor înregistrate, pot căuta în istoricul
+antrenamentelor (după orice field), și pot descoperi programe create de către alți utilizatori. O
+parte foarte relevantă a proiectului constă în modul în care toate aceste componente sunt combi-
+nate într-un sistem întreg și coerent, în care fiecare funcționalitate trebuie să fie atât utilă pentru
+utilizatori, cât și corect integrată în arhitectura generală a platformei.
+Din punct de vedere tehnic, proiectul combină mai multe probleme specifice unui sistem
+software real: autentificare și autorizare, controlul și asigurarea accesului la resurse, păstrarea
+corectă a datelor istorice, tratarea operațiilor concurente, căutarea full-text, funcționalități de tip
+marketplace, analiza automată a structurii unui program (pe baza studiilor științifice) și acces
+controlat pentru antrenori.
+1.2 Prezentarea generală a temei
+Un utilizator al aplicației începe prin configurarea spațiului de lucru al acestuia: exerciții
+predefinite și exerciții proprii, rutine de încălzire sau încheiere, săli de antrenament și echipa-
+mente disponibile. Pe baza acestora, utilizatorul poate crea programe de antrenament. O zi din
+program conține exerciții, valori planificate (serii, repetări, greutate, pauză) și, opțional, rutine
+atașate.
+În momentul în care utilizatorul pornește un antrenament, programul este transformat într-o
+sesiune live. Aici apar datele istorice propriu-zise: seriile efectuate, greutatea, repetările, dura-
+ta, RPE-ul (nivelul de efort perceput, fiind o metrica subiectiva), notele și echipamentul folosit.
+După finalizare, sesiunea este salvată în istoric și poate fi folosită în analizele de progres. Siste-
+mul calculează volumul în timp, antrenamentele pe săptămână și distribuția pe grupe musculare.
+Pe lângă fluxul individual, aplicația are un marketplace de programe publice. Un utilizator poate
+publica un program, iar ceilalți utilizatori îl pot vota, salva sau copia în biblioteca lor privată.
+Există și un mod de coaching: un utilizator cu rol de antrenor poate vedea istoricul și analizele
+unui client (numai dacă există o relație activă acceptată de client). Acest acces este intenționat
+limitat la citire, pentru a ne asigura că separam colaborarea dintre antrenor si client cu dreptul
+de a modifica datele personale ale clientului.
+6

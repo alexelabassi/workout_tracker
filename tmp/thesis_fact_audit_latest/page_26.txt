@@ -1,0 +1,42 @@
+Anexa 2 – Listări de cod reprezentative
+Următoarele fragmente sunt scurtate pentru lizibilitate, dar păstrează forma regulilor imple-
+mentate în proiect.
+Listarea 1. Analizatorul de programe folosește reguli deterministe: fiecare sub-scor pornește
+de la valoarea maximă și scade penalizări fixe pentru problemele găsite.
+private int scoreVolumeAndCoverage() {
+int score = 35;
+if (!lowerBody) {
+add("NO_LOWER_BODY", HIGH, "No lower−body work is planned.");
+score −= 12;
+}
+if (!pulling) {
+add("NO_PULL", HIGH, "No pulling movement is planned.");
+score −= 12;
+}
+if (!pushing) {
+add("NO_PUSH", HIGH, "No pushing movement is planned.");
+score −= 12;
+}
+for (String bucket : ALL_BUCKETS) {
+double volume = weeklyWeightedSets(bucket);
+if (volume <= 3) {
+add("MUSCLE_VOLUME_VERY_LOW", MEDIUM, bucket);
+score −= 3;
+} else if (volume > 25) {
+add("MUSCLE_VOLUME_EXCESSIVE", HIGH, bucket);
+score −= 5;
+} else if (volume > 20) {
+add("MUSCLE_VOLUME_HIGH", MEDIUM, bucket);
+score −= 2;
+}
+}
+return Math.max(0, score);
+}
+Listarea 2. Configurația de securitate aplică RBAC la nivel de rută; verificările de proprietate
+și relațiile de coaching sunt apoi aplicate în servicii.
+.authorizeHttpRequests(auth −> auth
+.requestMatchers(POST, "/api/auth/register", "/api/auth/login",
+"/api/auth/refresh", "/api/auth/logout").
+permitAll()
+.requestMatchers(GET, "/api/health").permitAll()
+26

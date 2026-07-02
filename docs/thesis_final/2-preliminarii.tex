@@ -1,89 +1,82 @@
 \chapter{Preliminarii}
 \label{cap:preliminarii}
 
-În acest capitol explic, pe scurt, tehnologiile și ideile pe care se bazează lucrarea, unde se află
-acum domeniul și ce obiective mi-am propus pornind de la acest context.
+În acest capitol prezint noțiunile tehnice pe care se sprijină proiectul. Le includ aici nu ca o
+listă de tehnologii, ci ca fundal pentru deciziile din implementare: de ce PostgreSQL rămâne sursa de
+adevăr, de ce istoricul se păstrează prin instantanee, de ce accesul trebuie verificat pe fiecare
+resursă și de ce căutarea este tratată ca model de citire separat.
 
-\section{Tehnologii de bază}
+\section{Aplicații web și sursa de adevăr}
 
-\paragraph{Backend.} Partea de server este scrisă în Java~21 cu Spring Boot~3 \cite{springboot} și
-folosește module pentru web (REST), securitate, validare și acces la date prin Spring Data JPA /
-Hibernate. Datele sunt ținute în PostgreSQL~16 \cite{postgresql}, iar schema este gestionată numai
-prin migrări Flyway. Un detaliu pe care l-am respectat este modul \code{ddl-auto: validate}: Hibernate
-nu creează și nu modifică niciodată schema, ci doar verifică la pornire că entitățile se potrivesc cu
-ea. Așa prind din start orice nepotrivire.
+Platforma este o aplicație web cu frontend React și backend Spring Boot. Frontend-ul trimite cereri
+JSON către un API REST, iar backend-ul aplică regulile de domeniu și persistă datele. Într-un astfel
+sistem, baza de date relațională nu este doar un loc de stocare, ci și componenta care poate garanta
+integritatea prin chei externe, constrângeri și tranzacții.
 
-\paragraph{Frontend.} Interfața este o aplicație de tip single-page scrisă în React cu TypeScript
-\cite{react}. Este servită chiar de backend, de la aceeași adresă, ceea ce simplifică partea de
-cookie-uri și de securitate.
+În proiect, PostgreSQL este sursa unică de adevăr. Această alegere este importantă deoarece aplicația
+are date care nu trebuie pierdute sau interpretate diferit: sesiuni de antrenament, token-uri de
+reîmprospătare, relații antrenor-client, voturi și salvări în marketplace. Hibernate este folosit
+pentru maparea obiect-relațională, dar schema nu este generată automat de aplicație. Ea este creată și
+modificată numai prin migrații Flyway, iar configurația Hibernate este setată pe \code{ddl-auto:
+validate}. Astfel, aplicația verifică schema la pornire, dar nu o schimbă implicit.
 
-\paragraph{Autentificare.} Folosesc \emph{JSON Web Tokens} (JWT) \cite{rfc7519}: un token de acces de
-scurtă durată, semnat, trimis în antetul \code{Authorization}, și un token de reîmprospătare opac, din
-care în baza de date păstrez doar o amprentă. Parolele sunt stocate ca amprente generate cu o funcție
-gândită să reziste la atacuri prin dicționar.
+\section{Date de planificare și date istorice}
 
-\section{Regăsirea informației și căutarea full-text}
+O diferență esențială în domeniul aplicației este cea dintre date de planificare și date istorice.
+Datele de planificare descriu intenția utilizatorului: programe, zile, exerciții planificate, rutine,
+săli și echipamente. Ele trebuie să rămână editabile. Datele istorice descriu însă ce s-a întâmplat la
+un moment concret și nu ar trebui să se schimbe retroactiv.
 
-\emph{Regăsirea informației} (information retrieval) se ocupă de cum găsești, dintr-o mulțime de
-documente, pe cele potrivite pentru o căutare. Spre deosebire de o potrivire exactă în SQL, căutarea
-full-text presupune mai multe lucruri: împărțirea textului în cuvinte și normalizarea lui (inclusiv
-scoaterea diacriticelor), un \emph{index inversat} care leagă fiecare cuvânt de documentele în care
-apare, o funcție care ordonează rezultatele după cât de potrivite sunt și un mod de a tolera greșelile.
+Soluția folosită este modelarea prin instantanee. Un instantaneu nu înseamnă o copie a întregii baze
+de date, ci copierea atributelor relevante într-o entitate istorică. De exemplu, o sesiune nu se
+bazează pe numele curent al exercițiului, ci păstrează numele exercițiului copiat atunci când sesiunea
+a fost pornită. Același principiu se aplică grupelor musculare, programului, zilei, rutinei, sălii și
+echipamentului. Cheile externe către sursă pot exista în continuare pentru trasabilitate, dar trebuie
+să poată deveni \code{NULL} fără a strica istoricul.
 
-\paragraph{Relevanță și ordonare.} Motoarele moderne folosesc funcția de scor \emph{BM25}
-\cite{robertson2009bm25}, o variantă mai bună din familia TF-IDF, care ține cont și de cât de des apare
-un cuvânt, și de cât de lung este documentul. Cât de bună este ordonarea se măsoară cu indicatori ca
-\emph{precision@k} și \emph{nDCG} \cite{jarvelin2002ndcg}, care răsplătesc rezultatele relevante când
-apar mai sus în listă.
+\section{Autentificare, autorizare și IDOR}
 
-\paragraph{Toleranța la greșeli.} Căutarea „fuzzy” acceptă potriviri aproximative, pe baza distanței de
-editare (Levenshtein). Este utilă pentru greșelile de tastare (de exemplu \emph{benhc}
-$\rightarrow$ \emph{bench}). În bazele de date relaționale, un lucru asemănător se obține cu extensia
-\code{pg\_trgm}, care compară cuvintele după trigrame.
+Autentificarea stabilește identitatea utilizatorului care trimite o cerere. În aplicațiile moderne,
+un mod uzual de lucru este folosirea token-urilor JWT \cite{rfc7519}: serverul semnează un token de
+acces, iar clientul îl trimite în antetul \code{Authorization}. Token-ul de acces trebuie să aibă o
+durată scurtă, deoarece este prezent la fiecare cerere. Pentru sesiuni mai lungi se folosește un token
+de reîmprospătare, care trebuie protejat mai strict.
 
-\paragraph{Căutarea în PostgreSQL vs.\ motoare dedicate.} PostgreSQL știe să facă singur căutare
-full-text, prin tipul \code{tsvector}, funcții de ordonare ca \code{ts\_rank\_cd} și indecși GIN
-\cite{postgresFTS}. La dimensiuni mici este suficient și are avantajul că totul stă într-un singur loc.
-Motoarele dedicate, cum este OpenSearch \cite{opensearch} (o variantă open-source a Elasticsearch,
-construită peste biblioteca Lucene), oferă în schimb analizoare configurabile, sinonime, scoruri BM25,
-fațete prin agregări și o căutare cu greșeli care rămâne rapidă chiar și la volume mari. Care variantă
-e mai bună depinde de scară, iar asta am verificat experimental.
+Autorizarea răspunde la o altă întrebare: utilizatorul autentificat are voie să acceseze resursa
+cerută? Într-un sistem multi-user, o greșeală frecventă este IDOR (\emph{Insecure Direct Object
+Reference}), adică situația în care un utilizator schimbă un identificator într-o cerere și obține
+datele altcuiva. O protecție corectă nu se bazează pe identificatori primiți de la frontend, ci pe
+utilizatorul curent extras din token și pe interogări care includ proprietarul resursei.
 
-\section{Modele de citire separate și consistență eventuală}
+Pe lângă regulile obișnuite pe roluri (RBAC), modul de coaching cere și reguli bazate pe relații
+(ReBAC). Un utilizator cu rol de antrenor nu ar trebui să poată vedea orice utilizator, ci doar
+clienții cu care are o relație activă. De aceea, rolul este doar primul filtru; al doilea este
+relația antrenor-client acceptată.
 
-Ca să separ partea de scriere (tranzacțională, normalizată) de partea de citire (optimizată pentru
-interogări), am folosit un \emph{model de citire separat}, construit dintr-o singură sursă de adevăr.
-Este o formă mai relaxată a tiparului CQRS \cite{kleppmann2017ddia}. Modelul separat (la mine, indexul
-OpenSearch) este \emph{eventual consistent} cu sursa de adevăr (PostgreSQL) și poate fi reconstruit
-oricând. Partea grea aici este să duci modificările în mod sigur către modelul separat (problema
-\emph{dual-write}), pe care o discut în Capitolul~\ref{cap:contributie}.
+\section{Căutare full-text și modele de citire}
 
-\section{Imuabilitatea istoricului}
+PostgreSQL poate face căutare full-text prin \code{tsvector}, indecși GIN și funcții de ranking
+\cite{postgresFTS}. Pentru colecții mici sau pentru interogări simple, aceasta poate fi o soluție
+suficientă și mai ușor de operat decât un motor separat. Când apar însă cerințe precum toleranță la
+greșeli de tastare, sinonime, scoruri de relevanță pe mai multe câmpuri, evidențierea fragmentelor și
+fațete, un motor dedicat precum OpenSearch \cite{opensearch} devine mai potrivit.
 
-Ideea că datele istorice ar trebui tratate ca fapte care nu se mai rescriu este un principiu cunoscut
-în sistemele care lucrează cu multe date \cite{helland2015immutability}. La mine, un antrenament
-efectuat este un fapt: nu trebuie să se schimbe doar pentru că am editat ulterior planul din care a
-pornit. Am pus asta în practică prin \emph{instantanee} (snapshots) și chei externe care pot fi
-anulate, detaliate în Secțiunea~\ref{sec:instantanee}.
+În această lucrare, OpenSearch nu înlocuiește PostgreSQL. El este un model de citire derivat:
+documentele indexate sunt reconstruibile din baza de date relațională, iar rezultatele sunt validate
+din nou în PostgreSQL înainte de a fi returnate. Această abordare introduce consistență eventuală,
+dar păstrează o sursă unică de adevăr și permite refacerea indexului în caz de eroare.
 
-\section{De unde vin regulile analizorului}
+\section{Analiză deterministă a programelor}
 
-Analiza structurii unui program pleacă de la rezultate din literatura antrenamentului de forță, mai
-ales de la legătura dintre volumul săptămânal (numărul de serii pe grupă musculară) și creșterea
-musculară \cite{schoenfeld2017dose}. Folosesc aceste rezultate ca \emph{reguli} pentru a semnala
-probleme de structură (de exemplu volum prea mic sau prea mare, sau lipsa unui tipar de mișcare), nu
-ca rețete individuale. De aceea analizorul este determinist, ușor de explicat și prudent, iar la
-fiecare rezultat adaugă un avertisment despre limitele lui.
+Aplicația include și un analizor al structurii programelor. Scopul lui nu este să ofere recomandări
+medicale și nici să înlocuiască un antrenor, ci să dea un feedback explicabil despre structură:
+volumul săptămânal, acoperirea grupelor musculare, frecvența, echilibrul între regiuni, lungimea
+sesiunilor și pauzele. Regulile sunt inspirate din literatura despre volumul antrenamentului
+\cite{schoenfeld2017dose} și din formule simple pentru estimarea progresului, cum este formula lui
+Epley pentru 1RM \cite{epley1985}.
 
-\section{Obiectivele lucrării}
-
-Pornind de aici, obiectivele mele au fost:
-\begin{enumerate}
-  \item să construiesc o platformă full-stack funcțională, cu date bine protejate și o securitate
-        serioasă;
-  \item să fac un model de citire pentru căutare, separat și eventual consistent, a cărui securitate
-        nu poate fi ocolită din parametrii cererii;
-  \item să verific concret, pe un set de date care crește, de la ce dimensiune merită un motor de
-        căutare dedicat față de ce poate face PostgreSQL singur;
-  \item să demonstrez corectitudinea prin teste de integrare pe infrastructură reală, nu pe substitute.
-\end{enumerate}
+Am ales o abordare deterministă, bazată pe scăderi fixe dintr-un scor, deoarece este mai ușor de
+explicat și de testat decât o soluție de tip „AI coach”. Pentru o lucrare de licență și pentru un
+produs care atinge antrenamentul fizic, această onestitate este importantă: sistemul poate semnala
+probleme de structură, dar nu poate cunoaște recuperarea, tehnica, somnul, alimentația sau nivelul
+real de efort al utilizatorului.

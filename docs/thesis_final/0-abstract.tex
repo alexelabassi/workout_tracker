@@ -1,40 +1,50 @@
 \begin{abstractpage}
 
 \begin{abstract}{romanian}
-Lucrarea descrie o aplicație web pentru antrenamente de forță, construită în jurul unei idei simple:
-istoricul de antrenament trebuie să rămână corect în timp. Atunci când un antrenament este efectuat,
-planul din care a pornit este copiat („înghețat”) sub formă de instantanee, așa că dacă utilizatorul
-modifică sau șterge mai târziu datele de la care a plecat, ce a fost deja înregistrat nu se mai
-schimbă. Aplicația permite gestionarea programelor de antrenament, executarea sesiunilor, urmărirea
-progresului, un marketplace de programe (publicare, vot, salvare, copiere), o analiză a structurii
-programului bazată pe reguli simple și explicabile (pornite din literatura de specialitate, fără
-pretenții medicale), un mod de coaching prin care un antrenor poate vedea datele unui client doar cu
-acordul lui, și o căutare full-text peste programe și peste istoric. Căutarea este un model de citire
-separat, construit peste OpenSearch și ținut la zi prin evenimente declanșate după ce datele se
-salvează în baza de date. Partea principală a lucrării este o comparație concretă între OpenSearch și
-PostgreSQL, făcută pe un set de date generat și crescut până la 2 milioane de documente. Backend-ul
-este scris în Spring Boot~3 / Java~21, cu PostgreSQL~16 ca sursă unică de adevăr, iar corectitudinea
-este verificată cu teste de integrare care rulează pe baze de date reale (Testcontainers, fără
-mock-uri). Rezultatele arată că cele două soluții se echivalează în jurul a 10.000 de documente și că
-cea mai mare diferență apare la căutarea care tolerează greșelile de tastare.
+Lucrarea prezintă o platformă web pentru planificarea și monitorizarea antrenamentelor de forță,
+construită cu accent pe corectitudinea datelor și pe controlul accesului. Aplicația permite unui
+utilizator să își gestioneze exercițiile, rutinele, sălile și echipamentele, să construiască programe
+pe mai multe zile, să execute sesiuni live, să consulte istoricul și progresul, să publice sau să
+copieze programe dintr-un marketplace și să colaboreze, în mod controlat, cu un antrenor.
+
+Problema centrală tratată este separarea dintre datele de planificare, care se pot modifica, și
+istoricul antrenamentelor, care trebuie să rămână stabil. La pornirea unei sesiuni, sistemul copiază
+înregistrările relevante din program, sală, exerciții, grupe musculare, rutine și echipamente în
+instantanee istorice. Astfel, o sesiune finalizată rămâne corectă chiar dacă ulterior utilizatorul
+editează sau șterge datele sursă. Pe lângă acest model de date, lucrarea descrie autentificarea cu
+JWT și rotația token-urilor de reîmprospătare, protecția față de accesul neautorizat la resurse
+(IDOR), autorizarea pe roluri și pe relații pentru modul de coaching, un analizor determinist al
+structurii programelor și un model de citire separat pentru căutare full-text cu OpenSearch.
+
+Backend-ul este implementat în Spring Boot 3 / Java 21, cu PostgreSQL 16 ca sursă unică de adevăr și
+schema gestionată exclusiv prin Flyway. Frontend-ul este o aplicație React cu TypeScript. Căutarea
+este evaluată experimental printr-o comparație între OpenSearch și o variantă PostgreSQL construită
+corect, pe un set de date generat până la 2 milioane de documente. Rezultatele arată că PostgreSQL
+este suficient pentru colecții mici, dar că OpenSearch devine justificat la dimensiuni mai mari, mai
+ales pentru căutarea tolerantă la greșeli de tastare.
 \end{abstract}
 
 \begin{abstract}{english}
-This thesis describes a web application for strength training, built around one simple idea: the
-training history has to stay correct over time. When a workout is performed, the plan it started from
-is copied (``frozen'') as snapshots, so if the user later edits or deletes the data they started
-from, what was already recorded does not change. The application lets users manage training programs,
-run sessions, follow their progress, use a program marketplace (publish, vote, save, copy), get an
-analysis of the program structure based on simple, explainable rules (taken from the training
-literature, with no medical claims), use a coaching mode where a coach can see a client's data only
-with that client's consent, and search the programs and the history with full-text search. The search
-is a separate read model, built on top of OpenSearch and kept up to date through events fired after
-the data is saved to the database. The main part of the thesis is a concrete comparison between
-OpenSearch and PostgreSQL, run on a generated data set scaled up to 2 million documents. The backend
-is written in Spring Boot~3 / Java~21, with PostgreSQL~16 as the single source of truth, and
-correctness is checked with integration tests that run on real databases (Testcontainers, no mocks).
-The results show that the two options are roughly equivalent around 10{,}000 documents and that the
-biggest difference shows up on typo-tolerant (fuzzy) search.
+This thesis presents a web platform for planning and tracking strength training, built with a strong
+focus on data correctness and access control. The application lets users manage exercises, routines,
+gyms and equipment, build multi-day training programs, run live workout sessions, inspect history and
+progress, publish or copy programs through a marketplace, and collaborate with a coach under explicit
+relationship-based access rules.
+
+The central problem is the separation between editable planning data and historical workout data that
+must remain stable. When a workout session starts, the system copies the relevant program, gym,
+exercise, muscle-group, routine and equipment data into historical snapshots. As a result, a completed
+session remains correct even if the source data is later edited or deleted. Besides this data model,
+the thesis describes JWT authentication with refresh-token rotation, IDOR-resistant resource access,
+role-based and relationship-based authorization for coaching, a deterministic program-structure
+analyzer, and a separate OpenSearch read model for full-text search.
+
+The backend is implemented in Spring Boot 3 / Java 21, with PostgreSQL 16 as the single source of
+truth and Flyway as the only schema-management mechanism. The frontend is a React and TypeScript
+single-page application. Search is evaluated empirically by comparing OpenSearch with a properly
+indexed PostgreSQL baseline over a generated corpus scaled up to 2 million documents. The results
+show that PostgreSQL is enough for small collections, while OpenSearch becomes justified at larger
+sizes, especially for typo-tolerant search.
 \end{abstract}
 
 \end{abstractpage}

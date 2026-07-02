@@ -1,0 +1,35 @@
+Anexa 3 – Rezultatele complete ale evaluării
+Măsurătorile au fost făcute la șapte dimensiuni ale corpusului, de la 1.000 la 2.000.000 de
+documente. Pentru PostgreSQL s-au folosit tsvector, GIN, ts_rank_cd și pg_trgm.
+Pentru OpenSearch s-au folosit aceleași câmpuri denormalizate ca în indexul aplicației. Cifrele
+reprezintă latențe în milisecunde.
+Corpus Construire PG Construire OS Dimensiune PG Dimensiune OS
+1.000 216 ms 203 ms 1,6 MB 0,3 MB
+10.000 1.926 ms 975 ms 14,6 MB 2,9 MB
+50.000 7.966 ms 3.481 ms 68,7 MB 14,3 MB
+100.000 14.006 ms 6.349 ms 135,5 MB 28,5 MB
+500.000 68.752 ms 37.987 ms 664,7 MB 140,8 MB
+1.000.000 125.774 ms 57.701 ms 1.313,6 MB 349,1 MB
+2.000.000 239.192 ms 114.908 ms 2.632,5 MB 738,7 MB
+Tabela 3.1: Timpul de construire a indexului și dimensiunea pe disc.
+Corpus PostgreSQL (𝑝 /𝑝 /𝑝 ) OpenSearch (𝑝 /𝑝 /𝑝 )
+50 95 99 50 95 99
+1.000 1,46 / 2,68 / 3,12 3,25 / 5,70 / 10,56
+10.000 10,64 / 14,32 / 17,63 2,85 / 5,21 / 7,17
+50.000 48,70 / 66,59 / 77,97 5,17 / 10,05 / 13,98
+100.000 100,21 / 117,87 / 136,46 6,84 / 10,59 / 12,83
+500.000 779,47 / 1021,25 / 1229,16 22,75 / 38,09 / 67,26
+1.000.000 872,19 / 1199,43 / 1220,09 33,64 / 45,24 / 83,90
+2.000.000 1863,97 / 2783,12 / 2783,12 63,65 / 73,05 / 111,67
+Tabela 3.2: Latența căutării full-text pentru interogarea bench press.
+Corpus PostgreSQL (𝑝 /𝑝 /𝑝 ) OpenSearch (𝑝 /𝑝 /𝑝 )
+50 95 99 50 95 99
+1.000 14,45 / 18,91 / 21,69 2,37 / 3,74 / 5,63
+10.000 127,93 / 134,06 / 136,22 3,23 / 7,38 / 10,94
+50.000 621,74 / 645,63 / 646,08 2,66 / 4,95 / 6,59
+100.000 1831,47 / 2169,61 / 2169,61 3,15 / 5,74 / 7,38
+500.000 2447,22 / 8354,43 / 8354,43 4,06 / 7,20 / 8,95
+1.000.000 7806,25 / 17790,10 / 17790,10 3,94 / 9,18 / 13,35
+2.000.000 15825,49 / 16399,71 / 16399,71 3,89 / 9,38 / 14,14
+Tabela 3.3: Latența căutării fuzzy pentru interogarea greșită benhc.
+28

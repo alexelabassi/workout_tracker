@@ -1,0 +1,24 @@
+.requestMatchers("/api/admin/∗∗").hasRole("ADMIN")
+.requestMatchers("/api/coach/∗∗").hasRole("COACH")
+.requestMatchers("/api/∗∗").authenticated()
+.anyRequest().permitAll())
+Listarea 3. Tabela outbox_events există încă din prima migrare și poate fi folosită ulterior
+pentru indexare tranzacțională.
+CREATE TABLE outbox_events (
+id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+aggregate_type varchar(100) NOT NULL,
+aggregate_id uuid NOT NULL,
+event_type varchar(100) NOT NULL,
+payload jsonb NOT NULL DEFAULT '{}'::jsonb,
+status varchar(30) NOT NULL DEFAULT 'PENDING',
+attempts int NOT NULL DEFAULT 0,
+available_at timestamptz NOT NULL DEFAULT now(),
+processed_at timestamptz,
+created_at timestamptz NOT NULL DEFAULT now(),
+last_error text,
+CONSTRAINT check_outbox_status
+CHECK (status IN ('PENDING','PROCESSING','PROCESSED','FAILED'))
+);
+CREATE INDEX outbox_events_processing_idx
+ON outbox_events (status, available_at, created_at);
+27

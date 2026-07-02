@@ -1,270 +1,235 @@
 \chapter{Contribuția proprie}
 \label{cap:contributie}
 
-\section{Cerințe și prezentare generală a sistemului}
+\section{Vedere de ansamblu asupra aplicației}
 
-Pe scurt, ce poate face un utilizator autentificat: își gestionează datele de planificare (un catalog
-de exerciții oficiale, comun, plus exerciții proprii, rutine de încălzire/încheiere, săli și
-echipamente), își construiește \emph{programe} de antrenament pe mai multe zile, execută sesiuni live
-(unde notează seriile cu greutate, repetări, RPE), își vede istoricul și progresul, publică și copiază
-programe într-un \emph{marketplace}, primește o analiză a structurii unui program și, dacă este
-antrenor, poate vedea (doar citi) datele unui client cu care are o relație activă. Peste programe și
-peste istoric funcționează o \emph{căutare} full-text.
+Platforma implementată urmărește întregul ciclu al unui antrenament. Utilizatorul își definește mai
+întâi datele de bază: exerciții, grupe musculare, rutine, săli și echipamente. Apoi construiește
+programe pe mai multe zile. O zi de program poate conține exerciții planificate, valori țintă și
+rutine de început sau final. Dintr-o astfel de zi se pornește o sesiune live, în care se adaugă
+seriile efectuate și notele din timpul antrenamentului. După finalizare, sesiunea devine istoric și
+intră în paginile de progres, căutare și coaching.
 
-Cerințele nefuncționale au ghidat tot ce am făcut: PostgreSQL este sursa unică de adevăr; schema este
-fixată de la început și se schimbă doar prin migrări Flyway; fiecare resursă a unui utilizator
-verifică proprietarul, ca să nu existe IDOR; iar codul este gândit la o calitate de tip „portofoliu /
-sisteme back-end”, fără substitute în memorie, fără H2, cu teste de integrare reale. Câteva capturi
-din interfață se găsesc în \textbf{Anexa~1}.
+Aplicația nu este construită ca un CRUD simplu. Fiecare zonă are reguli de domeniu: un utilizator nu
+poate porni două antrenamente active în același timp; un program public trebuie să aibă o dată de
+publicare; un antrenor nu poate deveni propriul client; o sesiune finalizată nu mai permite modificarea
+seriilor; un program copiat din marketplace devine o copie privată independentă. Aceste reguli sunt
+implementate atât în servicii, cât și, unde este posibil, în baza de date.
 
-\section{Arhitectura sistemului}
-\label{sec:arhitectura}
+Backend-ul este organizat pe funcționalități: \code{auth}, \code{exercise}, \code{routine},
+\code{gym}, \code{template}, \code{session}, \code{history}, \code{analytics}, \code{marketplace},
+\code{analyzer}, \code{search}, \code{coaching} și \code{shared}. În interiorul fiecărei
+funcționalități se păstrează aceeași separare: model de domeniu, servicii de aplicație,
+repository-uri și controllere. Frontend-ul React urmează aceeași împărțire pe funcționalități și
+consumă API-ul prin DTO-uri, fără să depindă de entitățile JPA.
 
-Sistemul este o aplicație web pe trei niveluri: o aplicație React (single-page) vorbește prin JSON cu
-un API REST scris în Spring Boot, care salvează în PostgreSQL. În producție, frontend-ul compilat este
-inclus în backend și servit de la aceeași adresă (\code{http://localhost:8080/}), așa că tot cookie-ul
-de autentificare rămâne same-origin. Tot stack-ul rulează prin Docker Compose (\textbf{Anexa~6}).
+O selecție a contractului API este prezentată în Anexa~4. Ea arată cum sunt grupate fluxurile
+principale: autentificare, planificare, sesiuni live, istoric, marketplace, analizor, căutare și
+coaching.
 
-Backend-ul este organizat \emph{pe funcționalități}, nu pe niveluri tehnice. Fiecare pachet
-(\code{auth}, \code{exercise}, \code{routine}, \code{gym}, \code{template}, \code{session},
-\code{history}, \code{analytics}, \code{marketplace}, \code{analyzer}, \code{search}, \code{coaching},
-\code{shared}) își are propriile patru niveluri: \code{domain} (entitățile JPA), \code{application}
-(servicii, comenzi, excepții), \code{infrastructure} (depozite Spring Data și SQL nativ) și \code{web}
-(controllere și DTO-uri). O regulă pe care am ținut-o strict: nivelul web nu expune niciodată
-entități, ci doar DTO-uri. Când o funcționalitate are nevoie de datele alteia (de exemplu analizorul
-citește structura unui program), cel care le deține expune un \emph{model de citire la nivel de
-aplicație}, nu un DTO web și nici un depozit; așa dependențele rămân curate.
-
-O cerere este autentificată de un filtru care verifică JWT-ul și pune în contextul de securitate un
-\code{UserPrincipal}. Controllerele citesc acest principal și nu se încred niciodată într-un
-identificator de utilizator venit din corpul cererii. Erorile de domeniu extind o excepție comună
-care duce cu ea un cod HTTP și un cod de eroare stabil, ușor de citit de un program, iar un singur
-handler le transformă într-un format de eroare uniform (\textbf{Anexa~5}). Diagrama de arhitectură
-este în Figura~\ref{fig:arhitectura}.
-
-\begin{figure}[!htb]
-  \capturaplaceholder{Diagrama de arhitectură: SPA React $\rightarrow$ API REST Spring Boot
-  $\rightarrow$ PostgreSQL (sursa de adevăr) și OpenSearch (model de citire separat).}
-  \caption{Arhitectura de ansamblu a sistemului.}
-  \label{fig:arhitectura}
-\end{figure}
-
-\section{Modelul de date și principiul instantaneelor}
+\section{Modelul de date și istoricul prin instantanee}
 \label{sec:instantanee}
 
-Schema este creată de o singură migrare inițială (\code{V1}), care acoperă utilizatorii, catalogul de
-exerciții și grupele musculare, rutinele, sălile și echipamentele, programele cu tot ce conțin
-(zile / exerciții / rutine), sesiunile live cu instantaneele lor, tabelele de marketplace (voturi,
-salvări, evenimente de utilizare, statistici per program) și câteva tabele lăsate pentru mai târziu
-(coaching, rezultate de analiză, un \emph{outbox}). A doua migrare (\code{V2}) pune catalogul oficial
-de exerciții, iar a treia (\code{V3}) adaugă un index pentru concurență. Toate tabelele și
-constrângerile sunt în \textbf{Anexa~2}.
+Schema este creată prin migrarea Flyway \code{V1}, care conține 28 de tabele. Migrarea \code{V2}
+adaugă grupele musculare și exercițiile oficiale, iar \code{V3} introduce un index unic parțial pentru
+regula „un singur antrenament activ per utilizator”. O sinteză a tabelelor și a constrângerilor se
+găsește în Anexa~1.
 
-\paragraph{Principiul instantaneelor.} Faptul că istoricul rămâne corect este cerința mea de bază și o
-asigur în două locuri. Întâi, exercițiile dintr-o zi de program rețin
-\code{exercise\_name\_snapshot}, \code{exercise\_type\_snapshot} și o copie a grupelor musculare,
-păstrând doar o legătură \emph{care poate fi anulată} către exercițiul viu (\code{ON DELETE SET
-NULL}). Apoi, când pornește un antrenament, fac un al doilea instantaneu: numele programului, al zilei
-și al sălii, plus numele/tipul/valorile planificate ale fiecărui exercițiu și grupele musculare, sunt
-copiate în \code{session\_exercises}; seriile rețin și numele echipamentului. Pentru că rândurile
-sesiunii își poartă propriile valori și au doar chei externe care pot fi anulate, dacă editez sau
-șterg programul, exercițiul, rutina, sala sau echipamentul, ce a fost notat într-o sesiune veche nu se
-schimbă. Asta o verific direct prin teste.
+Modelul de date este împărțit în două zone. Prima zonă este cea de planificare: \code{workout\_templates},
+\code{template\_days}, \code{template\_day\_exercises}, rutine, săli și echipamente. A doua zonă este cea
+istorică: \code{workout\_sessions}, \code{session\_exercises}, \code{session\_routines},
+\code{workout\_sets}. Regula principală este că seriile efectuate nu sunt legate direct de exercițiile
+dintr-un template, ci de exercițiile copiate în sesiune:
 
-\paragraph{Ștergere logică, unicitate și constrângeri.} Resursele de planificare folosesc o coloană
-\code{deleted\_at}, ca istoricul care le referă să supraviețuiască. Unicitatea o impun cu \emph{indecși
-unici parțiali} care ignoră rândurile șterse (de exemplu, un nume unic de exercițiu propriu per
-utilizator \code{WHERE deleted\_at IS NULL}), așa că un nume poate fi reutilizat după ștergere. Multe
-reguli sunt impuse chiar de baza de date prin constrângeri \code{CHECK}: valori permise pentru
-enumerări, \code{days\_per\_week BETWEEN 1 AND 7}, \code{rpe BETWEEN 1.0 AND 10.0},
-\code{finished\_at >= started\_at}, contoare care nu pot fi negative, interdicția de a te antrena
-singur (\code{coach\_user\_id <> client\_user\_id}) și regula că un program public trebuie să aibă o
-dată de publicare.
+\begin{center}
+\code{workout\_sets -> session\_exercises -> workout\_sessions}
+\end{center}
 
-\paragraph{Concurență.} Regula „un singur antrenament activ per utilizator” este garantată de un
-\emph{index unic parțial} \code{ux\_workout\_sessions\_one\_active\_per\_user … WHERE status =
-'IN\_PROGRESS'} (migrarea \code{V3}). Verificarea din serviciu este doar o cale rapidă și prietenoasă;
-dacă două cereri pornesc în același timp, cea care pierde primește un \code{409 ACTIVE\_WORKOUT\_EXISTS}
-curat, nu o eroare 500. Contoarele de marketplace (voturi, salvări) sunt actualizate cu SQL atomic și
-mărginit (\code{GREATEST(0, contor +/- delta)}), deci nu apare cursa citire–modificare–scriere și nu
-ajung niciodată sub zero.
+La pornirea unui antrenament, serviciul de sesiuni încarcă ziua de program a utilizatorului și creează
+o sesiune nouă într-o tranzacție. Pentru fiecare exercițiu planificat se creează un
+\code{session\_exercise} cu numele exercițiului, tipul, poziția, seriile planificate, repetările,
+greutatea, pauza și notele copiate. Grupele musculare sunt copiate separat în
+\code{session\_exercise\_muscle\_groups}. Rutinele sunt copiate în \code{session\_routines}. Dacă în
+timpul antrenamentului se folosește un echipament, seria păstrează și \code{equipment\_name\_snapshot}.
 
-\section{Modelul de securitate}
+Acest design face ca istoricul să fie stabil. Dacă după două săptămâni utilizatorul redenumește un
+exercițiu, șterge echipamentul sau modifică programul, sesiunea veche nu se schimbă. Cheile externe
+către datele sursă sunt \code{ON DELETE SET NULL}, iar valorile folosite pentru afișarea istoricului
+sunt coloanele \code{*\_snapshot}. Același principiu apare și la copierea programelor din marketplace:
+copia păstrează nume, tipuri și grupe musculare, iar legăturile către exerciții sunt păstrate doar
+când exercițiul este oficial și sigur de referit.
+
+\section{Constrângeri, ștergere logică și concurență}
+
+Am încercat să mut cât mai multe reguli stabile în PostgreSQL, nu doar în cod Java. Exemplele cele mai
+importante sunt constrângerile \code{CHECK} pentru enumerări, \code{days\_per\_week BETWEEN 1 AND 7},
+\code{rpe BETWEEN 1.0 AND 10.0}, \code{finished\_at >= started\_at}, contoare nenegative și interdicția
+ca un antrenor să fie propriul client. Pentru programe publice există o constrângere care cere ca
+\code{published\_at} să fie nenul atunci când \code{visibility='PUBLIC'}.
+
+Resursele de planificare folosesc ștergere logică prin \code{deleted\_at}. Astfel, o ștergere nu rupe
+istoricul care referă acea resursă. Pentru a permite reutilizarea numelor după ștergere, unicitatea
+este impusă prin indecși unici parțiali care iau în calcul doar rândurile active. De exemplu, un
+utilizator poate crea din nou o sală cu același nume după ce vechea sală a fost ștearsă logic.
+
+Concurența este tratată explicit în două locuri. Pentru sesiunile live, indexul
+\code{ux\_workout\_sessions\_one\_active\_per\_user} garantează la nivel de bază de date că un utilizator nu
+poate avea două sesiuni \code{IN\_PROGRESS}. Serviciul verifică regula înainte, pentru un răspuns mai
+prietenos, dar garanția finală este indexul. Pentru marketplace, contoarele de voturi și salvări sunt
+actualizate prin SQL atomic și mărginit cu \code{GREATEST(0, ...)}, evitând valori negative sau curse
+de tip citire-modificare-scriere.
+
+\section{Securitate și controlul accesului}
 \label{sec:securitate}
 
-Parolele sunt stocate ca amprente BCrypt. La autentificare, API-ul dă un token de acces JWT de scurtă
-durată (HS256), pe care SPA-ul îl trimite în antetul \code{Authorization} și îl ține doar în memorie,
-și un token de reîmprospătare opac, ca un cookie \code{HttpOnly}, \code{SameSite=Strict}, limitat la
-calea \code{/api/auth}. Din token-ul de reîmprospătare păstrez în baza de date doar o amprentă SHA-256.
-La reîmprospătare, token-ul este \emph{rotit}: cel prezentat este verificat și revocat, iar o pereche
-nouă este emisă, totul într-o singură tranzacție. Așa, dacă cineva fură un token și încearcă să-l
-refolosească, este prins (amprenta lui există, dar are \code{revoked\_at} setat). Am dezactivat
-protecția CSRF intenționat, fiindcă token-ul de acces vine din antet, nu din cookie; singurul cookie cu
-credențiale este cel de reîmprospătare, protejat de atributele de mai sus.
+Autentificarea este bazată pe token-uri JWT. La login sau înregistrare, backend-ul emite un token de
+acces semnat HS256, cu durată scurtă, și un token de reîmprospătare opac. Token-ul de acces este
+trimis de frontend în antetul \code{Authorization}; token-ul de reîmprospătare este transmis ca un
+cookie \code{HttpOnly}, \code{SameSite=Strict}, limitat la calea \code{/api/auth}. În baza de date se
+păstrează doar amprenta SHA-256 a token-ului de reîmprospătare.
 
-\paragraph{Autorizare și siguranță IDOR.} Fiecare resursă a unui utilizator este încărcată cu o
-interogare care include și identificatorul proprietarului. Important, dacă cineva cere o resursă a
-altui utilizator, primește \textbf{404, nu 403}, ca să nu afle nici măcar că resursa există. Resursele
-imbricate își verifică proprietarul în lanț (de exemplu, un exercițiu dintr-o zi de program este
-accesibil doar dacă programul acelei zile îți aparține). În configurația de securitate, ordinea este:
-rute publice de autentificare; \code{/api/admin/**} doar pentru rolul \code{ADMIN};
-\code{/api/coach/**} doar pentru rolul \code{COACH}; restul \code{/api/**} doar pentru utilizatori
-autentificați.
+La fiecare reîmprospătare, token-ul vechi este revocat și se emite o pereche nouă în aceeași
+tranzacție. Dacă un token furat este refolosit, amprenta lui există, dar rândul este deja revocat, iar
+cererea este respinsă. Parolele sunt stocate cu BCrypt. Configurația de securitate este stateless:
+rutele de autentificare și \code{/api/health} sunt publice, \code{/api/admin/**} cere rolul
+\code{ADMIN}, \code{/api/coach/**} cere rolul \code{COACH}, iar restul rutelor \code{/api/**} cer un
+utilizator autentificat.
 
-\section{Funcționalitățile aplicației}
-\label{sec:functionalitati}
+Protecția față de IDOR este aplicată prin modul în care sunt încărcate resursele. Controllerele nu
+primesc \code{userId} din corpul cererii, ci folosesc utilizatorul curent extras din JWT. Serviciile
+încarcă resursele prin metode care includ proprietarul, iar resursele imbricate verifică lanțul de
+proprietate până la rădăcină. Dacă un utilizator cere o resursă care aparține altcuiva, răspunsul este
+404, nu 403, pentru a nu confirma existența acelei resurse.
 
-\paragraph{Date de planificare și programe.} Utilizatorii își fac o bibliotecă de exerciții (catalogul
-oficial plus exerciții proprii, fiecare cu grupe musculare primare/secundare), rutine, săli și
-echipamente. Un program este privat și pe mai multe zile; fiecare zi are exerciții ordonate (cu
-serii/repetări/greutate/pauză planificate) și rutine atașate. După fiecare modificare a exercițiilor,
-recalculez pe partea de PostgreSQL niște vectori agregați ai programului (grupe musculare,
-identificatori de exerciții oficiale, nume de exerciții), printr-o singură instrucțiune nativă cu
-\code{array\_agg(DISTINCT … ORDER BY …)}, ca să pregătesc căutarea.
+\section{Funcționalități de planificare și execuție}
 
-\paragraph{Execuția live și istoricul.} Pornirea unui antrenament face, într-o singură tranzacție,
-copierea-instantaneu din Secțiunea~\ref{sec:instantanee}. În timpul sesiunii, utilizatorul notează
-serii, adaugă exerciții în plus, neplanificate, și la final finalizează sau anulează sesiunea.
-Istoricul listează sesiunile cele mai recente primele, cu câteva numere de sumar per sesiune calculate
-printr-o singură interogare în lot (ca să evit N+1).
+Funcționalitățile de planificare sunt gândite ca blocuri reutilizabile. Catalogul de exerciții conține
+exerciții oficiale, vizibile tuturor, și exerciții custom, vizibile doar proprietarului. Fiecare
+exercițiu are grupe musculare primare sau secundare. Rutinele sunt texte reutilizabile pentru început
+sau final de antrenament. Sălile și echipamentele sunt personale, iar echipamentele sunt legate de o
+sală.
 
-\paragraph{Analize de progres.} Analizele sunt calculate complet în PostgreSQL, peste sesiunile
-finalizate: volumul total pe zi, numărul de antrenamente pe săptămână (\code{date\_trunc}), distribuția
-seriilor pe grupa musculară primară și, pentru un grafic al progresului la forță, cea mai bună estimare
-a unei repetări maxime (1RM) pe exercițiu pe zi, cu formula lui Epley \cite{epley1985}:
-\begin{equation}
-  \mathrm{1RM} \approx w \cdot \left(1 + \frac{r}{30}\right),
-  \label{eq:epley}
-\end{equation}
-unde $w$ este greutatea și $r$ numărul de repetări ale seriei.
+Un program de antrenament este compus din zile. Fiecare zi are exerciții ordonate, valori planificate
+și rutine atașate. După modificarea exercițiilor unei zile, backend-ul recalculează în PostgreSQL
+vectori agregați ai programului: grupe musculare, identificatori de exerciții oficiale și nume de
+exerciții. Acești vectori sunt utili pentru filtrare și căutare.
 
-\paragraph{Marketplace.} Proprietarii publică un program nevid, făcându-l public. Utilizatorii
-autentificați parcurg programele publice (sortate după cele mai noi, scor sau tendință), votează,
-salvează și \emph{folosesc} un program. „Folosirea” copiază în profunzime programul public într-un
-program nou, privat, al celui care copiază. Legătura către exercițiu o păstrez doar dacă este un
-exercițiu \emph{oficial}; altfel o anulez, dar păstrez copia numelui/tipului/grupelor musculare — așa
-copia rămâne complet utilizabilă și independentă de original, fără să scape date private.
+Execuția live pornește dintr-o zi de program și creează instantaneele descrise mai sus. În timpul
+sesiunii, utilizatorul poate adăuga serii, poate introduce greutate, repetări, durată, distanță, RPE,
+note și echipament, sau poate adăuga exerciții neplanificate. După finalizare sau anulare, sesiunea
+devine terminală. Seriile nu mai pot fi modificate după finalizare, dar notele sesiunii pot fi editate,
+fiind comentariu al utilizatorului, nu datele efective ale execuției.
 
-\section{Analizorul structural informat de dovezi}
+\section{Istoric, analize și marketplace}
+
+Istoricul afișează sesiunile utilizatorului, ordonate descrescător după data de început. Pentru a evita
+problema N+1, sumarul unei pagini (număr de exerciții, număr de serii și volum total) este calculat
+printr-o singură interogare în lot. Analizele de progres sunt calculate în PostgreSQL peste sesiunile
+finalizate: volum pe zi, antrenamente pe săptămână, distribuția seriilor după grupa musculară primară,
+cele mai bune serii pe exercițiu și evoluția estimării 1RM folosind formula lui Epley.
+
+Marketplace-ul permite publicarea programelor private, dar numai dacă programul nu este gol. Un
+utilizator poate naviga programele publice, le poate sorta după noutate, scor sau tendință, le poate
+vota, salva și copia. Copierea este o operație de tip deep copy: se creează un program privat nou,
+cu zile, exerciții, rutine și instantanee proprii. Nu se expun date private ale autorului, iar copia
+poate fi folosită independent de original.
+
+Pentru interacțiuni, votul propriu asupra propriului program este respins, salvarea este idempotentă,
+iar contoarele sunt menținute în \code{template\_stats}. Evenimentele de folosire sunt păstrate în
+\code{template\_use\_events}, astfel încât popularitatea programelor poate fi folosită la sortare și
+căutare.
+
+\section{Analizorul de programe}
 \label{sec:analizor}
 
-Analizorul este determinist și bazat pe reguli — nu folosește învățare automată. Dă un \emph{Scor de
-structură a programului} (nu o judecată de „calitate științifică” sau medicală), iar fiecare răspuns
-vine cu un avertisment că nu este sfat medical și că nu ține cont de recuperare, tehnică, efort, somn,
-alimentație sau de cum răspunde fiecare individ. Îl calculez la cerere, la un \code{GET} read-only
-(\code{/api/templates/\{id\}/analysis}), și îl folosesc și la indexarea pentru căutare.
+Analizorul este expus prin \code{GET /api/templates/\{id\}/analysis}. El citește structura programului
+dintr-un model de aplicație, nu din DTO-uri web, și produce un scor între 0 și 100. Scorul este împărțit
+în cinci sub-scoruri: volum și acoperire, frecvență, echilibru, designul sesiunii și specificitate /
+pauză. Fiecare sub-scor pornește de la maxim și scade penalizări fixe pentru problemele găsite.
 
-Volumul săptămânal este suma peste zilele scrise în program, iar seriile sunt ponderate după rolul
-muscular (primar 1.0, secundar 0.5). Exercițiile fără serii planificate sunt \emph{scoase} din volum
-(nu le presupun o valoare implicită) și marcate ca date incomplete; doar exercițiile de forță contează
-la volum și echilibru. Scorul de 100 de puncte este împărțit în cinci părți, fiecare pornind de la
-maximul ei și scăzând o valoare fixă pentru fiecare problemă găsită (dar nu sub zero), deci rezultatele
-sunt complet deterministe și pot fi testate (Tabelul~\ref{tab:analizor}). Categoriile pun totalul în
-\code{WELL\_STRUCTURED} ($\geq 80$), \code{DECENT\_STRUCTURE} ($55$–$79$) sau \code{NEEDS\_REVIEW}
-($<55$). Familiile de reguli și o bucată reprezentativă din logica de scor sunt în \textbf{Anexa~3}.
+Volumul este calculat doar pentru exercițiile de forță. Seriile sunt ponderate în funcție de rolul
+muscular: o grupă primară primește 1.0, iar una secundară 0.5. Exercițiile fără serii planificate nu
+primesc valori inventate; ele sunt excluse din volum și marcate ca date incomplete. Categoriile
+rezultate sunt \code{WELL\_STRUCTURED} pentru scoruri de cel puțin 80, \code{DECENT\_STRUCTURE} pentru
+scoruri de cel puțin 55 și \code{NEEDS\_REVIEW} pentru restul.
 
-\begin{table}[!htb]
-  \centering
-  \small
-  \begin{tabular}{@{}lcl@{}}
-  \toprule
-  Sub-scor & Maxim & Exemple de penalizări \\
-  \midrule
-  Volum și acoperire & 35 & regiune absentă $-12$; volum excesiv $-5$; foarte scăzut $-3$ \\
-  Frecvență & 20 & volum concentrat într-o singură zi $-4$ \\
-  Echilibru & 20 & dezechilibru sever $-8$; moderat $-4$ \\
-  Designul sesiunii & 15 & sesiune excesivă $-5$; concentrare pe o grupă $-3$ \\
-  Specificitate / pauză & 10 & pauză prea scurtă $-2$; interval de repetări extrem $-2$ … $-3$ \\
-  \bottomrule
-  \end{tabular}
-  \caption{Descompunerea scorului de structură pe cinci sub-scoruri deterministe.}
-  \label{tab:analizor}
-\end{table}
+Răspunsul include avertismente cu severitate, explicații și sugestii. Exemple de reguli sunt lipsa unei
+regiuni importante, volum prea mic sau excesiv, dezechilibru push/pull, dezechilibru lower/upper,
+sesiuni prea lungi sau pauze prea scurte. Analizorul include și limitări explicite: nu vede tehnica,
+recuperarea, somnul, alimentația sau efortul real, deci nu oferă sfat medical.
 
-\section{Modelul de citire pentru căutare (OpenSearch)}
+\section{Modul de coaching}
+\label{sec:coaching}
+
+Modul de coaching combină RBAC și ReBAC. Rutele \code{/api/coach/**} cer rolul \code{COACH}, dar acest
+rol nu este suficient pentru a vedea datele unui client. Pentru fiecare citire legată de un client,
+serviciul verifică existența unei relații active între antrenor și client. Dacă relația lipsește sau nu
+este activă, răspunsul este 404.
+
+Relațiile au un ciclu de viață clar: \code{PENDING}, \code{ACTIVE}, \code{REJECTED} și
+\code{REVOKED}. Antrenorul trimite invitația, clientul o acceptă sau o respinge, iar oricare dintre
+părți poate revoca accesul. O constrângere din baza de date interzice relația cu sine însuși, iar un
+index unic parțial permite o singură relație vie pentru aceeași pereche.
+
+Accesul antrenorului este doar de citire: lista de clienți activi, istoricul clientului, analizele,
+detaliile unei sesiuni și căutarea în istoricul clientului. Nu există endpoint prin care antrenorul să
+modifice sesiunile sau programele clientului. Această limitare este intenționată și menține separația
+dintre colaborare și proprietatea datelor.
+
+\section{Modelul de citire pentru căutare}
 \label{sec:cautare}
 
-Căutarea este un \emph{model de citire separat}, construit peste OpenSearch și pornit printr-un
-indicator de configurare (\code{app.search.enabled}, implicit oprit, ca să nu lege compilarea locală
-și testele pe PostgreSQL de OpenSearch). Am două indexuri, \code{templates} și \code{workout\_sessions},
-cu nume versionate ascunse în spatele unor alias-uri stabile. Analizorul de indexare normalizează
-textul (lowercase + scoaterea diacriticelor), iar cel de căutare adaugă și un set de \emph{sinonime}
-(de exemplu \emph{pecs}$\rightarrow$\emph{chest}, \emph{ohp}$\rightarrow$\emph{overhead press}).
-Interogarea de tip \code{multi\_match} dă ponderi (boost) câmpurilor — pentru programe \code{name\^{}4},
-\code{exerciseNames\^{}3}, \code{muscleGroupsText\^{}2} etc. — și toleranță la greșeli
-(\code{fuzziness=AUTO}, cu o regulă care nu aplică „fuzzy” pentru căutări mai scurte de 3 caractere).
-Pentru marketplace, scorul de relevanță este combinat cu un \emph{function\_score} care adaugă o
-influență logaritmică a popularității (salvări, utilizări). Rezultatele includ fațete (agregări
-\code{terms} și un histogram pe lună) și evidențierea potrivirilor cu \code{<mark>}.
+Căutarea este implementată cu OpenSearch ca model de citire derivat. Există două indexuri logice:
+\code{templates} pentru programe și \code{workout\_sessions} pentru istoricul antrenamentelor. Documentele
+sunt denormalizate și conțin câmpurile utile pentru căutare: nume, descrieri, exerciții, grupe
+musculare, săli, echipamente, note, scor de analiză și statistici de popularitate.
 
-\paragraph{Cum scriu în index și cum țin totul consistent.} Indexarea este pornită de evenimente
-declanșate \emph{după} ce tranzacția se salvează (\code{@TransactionalEventListener(AFTER\_COMMIT)}),
-ca să nu ajungă în index munca anulată prin rollback. Am două căi de actualizare: o reindexare
-\emph{structurală} reconstruiește tot documentul și recalculează câmpurile din analiză, iar o
-actualizare \emph{doar a contoarelor} (vot/salvare/utilizare) nu mai recalculează analiza. Toate
-scrierile sunt \emph{idempotente} (rescriu documentul întreg după identificator). Dacă o scriere dă
-greș, o jurnalizez și merg mai departe — PostgreSQL rămâne sursa de adevăr, iar o reconstrucție repară
-indexul. Intenționat, aceasta \emph{nu} este încă un outbox tranzacțional (vezi
-Secțiunea~\ref{sec:directii}).
+Interogările folosesc \code{multi\_match} cu ponderi diferite pe câmpuri. De exemplu, numele programului
+contează mai mult decât descrierea, iar în istoricul de antrenament numele exercițiului contează mai
+mult decât nota sesiunii. Pentru greșeli de tastare se folosește \code{fuzziness=AUTO}, dar nu pentru
+interogări foarte scurte, pentru a evita potriviri zgomotoase. Analizorul de căutare include sinonime
+precum \emph{pecs -> chest} sau \emph{ohp -> overhead press}. Rezultatele pot include fațete și
+evidențieri cu \code{<mark>}.
 
-\paragraph{Securitate pe două straturi.} Întâi, un \emph{filtru obligatoriu}, luat din JWT, pe care
-parametrii cererii nu îl pot suprascrie: \code{marketplace} $\Rightarrow$ \code{visibility=PUBLIC};
-\code{my} $\Rightarrow$ \code{ownerUserId=apelant}; \code{workouts} $\Rightarrow$
-\code{ownerUserId=apelant}. Apoi, o verificare suplimentară în PostgreSQL: identificatorii întorși de
-OpenSearch sunt verificați din nou în baza de date cu aceeași regulă, ca să arunc orice rezultat
-învechit (de exemplu, abia depublicat sau șters) și să adaug starea curentă de vot/salvare pentru
-marketplace.
+Scrierea în index se face prin evenimente Spring declanșate după commit-ul tranzacției, pentru ca
+datele anulate prin rollback să nu fie indexate. Există două tipuri de actualizare: structurală, când
+se reconstruiește documentul complet,
+și de statistici, când se actualizează doar contoarele de popularitate. Dacă o scriere în OpenSearch
+eșuează, eroarea este jurnalizată, iar PostgreSQL rămâne sursa de adevăr.
 
-\paragraph{Reconstrucție și reziliență.} Serviciul de reconstrucție creează un index nou cu marcaj de
-timp, îl umple în lot din PostgreSQL și \emph{schimbă atomic alias-ul} (fără să se oprească citirile),
-apoi șterge indexul vechi; dacă ceva pică, indexul nou este aruncat, iar cel vechi continuă să
-servească. Reconstrucția manuală (\code{POST /api/admin/search/reindex}) este permisă doar rolului
-\code{ADMIN}. Dacă căutarea este oprită sau OpenSearch nu răspunde, endpoint-urile întorc \code{503} și
-interfața trece înapoi pe lista din SQL; un index încă neconstruit este tratat ca „fără rezultate”, nu
-ca o eroare.
+Securitatea căutării are două straturi. Primul este un filtru obligatoriu derivat din utilizatorul
+curent: marketplace înseamnă \code{visibility=PUBLIC}, programele personale înseamnă
+\code{ownerUserId=apelant}, iar istoricul înseamnă \code{ownerUserId=apelant}. Al doilea strat este
+validarea rezultatelor în PostgreSQL. Identificatorii întorși de OpenSearch sunt verificați din nou
+în baza relațională, astfel încât un rezultat învechit, șters sau depublicat nu ajunge la client.
 
-\paragraph{Căutarea făcută de antrenor.} Un antrenor poate căuta full-text în istoricul unui client
-(\code{/api/coach/clients/\{id\}/search/workouts}). Este singurul loc unde căutarea rulează cu un
-identificator de proprietar diferit de cel care cere, și este sigură fiindcă trece mai întâi prin
-poarta de acces a antrenorului (vezi Secțiunea~\ref{sec:coaching}) și apoi folosește exact același
-serviciu de căutare, dar cu identificatorul clientului, păstrând filtrul obligatoriu și verificarea din
-PostgreSQL.
+Reconstrucția indexului creează un index nou, îl umple din PostgreSQL și apoi schimbă atomic alias-ul.
+Endpoint-ul manual de reindexare este permis doar rolului \code{ADMIN}. Dacă modulul de căutare este
+dezactivat sau OpenSearch nu răspunde, API-ul întoarce \code{503}, iar interfața poate reveni la lista
+SQL autoritativă.
 
-\section{Evaluarea empirică: OpenSearch vs.\ PostgreSQL}
+\section{Evaluarea OpenSearch vs. PostgreSQL}
 \label{sec:benchmark}
 
-Partea cea mai importantă din punct de vedere științific este o măsurătoare concretă: de la ce
-dimensiune merită un motor de căutare dedicat față de ce poate face PostgreSQL singur.
+Pentru a evita o concluzie bazată doar pe preferința pentru un motor de căutare, am implementat o
+evaluare practică între OpenSearch și PostgreSQL. Varianta PostgreSQL nu este una slabă: folosește
+\code{tsvector} ponderat, index GIN, \code{ts\_rank\_cd}, \code{pg\_trgm} pentru fuzzy search și
+\code{GROUP BY} pentru fațete. Varianta OpenSearch folosește mapările și interogările aplicației.
 
-\paragraph{Metodologie.} Varianta de PostgreSQL este făcută \emph{corect}, nu ca să piardă: căutare
-full-text ponderată cu \code{tsvector} (\code{setweight} A/B/C/D) și index GIN, ordonată cu
-\code{ts\_rank\_cd}; căutare fuzzy cu \code{pg\_trgm} și index GIN; fațete prin \code{GROUP BY}. Partea
-OpenSearch folosește exact aceleași mapări și interogări ca în producție. Setul de date este generat
-determinist și \emph{în flux} (pe loturi, cu memorie constantă), cu un vocabular realist de ridicări,
-popularitate înclinată și 90\%/10\% public/privat. Am măsurat la șapte dimensiuni, de la 1.000 la
-2.000.000 de documente, pe cinci scenarii: două căutări full-text, o căutare fuzzy (greșeală de
-tastare), o căutare filtrată și o agregare pe fațete. Măsurarea este pe un singur fir, cu încălzire și
-un buget de timp, și raportez percentilele $p_{50}/p_{95}/p_{99}$.
-
-\paragraph{Rezultate.} Tabelul~\ref{tab:bench} arată latențele la cea mai mare dimensiune (2M de
-documente); tabelele complete, pe toate dimensiunile, sunt în \textbf{Anexa~4}. Pe scurt: cele două
-soluții se echivalează în jurul a \emph{10.000 de documente} (sub această valoare PostgreSQL e mai
-rapid; peste ea, OpenSearch câștigă clar); căutarea full-text în PostgreSQL crește aproape liniar (de
-la $\sim$1,5\,ms la $\sim$1,86\,s între 1k și 2M), în timp ce OpenSearch rămâne aproape constant
-($\sim$3–64\,ms); \emph{căutarea fuzzy face diferența} — \code{pg\_trgm} se duce de la 14\,ms la
-$\sim$15,8\,s (1k$\rightarrow$2M), față de $\sim$4\,ms, aproape constant, în OpenSearch (un raport de
-ordinul a 4000$\times$ la 2M); în plus, indexul OpenSearch ocupă de $\sim$3,6$\times$ mai puțin pe
-disc și se construiește de $\sim$2$\times$ mai repede la 2M.
+Setul de date este generat determinist și crește de la 1.000 la 2.000.000 de documente. Am măsurat
+cinci scenarii: două căutări full-text, o căutare fuzzy cu greșeală de tastare, o căutare filtrată și
+o agregare pe fațete. Tabelul~\ref{tab:bench} arată rezultatele la dimensiunea maximă, iar tabelele
+complete sunt în Anexa~3.
 
 \begin{table}[!htb]
   \centering
   \begin{tabular}{@{}lrr@{}}
   \toprule
-  Scenariu (la 2M documente) & PostgreSQL & OpenSearch \\
+  Scenariu la 2M documente & PostgreSQL & OpenSearch \\
   \midrule
   Full-text „bench press” ($p_{50}$) & 1864\,ms & 64\,ms \\
   Full-text „squat” ($p_{50}$) & 1437\,ms & 4\,ms \\
-  Fuzzy „benhc” (greșeală) ($p_{50}$) & 15825\,ms & 4\,ms \\
+  Fuzzy „benhc” ($p_{50}$) & 15825\,ms & 4\,ms \\
   Filtrat (press + INTERMEDIATE + PPL) ($p_{50}$) & 2295\,ms & 7\,ms \\
   Fațetă după dificultate ($p_{50}$) & 1193\,ms & 2\,ms \\
   \midrule
@@ -272,70 +237,27 @@ disc și se construiește de $\sim$2$\times$ mai repede la 2M.
   Dimensiune pe disc & 2632\,MB & 739\,MB \\
   \bottomrule
   \end{tabular}
-  \caption{Comparație OpenSearch vs.\ PostgreSQL la 2.000.000 de documente. Tabelele complete pe
-  toate cele șapte dimensiuni sunt în Anexa~4.}
+  \caption{Comparație OpenSearch vs. PostgreSQL la 2.000.000 de documente.}
   \label{tab:bench}
 \end{table}
 
-\paragraph{Interpretare.} Rezultatul transformă o alegere de arhitectură luată des „din reflex” într-o
-decizie cu temei: sub pragul de echivalență, complexitatea în plus a unui motor dedicat nu se justifică;
-peste el — și mai ales dacă ai nevoie de toleranță la greșeli — un motor dedicat devine nu doar util, ci
-necesar.
+Rezultatul principal este că cele două soluții se echivalează în jurul a 10.000 de documente. Sub acest
+prag, PostgreSQL este mai simplu și uneori mai rapid. Peste el, OpenSearch câștigă clar, mai ales la
+căutarea tolerantă la greșeli de tastare. Aceasta justifică arhitectura cu model de citire separat, dar
+și arată că un motor separat nu trebuie introdus fără un motiv concret.
 
-\section{Modul de coaching: RBAC plus ReBAC}
-\label{sec:coaching}
-
-Modul de coaching adaugă un al doilea strat de control peste RBAC. O relație antrenor–client are un
-ciclu de viață (\code{PENDING} $\rightarrow$ \code{ACTIVE} dacă se acceptă, sau \code{REJECTED}; o
-relație \code{ACTIVE} poate fi \code{REVOKED} de oricare parte), cu un index unic parțial care permite
-o singură relație vie per pereche. RBAC (\code{/api/coach/**} cere rolul \code{COACH}) este necesar,
-dar nu suficient: fiecare citire per client trece printr-o poartă bazată pe relații (ReBAC) care cere o
-relație \emph{activă} și, altfel, întoarce \textbf{404 (nu 403)}, ca un antrenor să nu poată afla ce
-utilizatori există. Accesul antrenorului este doar de citire (istoric, analize, o sesiune, căutare); nu
-există niciun endpoint prin care antrenorul să modifice datele clientului, iar clientul poate retrage
-accesul oricând.
-
-\section{Strategia de testare}
+\section{Testare și verificarea corectitudinii}
 \label{sec:testare}
 
-Corectitudinea o verific cu teste de integrare pe \emph{infrastructură reală}: o clasă de bază
-pornește un container PostgreSQL (Testcontainers), iar suita de căutare adaugă un container OpenSearch
-real și pornește indicatorul de căutare — fără mock-uri, fără H2. Așa, toată schema gestionată de
-Flyway și constrângerile ei sunt puse la treabă. Testele verifică comportamentul prin nivelul HTTP și,
-unde contează, garanțiile la nivel de bază de date: o a doua inserare „în desfășurare” brută este
-respinsă de indexul unic parțial; vectorii agregați sunt citiți înapoi cu \code{JdbcTemplate};
-instantaneele unei sesiuni rămân neschimbate după ce editez datele sursă. La momentul scrierii, suita
-are 128 de teste care trec.
+Suita de teste este gândită să ruleze pe infrastructură reală. Testele de integrare pornesc PostgreSQL
+16 prin Testcontainers, iar testele de căutare pornesc și un container OpenSearch și activează modulul
+de search. Nu se folosește H2 și nu sunt înlocuite repository-urile cu implementări false.
 
-\section{Direcții de dezvoltare proiectate}
-\label{sec:directii}
+Testele acoperă fluxuri HTTP, reguli de securitate, IDOR, marketplace, coaching, analizor, sesiuni,
+istoric, căutare și garanții ale bazei de date. Unele teste verifică explicit constrângerile din
+PostgreSQL, de exemplu respingerea unei a doua sesiuni active inserate direct sau stabilitatea
+instantaneelor după editarea datelor sursă. În forma curentă, suita conține 128 de teste automate și
+cere un mediu Docker funcțional pentru verificările bazate pe Testcontainers.
 
-Lucrurile de mai jos sunt \emph{gândite și pregătite}, dar încă neimplementate. Le includ aici fiindcă
-arhitectura și, în mai multe cazuri, chiar schema bazei de date le anticipează: schema \code{V1}
-conține deja, nefolosite de cod, tabelele \code{outbox\_events}, \code{template\_analysis\_results},
-\code{coach\_session\_comments} și \code{coach\_template\_assignments}.
-
-\begin{itemize}
-  \item \textbf{Cache cu Redis pentru marketplace (cache-aside).} Aș memora paginile de listă și
-        detaliile de program, cu invalidare condusă de aceleași evenimente după salvare deja existente,
-        plus protecție împotriva efectului de „turmă” prin expirare probabilistică timpurie
-        (XFetch \cite{vattani2015stampede}).
-  \item \textbf{Outbox tranzacțional pentru indexare.} Ar rezolva problema \emph{dual-write}: un rând
-        de eveniment scris în aceeași tranzacție cu modificarea, în tabela \code{outbox\_events} deja
-        existentă, plus un proces care îl trimite mai departe cu livrare cel-puțin-o-dată și un
-        consumator idempotent (indexatorul este deja idempotent). Aș discuta și alternativa
-        CDC/Debezium \cite{richardson2018microservices}.
-  \item \textbf{Evaluarea calității relevanței.} Aș duce evaluarea de la viteză la calitate: un set de
-        judecăți etichetate și indicatori ca precision@k și nDCG \cite{jarvelin2002ndcg}, plus un
-        studiu de ablație (sinonime / fuzzy / ponderi pornite sau oprite).
-  \item \textbf{Paginare prin chei (keyset).} Aș înlocui paginarea \code{OFFSET} de acum cu paginare
-        prin cheie de continuare, ducând costul paginilor adânci de la $\bigO{n}$ la $\bigO{\log n}$.
-  \item \textbf{Limitarea ratei la autentificare} (token-bucket cu Redis) și \textbf{trecerea la
-        Argon2id} pentru parole, cu re-hashing transparent la autentificare.
-  \item \textbf{Observabilitate} (trasare distribuită OpenTelemetry + metrici Prometheus/Grafana),
-        \textbf{partiționarea pe timp} a tabelei \code{workout\_sessions}, o \textbf{coadă de lucru}
-        bazată pe \code{SELECT … FOR UPDATE SKIP LOCKED} (potrivită pentru trimiterea din outbox) și
-        \textbf{vederi materializate} pentru analize.
-\end{itemize}
-
-Aceste direcții sunt descrise, ca proiectare, în Capitolul~\ref{cap:concluzii}.
+Fragmente reprezentative din implementarea analizorului, din configurația de securitate și din
+migrările SQL sunt incluse în Anexa~2. Configurația de rulare a aplicației este rezumată în Anexa~5.

@@ -1,0 +1,34 @@
+Cuprins
+1 Introducere 6
+1.1 Tipul lucrării și încadrarea temei . . . . . . . . . . . . . . . . . . . . . . . . . 6
+1.2 Prezentarea generală a temei . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+1.3 Problema urmărită . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+1.4 Contribuția proprie . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+1.5 Structura lucrării . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+2 Preliminarii 8
+2.1 Aplicații web și sursa de adevăr . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+2.2 Date de planificare și date istorice . . . . . . . . . . . . . . . . . . . . . . . . 9
+2.3 Autentificare, autorizare și IDOR . . . . . . . . . . . . . . . . . . . . . . . . . 9
+2.4 Căutare full-text și modele de citire . . . . . . . . . . . . . . . . . . . . . . . . 10
+2.5 Analiză deterministă a programelor . . . . . . . . . . . . . . . . . . . . . . . 10
+3 Contribuția proprie 10
+3.1 Vedere de ansamblu asupra aplicației . . . . . . . . . . . . . . . . . . . . . . . 10
+3.2 Fluxul complet de utilizare . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+3.3 Cerințe funcționale și nefuncționale . . . . . . . . . . . . . . . . . . . . . . . 12
+3.3.1 Cerințe funcționale . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+3.3.2 Cerințe nefuncționale . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+3.4 Modelul de date și istoricul prin snapshot-uri . . . . . . . . . . . . . . . . . . 15
+3.5 Constrângeri, ștergere logică și concurență . . . . . . . . . . . . . . . . . . . . 16
+3.6 Securitate și controlul accesului . . . . . . . . . . . . . . . . . . . . . . . . . 16
+3.7 Funcționalități de planificare și execuție . . . . . . . . . . . . . . . . . . . . . 18
+3.8 Istoric, analize și marketplace . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+3.9 Analizatorul de programe . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+3.10 Modul de coaching . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+3.11 Modelul de citire pentru căutare . . . . . . . . . . . . . . . . . . . . . . . . . 20
+3.12 Evaluarea OpenSearch vs. PostgreSQL . . . . . . . . . . . . . . . . . . . . . . 20
+3.13 Testare și verificarea corectitudinii . . . . . . . . . . . . . . . . . . . . . . . . 21
+4 Concluzii 22
+4.1 Concluzii privind realizarea temei . . . . . . . . . . . . . . . . . . . . . . . . 22
+4.2 Relevanța rezultatelor . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+Bibliografie 24
+Anexa 1 – Schema bazei de date 25

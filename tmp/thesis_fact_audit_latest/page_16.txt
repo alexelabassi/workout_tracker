@@ -1,0 +1,35 @@
+exercise_muscle_groups, iar rutinele sunt copiate în session_routines. Da-
+că în timpul antrenamentului se folosește un echipament, seria păstrează și equipment_
+name_snapshot.
+Acest design face ca istoricul să fie stabil. Dacă după două săptămâni utilizatorul redenu-
+mește un exercițiu, șterge echipamentul sau modifică programul, sesiunea veche nu se schimbă.
+Cheile externe către datele sursă sunt ON DELETE SET NULL, iar valorile folosite pentru
+afișarea istoricului sunt coloanele *_snapshot. Astfel, template-ul poate continua să fie
+editat ca resursă de planificare, în timp ce sesiunea finalizată rămâne o înregistrare a ceea ce
+utilizatorul a avut în față și a executat în ziua respectivă.
+Același principiu apare și la copierea programelor din marketplace: copia păstrează nume,
+tipuri și grupe musculare, iar legăturile către exerciții sunt păstrate doar când exercițiul este
+oficial și sigur de referit.
+3.5 Constrângeri, ștergere logică și concurență
+Am încercat să mut cât mai multe reguli stabile în PostgreSQL, nu doar în cod Java.
+Exemplele cele mai importante sunt constrângerile CHECK pentru enumerări, days_per_
+week BETWEEN 1 AND 7, rpe BETWEEN 1.0 AND 10.0, finished_at >=
+started_at, contoare nenegative și interdicția ca un antrenor să fie propriul client. Pentru
+programe publice există o constrângere care cere ca published_at să fie nenul atunci când
+visibility='PUBLIC'.
+Resursele de planificare folosesc ștergere logică prin deleted_at. Astfel, o ștergere
+nu rupe istoricul care referă acea resursă. Pentru a permite reutilizarea numelor după ștergere,
+unicitatea este impusă prin indecși unici parțiali care iau în calcul doar rândurile active. De
+exemplu, un utilizator poate crea din nou o sală cu același nume după ce vechea sală a fost
+ștearsă logic.
+Concurența este tratată explicit în două locuri. Pentru sesiunile live, indexul ux_
+workout_sessions_one_active_per_user garantează la nivel de bază de date
+că un utilizator nu poate avea două sesiuni IN_PROGRESS. Serviciul verifică regula înainte,
+pentru un răspuns mai prietenos, dar garanția finală este indexul. Pentru marketplace, contoarele
+de voturi și salvări sunt actualizate prin SQL atomic și mărginit cu GREATEST(0, ...),
+evitând valori negative sau curse de tip citire-modificare-scriere.
+3.6 Securitate și controlul accesului
+Securitatea aplicației este construită în jurul a două idei principale: autentificarea utilizato-
+rului și verificarea dreptului de acces la fiecare resursă. Nu este suficient ca un utilizator să fie
+autentificat; sistemul trebuie să verifice și dacă acel utilizator are voie să vadă sau să modifi-
+16

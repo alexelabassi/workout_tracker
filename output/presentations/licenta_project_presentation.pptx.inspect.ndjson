@@ -1,0 +1,245 @@
+{"kind":"deck","id":"pr/qrydv1","name":"Deck"}
+{"kind":"layout","layoutId":"581ae73f-06e8-4638-bca9-2269228d6e19","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"6cbf3ded-7aec-45fe-99c4-a1ab7e9aca18","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/s158ek","slide":1,"title":"Platformă web sigură pentru planificarea, monitorizarea și analiza antrenamen...","textShapes":8}
+{"kind":"textbox","id":"sh/xczed8v6","slide":1,"text":"Platformă web sigură pentru planificarea, monitorizarea și analiza antrenamentelor de forță","textPreview":"Platformă web sigură pentru planificarea, monitorizarea și analiza antrenamentelor de forță","textChars":91,"textLines":1,"bbox":[70,120,1000,190]}
+{"kind":"textbox","id":"sh/qpg3ex0n","slide":1,"text":"Aplicație full-stack cu istoric stabil, securitate multi-user și căutare scalabilă","textPreview":"Aplicație full-stack cu istoric stabil, securitate multi-user și căutare scalabilă","textChars":82,"textLines":1,"bbox":[74,335,820,40]}
+{"kind":"shape","id":"sh/fa9w3m94","slide":1,"bbox":[74,470,340,92]}
+{"kind":"textbox","id":"sh/8jqh0fep","slide":1,"text":"Ideea centrală","textPreview":"Ideea centrală","textChars":14,"textLines":1,"bbox":[92,486,304,34]}
+{"kind":"textbox","id":"sh/x4nap4r6","slide":1,"text":"Datele de planificare se pot schimba, dar istoricul antrenamentelor trebuie să rămână corect.","textPreview":"Datele de planificare se pot schimba, dar istoricul antrenamentelor trebuie să rămână corect.","textChars":93,"textLines":1,"bbox":[94,532,300,16]}
+{"kind":"shape","id":"sh/qd4vmtwr","slide":1,"bbox":[455,470,340,92]}
+{"kind":"textbox","id":"sh/fyxobm58","slide":1,"text":"Contribuția","textPreview":"Contribuția","textChars":11,"textLines":1,"bbox":[473,486,304,34]}
+{"kind":"textbox","id":"sh/87ed8bat","slide":1,"text":"Am integrat planificare, sesiuni live, marketplace, coaching, analizator, securitate și OpenSearch într-un sistem coerent.","textPreview":"Am integrat planificare, sesiuni live, marketplace, coaching, analizator, securitate și OpenSearch într-un sistem coerent.","textChars":122,"textLines":1,"bbox":[475,532,300,16]}
+{"kind":"textbox","id":"sh/xs72x4na","slide":1,"text":"Licență - prezentare proiect","textPreview":"Licență - prezentare proiect","textChars":28,"textLines":1,"bbox":[52,676,320,24]}
+{"kind":"textbox","id":"sh/xkf6dcbu","slide":1,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1190,676,40,24]}
+{"kind":"notes","id":"nt/s158ek","slide":1,"text":"Deschid cu ideea că nu prezint un CRUD, ci o platformă completă.\nAccentul este pe corectitudine istorică, securitate și scalare.\nNu intru încă în detalii. Doar setez cadrul."}
+{"kind":"slide","id":"sl/utlwvk","slide":2,"title":"Platformă web pentru antrenamente de forță","textShapes":11}
+{"kind":"textbox","id":"sh/36hcrmhk","slide":2,"text":"Platformă web pentru antrenamente de forță","textPreview":"Platformă web pentru antrenamente de forță","textChars":42,"textLines":1,"bbox":[52,32,640,28]}
+{"kind":"textbox","id":"sh/wra5gbq1","slide":2,"text":"Problema reală este că planul se schimbă, dar istoricul nu trebuie să se rescrie","textPreview":"Problema reală este că planul se schimbă, dar istoricul nu trebuie să se rescrie","textChars":80,"textLines":1,"bbox":[52,74,1080,112]}
+{"kind":"shape","id":"sh/lc7u54zi","slide":2,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/ed8bat47","slide":2,"bbox":[70,220,330,260]}
+{"kind":"textbox","id":"sh/7u54zido","slide":2,"text":"Planificarea este editabilă","textPreview":"Planificarea este editabilă","textChars":27,"textLines":1,"bbox":[88,236,294,34]}
+{"kind":"textbox","id":"sh/wfyxobm5","slide":2,"text":"• exerciții, rutine, săli, echipamente\n• template-uri pe zile\n• publicare în marketplace\n• modificări și ștergere logică","textPreview":"• exerciții, rutine, săli, echipamente | • template-uri pe zile | • publicare în marketplace | • modificări și ștergere logică","textChars":120,"textLines":4,"bbox":[90,282,290,184]}
+{"kind":"shape","id":"sh/l0rqd4vm","slide":2,"bbox":[475,220,330,260]}
+{"kind":"textbox","id":"sh/e1w7mp0b","slide":2,"text":"Istoricul trebuie să fie stabil","textPreview":"Istoricul trebuie să fie stabil","textChars":31,"textLines":1,"bbox":[493,236,294,34]}
+{"kind":"textbox","id":"sh/7mp0bi9s","slide":2,"text":"• sesiuni pornite dintr-un template\n• seturi executate de utilizator\n• nume și valori păstrate ca la momentul execuției\n• analytics și search peste date istorice","textPreview":"• sesiuni pornite dintr-un template | • seturi executate de utilizator | • nume și valori păstrate ca la momentul execuției | • analytics...","textChars":161,"textLines":4,"bbox":[495,282,290,184]}
+{"kind":"shape","id":"sh/zed8v6ps","slide":2,"bbox":[880,220,300,260]}
+{"kind":"textbox","id":"sh/6xkf6dcb","slide":2,"text":"Mai există o problemă","textPreview":"Mai există o problemă","textChars":21,"textLines":1,"bbox":[898,236,264,34]}
+{"kind":"textbox","id":"sh/hk3q5o7q","slide":2,"text":"• aplicația este multi-user\n• datele personale nu pot fi accesate prin ID-uri ghicite\n• coach-ul vede doar clienții cu relație activă","textPreview":"• aplicația este multi-user | • datele personale nu pot fi accesate prin ID-uri ghicite | • coach-ul vede doar clienții cu relație activă","textChars":133,"textLines":3,"bbox":[900,282,260,184]}
+{"kind":"textbox","id":"sh/oza1gvy9","slide":2,"text":"De aici apar cele trei decizii importante: snapshot-uri, autorizare la nivel de resursă și model de citire OpenSearch.","textPreview":"De aici apar cele trei decizii importante: snapshot-uri, autorizare la nivel de resursă și model de citire OpenSearch.","textChars":118,"textLines":1,"bbox":[92,552,1050,54]}
+{"kind":"textbox","id":"sh/zqtcj6to","slide":2,"text":"Licență - prezentare proiect","textPreview":"Licență - prezentare proiect","textChars":28,"textLines":1,"bbox":[52,676,320,24]}
+{"kind":"textbox","id":"sh/65wjudg7","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1190,676,40,24]}
+{"kind":"notes","id":"nt/utlwvk","slide":2,"text":"Aici explic tensiunea principală: planul e editabil, istoricul trebuie să rămână factual.\nLeg imediat problema de securitate: dacă sunt mai mulți utilizatori, autentificarea nu ajunge.\nPregătesc tranziția spre fluxul aplicației."}
+{"kind":"slide","id":"sl/zit9xa","slide":3,"title":"Platformă web pentru antrenamente de forță","textShapes":20}
+{"kind":"textbox","id":"sh/h4byhgn2","slide":3,"text":"Platformă web pentru antrenamente de forță","textPreview":"Platformă web pentru antrenamente de forță","textChars":42,"textLines":1,"bbox":[52,32,640,28]}
+{"kind":"textbox","id":"sh/adsji5sn","slide":3,"text":"Fluxul principal transformă planificarea într-un istoric analizabil","textPreview":"Fluxul principal transformă planificarea într-un istoric analizabil","textChars":67,"textLines":1,"bbox":[52,74,1080,112]}
+{"kind":"shape","id":"sh/3ylc7u54","slide":3,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/s72x4nap","slide":3,"bbox":[62,268,150,104]}
+{"kind":"textbox","id":"sh/lszqtcj6","slide":3,"text":"Resurse","textPreview":"Resurse","textChars":7,"textLines":1,"bbox":[76,280,122,28]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":3,"text":"exerciții\nrutine\nsăli\nechipamente","textPreview":"exerciții | rutine | săli | echipamente","textChars":33,"textLines":4,"bbox":[76,316,122,48]}
+{"kind":"shape","id":"sh/3m94fu18","slide":3,"bbox":[255,268,150,104]}
+{"kind":"textbox","id":"sh/s36hcrmh","slide":3,"text":"Template","textPreview":"Template","textChars":8,"textLines":1,"bbox":[269,280,122,28]}
+{"kind":"textbox","id":"sh/hoza1gvy","slide":3,"text":"program pe zile\nexerciții planificate\nrutine START/END","textPreview":"program pe zile | exerciții planificate | rutine START/END","textChars":54,"textLines":3,"bbox":[269,316,122,48]}
+{"kind":"shape","id":"sh/58z25kb6","slide":3,"bbox":[448,268,150,104]}
+{"kind":"textbox","id":"sh/gn29gr2p","slide":3,"text":"Sesiune live","textPreview":"Sesiune live","textChars":12,"textLines":1,"bbox":[462,280,122,28]}
+{"kind":"textbox","id":"sh/n29gr2p8","slide":3,"text":"start workout\nsnapshot-uri\nextra exercises","textPreview":"start workout | snapshot-uri | extra exercises","textChars":42,"textLines":3,"bbox":[462,316,122,48]}
+{"kind":"shape","id":"sh/yhgn29gr","slide":3,"bbox":[641,268,150,104]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":3,"text":"Seturi","textPreview":"Seturi","textChars":6,"textLines":1,"bbox":[655,280,122,28]}
+{"kind":"textbox","id":"sh/gbq1oryt","slide":3,"text":"greutate\nrepetări\nRPE\nechipament","textPreview":"greutate | repetări | RPE | echipament","textChars":32,"textLines":4,"bbox":[655,316,122,48]}
+{"kind":"shape","id":"sh/nuxc3ylc","slide":3,"bbox":[834,268,150,104]}
+{"kind":"textbox","id":"sh/y90je9cv","slide":3,"text":"Istoric","textPreview":"Istoric","textChars":7,"textLines":1,"bbox":[848,280,122,28]}
+{"kind":"textbox","id":"sh/5sneloj2","slide":3,"text":"sesiuni\nsummary\nnotes","textPreview":"sesiuni | summary | notes","textChars":21,"textLines":3,"bbox":[848,316,122,48]}
+{"kind":"shape","id":"sh/cbulwval","slide":3,"bbox":[1027,268,150,104]}
+{"kind":"textbox","id":"sh/8nqxs72x","slide":3,"text":"Analiză","textPreview":"Analiză","textChars":7,"textLines":1,"bbox":[1041,280,122,28]}
+{"kind":"textbox","id":"sh/18jqh0fe","slide":3,"text":"analytics\nsearch\ncoach view","textPreview":"analytics | search | coach view","textChars":27,"textLines":3,"bbox":[1041,316,122,48]}
+{"kind":"shape","id":"sh/qh0fepkz","slide":3,"bbox":[212,320,43,0]}
+{"kind":"shape","id":"sh/j2t83itg","slide":3,"bbox":[405,320,43,0]}
+{"kind":"shape","id":"sh/8bat47y1","slide":3,"bbox":[598,320,43,0]}
+{"kind":"shape","id":"sh/1w7mp0bi","slide":3,"bbox":[791,320,43,0]}
+{"kind":"shape","id":"sh/q5o7qpg3","slide":3,"bbox":[984,320,43,0]}
+{"kind":"shape","id":"sh/jqh0fepk","slide":3,"bbox":[105,465,460,96]}
+{"kind":"textbox","id":"sh/c3ylc7u5","slide":3,"text":"Ce vede utilizatorul","textPreview":"Ce vede utilizatorul","textChars":20,"textLines":1,"bbox":[123,481,424,34]}
+{"kind":"textbox","id":"sh/1kre1w7m","slide":3,"text":"Își construiește programul, pornește un antrenament, loghează seturi și apoi vede istoricul, graficele și căutarea.","textPreview":"Își construiește programul, pornește un antrenament, loghează seturi și apoi vede istoricul, graficele și căutarea.","textChars":115,"textLines":1,"bbox":[125,527,420,20]}
+{"kind":"shape","id":"sh/re1w7mp0","slide":3,"bbox":[665,465,460,96]}
+{"kind":"textbox","id":"sh/2t83itgf","slide":3,"text":"Ce face sistemul","textPreview":"Ce face sistemul","textChars":16,"textLines":1,"bbox":[683,481,424,34]}
+{"kind":"textbox","id":"sh/9knih4by","slide":3,"text":"Separă planul editabil de execuția istorică și aplică verificări de acces la fiecare pas.","textPreview":"Separă planul editabil de execuția istorică și aplică verificări de acces la fiecare pas.","textChars":89,"textLines":1,"bbox":[685,527,420,20]}
+{"kind":"textbox","id":"sh/kzupwb2h","slide":3,"text":"Licență - prezentare proiect","textPreview":"Licență - prezentare proiect","textChars":28,"textLines":1,"bbox":[52,676,320,24]}
+{"kind":"textbox","id":"sh/rqd4vmtw","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1190,676,40,24]}
+{"kind":"notes","id":"nt/zit9xa","slide":3,"text":"Acesta este slide-ul pe care îl folosesc ca hartă mentală pentru toată aplicația.\nÎl explic ca utilizator: creez resurse, template, sesiune, seturi, apoi istoric.\nApoi îl explic tehnic: sistemul separă datele editabile de cele istorice."}
+{"kind":"slide","id":"sl/o0by7e","slide":4,"title":"Platformă web pentru antrenamente de forță","textShapes":16}
+{"kind":"textbox","id":"sh/oza1gvy9","slide":4,"text":"Platformă web pentru antrenamente de forță","textPreview":"Platformă web pentru antrenamente de forță","textChars":42,"textLines":1,"bbox":[52,32,640,28]}
+{"kind":"textbox","id":"sh/zed8v6ps","slide":4,"text":"Arhitectura păstrează PostgreSQL ca sursă de adevăr și OpenSearch ca proiecție","textPreview":"Arhitectura păstrează PostgreSQL ca sursă de adevăr și OpenSearch ca proiecție","textChars":78,"textLines":1,"bbox":[52,74,1080,112]}
+{"kind":"shape","id":"sh/6xkf6dcb","slide":4,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/hwfyxobm","slide":4,"bbox":[74,230,190,110]}
+{"kind":"textbox","id":"sh/obm58z25","slide":4,"text":"React + TypeScript","textPreview":"React + TypeScript","textChars":18,"textLines":1,"bbox":[88,242,162,28]}
+{"kind":"textbox","id":"sh/zqtcj6to","slide":4,"text":"Vite SPA\nfeature modules\ntheme + auth provider","textPreview":"Vite SPA | feature modules | theme + auth provider","textChars":46,"textLines":3,"bbox":[88,278,162,54]}
+{"kind":"shape","id":"sh/65wjudg7","slide":4,"bbox":[332,230,190,110]}
+{"kind":"textbox","id":"sh/h0fepkzu","slide":4,"text":"Spring Boot API","textPreview":"Spring Boot API","textChars":15,"textLines":1,"bbox":[346,242,162,28]}
+{"kind":"textbox","id":"sh/sfil0rqd","slide":4,"text":"controllers\nservices\nrepositories\nDTO-uri","textPreview":"controllers | services | repositories | DTO-uri","textChars":41,"textLines":4,"bbox":[346,278,162,54]}
+{"kind":"shape","id":"sh/qtcj6tov","slide":4,"bbox":[590,188,210,112]}
+{"kind":"textbox","id":"sh/je9cvixc","slide":4,"text":"PostgreSQL 16","textPreview":"PostgreSQL 16","textChars":13,"textLines":1,"bbox":[604,200,182,28]}
+{"kind":"textbox","id":"sh/8z25kb6x","slide":4,"text":"Flyway migrations\nFK, CHECK, indexes\nsource of truth","textPreview":"Flyway migrations | FK, CHECK, indexes | source of truth","textChars":52,"textLines":3,"bbox":[604,236,182,56]}
+{"kind":"shape","id":"sh/1gvy90je","slide":4,"bbox":[590,355,210,112]}
+{"kind":"textbox","id":"sh/q1orytsv","slide":4,"text":"OpenSearch 2.13","textPreview":"OpenSearch 2.13","textChars":15,"textLines":1,"bbox":[604,367,182,28]}
+{"kind":"textbox","id":"sh/fmlkjm1c","slide":4,"text":"full-text\nfuzzy\nfacets\nhighlights","textPreview":"full-text | fuzzy | facets | highlights","textChars":33,"textLines":4,"bbox":[604,403,182,56]}
+{"kind":"shape","id":"sh/87ed8bat","slide":4,"bbox":[868,270,220,110]}
+{"kind":"textbox","id":"sh/xs72x4na","slide":4,"text":"Testcontainers","textPreview":"Testcontainers","textChars":14,"textLines":1,"bbox":[882,282,192,28]}
+{"kind":"textbox","id":"sh/qd4vmtwr","slide":4,"text":"PostgreSQL real\nOpenSearch real\nfără H2","textPreview":"PostgreSQL real | OpenSearch real | fără H2","textChars":39,"textLines":3,"bbox":[882,318,192,54]}
+{"kind":"shape","id":"sh/fyxobm58","slide":4,"bbox":[264,285,68,0]}
+{"kind":"shape","id":"sh/7y1kre1w","slide":4,"bbox":[522,244,68,41]}
+{"kind":"shape","id":"sh/ed8v6psf","slide":4,"bbox":[522,285,68,126]}
+{"kind":"shape","id":"sh/p4r65wju","slide":4,"bbox":[522,285,346,40]}
+{"kind":"shape","id":"sh/wjudg7ad","slide":4,"bbox":[91,510,1015,72]}
+{"kind":"textbox","id":"sh/7qpg3ex0","slide":4,"text":"Ideea de arhitectură","textPreview":"Ideea de arhitectură","textChars":20,"textLines":1,"bbox":[109,526,979,34]}
+{"kind":"textbox","id":"sh/i5sneloj","slide":4,"text":"Backend-ul scrie și validează datele în PostgreSQL. OpenSearch este o copie derivată pentru căutare, care poate fi reconstruită din PostgreSQL.","textPreview":"Backend-ul scrie și validează datele în PostgreSQL. OpenSearch este o copie derivată pentru căutare, care poate fi reconstruită din Postg...","textChars":143,"textLines":1,"bbox":[111,572,975,-4]}
+{"kind":"textbox","id":"sh/pwb2hwfy","slide":4,"text":"Licență - prezentare proiect","textPreview":"Licență - prezentare proiect","textChars":28,"textLines":1,"bbox":[52,676,320,24]}
+{"kind":"textbox","id":"sh/0bi9s36h","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1190,676,40,24]}
+{"kind":"notes","id":"nt/o0by7e","slide":4,"text":"Spun clar: PostgreSQL este autoritativ. OpenSearch nu înlocuiește baza de date.\nMenționez separarea pe module din backend și frontend.\nAdaug că testele folosesc containere reale, nu H2."}
+{"kind":"slide","id":"sl/91op1g","slide":5,"title":"Platformă web pentru antrenamente de forță","textShapes":16}
+{"kind":"textbox","id":"sh/9cvixcze","slide":5,"text":"Platformă web pentru antrenamente de forță","textPreview":"Platformă web pentru antrenamente de forță","textChars":42,"textLines":1,"bbox":[52,32,640,28]}
+{"kind":"textbox","id":"sh/ylc7u54z","slide":5,"text":"Snapshot-urile sunt copii istorice ale câmpurilor care nu trebuie să se schimbe","textPreview":"Snapshot-urile sunt copii istorice ale câmpurilor care nu trebuie să se schimbe","textChars":79,"textLines":1,"bbox":[52,74,1080,112]}
+{"kind":"shape","id":"sh/r65wjudg","slide":5,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/g3ex0nux","slide":5,"bbox":[80,220,260,140]}
+{"kind":"textbox","id":"sh/5o7qpg3e","slide":5,"text":"Tabele de planificare","textPreview":"Tabele de planificare","textChars":21,"textLines":1,"bbox":[94,232,232,28]}
+{"kind":"textbox","id":"sh/yxobm58z","slide":5,"text":"workout_templates\ntemplate_days\ntemplate_day_exercises\nroutines, gyms, equipment","textPreview":"workout_templates | template_days | template_day_exercises | routines, gyms, equipment","textChars":80,"textLines":4,"bbox":[94,268,232,84]}
+{"kind":"shape","id":"sh/nih4byhg","slide":5,"bbox":[432,220,210,140]}
+{"kind":"textbox","id":"sh/g7adsji5","slide":5,"text":"POST /workouts/start","textPreview":"POST /workouts/start","textChars":20,"textLines":1,"bbox":[446,232,182,28]}
+{"kind":"textbox","id":"sh/9s36hcrm","slide":5,"text":"verifică owner\nverifică sala\nziua nu e goală\nun singur IN_PROGRESS","textPreview":"verifică owner | verifică sala | ziua nu e goală | un singur IN_PROGRESS","textChars":66,"textLines":4,"bbox":[446,268,182,84]}
+{"kind":"shape","id":"sh/d8v6psfi","slide":5,"bbox":[735,220,310,140]}
+{"kind":"textbox","id":"sh/onyd0z61","slide":5,"text":"Tabele istorice","textPreview":"Tabele istorice","textChars":15,"textLines":1,"bbox":[749,232,282,28]}
+{"kind":"textbox","id":"sh/z25kb6xk","slide":5,"text":"workout_sessions\nsession_exercises\nsession_routines\nworkout_sets","textPreview":"workout_sessions | session_exercises | session_routines | workout_sets","textChars":64,"textLines":4,"bbox":[749,268,282,84]}
+{"kind":"shape","id":"sh/6hcrmhk3","slide":5,"bbox":[340,290,92,0]}
+{"kind":"shape","id":"sh/dg7adsji","slide":5,"bbox":[642,290,93,0]}
+{"kind":"shape","id":"sh/ovahoza1","slide":5,"bbox":[93,425,330,112]}
+{"kind":"textbox","id":"sh/vahoza1g","slide":5,"text":"Exemplu","textPreview":"Exemplu","textChars":7,"textLines":1,"bbox":[111,441,294,34]}
+{"kind":"textbox","id":"sh/6tovahoz","slide":5,"text":"exercises.name = Bench Press\n\nse copiază în\n\nsession_exercises.exercise_name_snapshot = Bench Press","textPreview":"exercises.name = Bench Press |  | se copiază în |  | session_exercises.exercise_name_snapshot = Bench Press","textChars":99,"textLines":5,"bbox":[113,487,290,36]}
+{"kind":"shape","id":"sh/dsji5sne","slide":5,"bbox":[474,425,330,112]}
+{"kind":"textbox","id":"sh/o7qpg3ex","slide":5,"text":"De ce nu e doar FK","textPreview":"De ce nu e doar FK","textChars":18,"textLines":1,"bbox":[492,441,294,34]}
+{"kind":"textbox","id":"sh/kjm1cfa9","slide":5,"text":"original_exercise_id poate indica exercițiul curent, dar snapshot-ul păstrează numele de la momentul sesiunii.","textPreview":"original_exercise_id poate indica exercițiul curent, dar snapshot-ul păstrează numele de la momentul sesiunii.","textChars":110,"textLines":1,"bbox":[494,487,290,36]}
+{"kind":"shape","id":"sh/94fu18jq","slide":5,"bbox":[855,425,330,112]}
+{"kind":"textbox","id":"sh/2hwfyxob","slide":5,"text":"Regula de date","textPreview":"Regula de date","textChars":14,"textLines":1,"bbox":[873,441,294,34]}
+{"kind":"textbox","id":"sh/r2p8nqxs","slide":5,"text":"workout_sets -> session_exercises -> workout_sessions\n\nnu\n\nworkout_sets -> template_day_exercises","textPreview":"workout_sets -> session_exercises -> workout_sessions |  | nu |  | workout_sets -> template_day_exercises","textChars":97,"textLines":5,"bbox":[875,487,290,36]}
+{"kind":"textbox","id":"sh/gvy90je9","slide":5,"text":"Licență - prezentare proiect","textPreview":"Licență - prezentare proiect","textChars":28,"textLines":1,"bbox":[52,676,320,24]}
+{"kind":"textbox","id":"sh/9gr2p8nq","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1190,676,40,24]}
+{"kind":"notes","id":"nt/91op1g","slide":5,"text":"Aici explic foarte simplu că snapshot în proiect înseamnă câmp copiat, nu backup.\nDau exemplul cu Bench Press redenumit după antrenament.\nInsist pe lanțul corect workout_sets -> session_exercises -> workout_sessions."}
+{"kind":"slide","id":"sl/sn2z5a","slide":6,"title":"Platformă web pentru antrenamente de forță","textShapes":16}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":6,"text":"Platformă web pentru antrenamente de forță","textPreview":"Platformă web pentru antrenamente de forță","textChars":42,"textLines":1,"bbox":[52,32,640,28]}
+{"kind":"textbox","id":"sh/0rqd4vmt","slide":6,"text":"Securitatea nu se oprește la login: fiecare resursă este verificată","textPreview":"Securitatea nu se oprește la login: fiecare resursă este verificată","textChars":67,"textLines":1,"bbox":[52,74,1080,112]}
+{"kind":"shape","id":"sh/tcj6tova","slide":6,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/idonyd0z","slide":6,"bbox":[80,220,200,130]}
+{"kind":"textbox","id":"sh/byhgn29g","slide":6,"text":"Autentificare","textPreview":"Autentificare","textChars":13,"textLines":1,"bbox":[94,232,172,28]}
+{"kind":"textbox","id":"sh/0je9cvix","slide":6,"text":"JWT access token\nrefresh token opac\nparole BCrypt","textPreview":"JWT access token | refresh token opac | parole BCrypt","textChars":49,"textLines":3,"bbox":[94,268,172,74]}
+{"kind":"shape","id":"sh/t47y1kre","slide":6,"bbox":[350,220,210,130]}
+{"kind":"textbox","id":"sh/i9s36hcr","slide":6,"text":"Refresh sigur","textPreview":"Refresh sigur","textChars":13,"textLines":1,"bbox":[364,232,182,28]}
+{"kind":"textbox","id":"sh/bulwval8","slide":6,"text":"cookie HttpOnly\nSameSite=Strict\nhash SHA-256 în DB\nrotație la refresh","textPreview":"cookie HttpOnly | SameSite=Strict | hash SHA-256 în DB | rotație la refresh","textChars":69,"textLines":4,"bbox":[364,268,182,74]}
+{"kind":"shape","id":"sh/j6tovaho","slide":6,"bbox":[630,220,200,130]}
+{"kind":"textbox","id":"sh/ulwval87","slide":6,"text":"RBAC","textPreview":"RBAC","textChars":4,"textLines":1,"bbox":[644,232,172,28]}
+{"kind":"textbox","id":"sh/1cfa9w3m","slide":6,"text":"/api/admin/** -> ADMIN\n/api/coach/** -> COACH\nrestul /api/** autenticat","textPreview":"/api/admin/** -> ADMIN | /api/coach/** -> COACH | restul /api/** autenticat","textChars":71,"textLines":3,"bbox":[644,268,172,74]}
+{"kind":"shape","id":"sh/crmhk3q5","slide":6,"bbox":[900,220,210,130]}
+{"kind":"textbox","id":"sh/ji5snelo","slide":6,"text":"Ownership/ReBAC","textPreview":"Ownership/ReBAC","textChars":15,"textLines":1,"bbox":[914,232,182,28]}
+{"kind":"textbox","id":"sh/uxc3ylc7","slide":6,"text":"userId din JWT\n404 pentru resursa altuia\ncoach doar cu relație ACTIVE","textPreview":"userId din JWT | 404 pentru resursa altuia | coach doar cu relație ACTIVE","textChars":69,"textLines":3,"bbox":[914,268,182,74]}
+{"kind":"shape","id":"sh/1kre1w7m","slide":6,"bbox":[280,285,70,0]}
+{"kind":"shape","id":"sh/c3ylc7u5","slide":6,"bbox":[560,285,70,0]}
+{"kind":"shape","id":"sh/jqh0fepk","slide":6,"bbox":[830,285,70,0]}
+{"kind":"shape","id":"sh/q5o7qpg3","slide":6,"bbox":[118,425,440,110]}
+{"kind":"textbox","id":"sh/itgfmlkj","slide":6,"text":"Anti-IDOR","textPreview":"Anti-IDOR","textChars":9,"textLines":1,"bbox":[136,441,404,34]}
+{"kind":"textbox","id":"sh/7ed8bat4","slide":6,"text":"Frontend-ul nu decide userId-ul resursei. Backend-ul îl ia din JWT și încarcă resursele prin query-uri owner-scoped sau verificări pe lanțul de proprietate.","textPreview":"Frontend-ul nu decide userId-ul resursei. Backend-ul îl ia din JWT și încarcă resursele prin query-uri owner-scoped sau verificări pe lan...","textChars":156,"textLines":1,"bbox":[138,487,400,34]}
+{"kind":"shape","id":"sh/0z61032l","slide":6,"bbox":[690,425,440,110]}
+{"kind":"textbox","id":"sh/pkzupwb2","slide":6,"text":"RBAC vs ReBAC","textPreview":"RBAC vs ReBAC","textChars":13,"textLines":1,"bbox":[708,441,404,34]}
+{"kind":"textbox","id":"sh/ih4byhgn","slide":6,"text":"Rolul COACH deschide zona de coaching, dar accesul real la datele clientului cere relație coach-client ACTIVE.","textPreview":"Rolul COACH deschide zona de coaching, dar accesul real la datele clientului cere relație coach-client ACTIVE.","textChars":110,"textLines":1,"bbox":[710,487,400,34]}
+{"kind":"textbox","id":"sh/72x4nap4","slide":6,"text":"Licență - prezentare proiect","textPreview":"Licență - prezentare proiect","textChars":28,"textLines":1,"bbox":[52,676,320,24]}
+{"kind":"textbox","id":"sh/0nuxc3yl","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1190,676,40,24]}
+{"kind":"notes","id":"nt/sn2z5a","slide":6,"text":"Spun diferența dintre autentificare și autorizare.\nExplic de ce refresh token-ul e cookie HttpOnly și de ce în DB e doar hash-ul.\nPentru IDOR: un utilizator nu poate schimba un ID în URL ca să vadă datele altuia."}
+{"kind":"slide","id":"sl/qob23g","slide":7,"title":"Platformă web pentru antrenamente de forță","textShapes":11}
+{"kind":"textbox","id":"sh/gn29gr2p","slide":7,"text":"Platformă web pentru antrenamente de forță","textPreview":"Platformă web pentru antrenamente de forță","textChars":42,"textLines":1,"bbox":[52,32,640,28]}
+{"kind":"textbox","id":"sh/n29gr2p8","slide":7,"text":"Modulele avansate folosesc aceleași reguli de corectitudine","textPreview":"Modulele avansate folosesc aceleași reguli de corectitudine","textChars":59,"textLines":1,"bbox":[52,74,1080,112]}
+{"kind":"shape","id":"sh/yhgn29gr","slide":7,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/5wjudg7a","slide":7,"bbox":[70,220,330,220]}
+{"kind":"textbox","id":"sh/gbq1oryt","slide":7,"text":"Marketplace","textPreview":"Marketplace","textChars":11,"textLines":1,"bbox":[88,236,294,34]}
+{"kind":"textbox","id":"sh/nuxc3ylc","slide":7,"text":"• template public doar dacă nu este gol\n• vote/save/use cu contoare în template_stats\n• use creează o copie privată independentă\n• referințele custom ale altui user nu se păstrează","textPreview":"• template public doar dacă nu este gol | • vote/save/use cu contoare în template_stats | • use creează o copie privată independentă | • ...","textChars":180,"textLines":4,"bbox":[90,282,290,144]}
+{"kind":"shape","id":"sh/y90je9cv","slide":7,"bbox":[475,220,330,220]}
+{"kind":"textbox","id":"sh/5sneloj2","slide":7,"text":"Analizator","textPreview":"Analizator","textChars":10,"textLines":1,"bbox":[493,236,294,34]}
+{"kind":"textbox","id":"sh/cbulwval","slide":7,"text":"• determinist, rule-based\n• scor 0-100 și categorii explicabile\n• volume, frequency, balance, session design, rest\n• nu este AI și nu oferă sfat medical","textPreview":"• determinist, rule-based | • scor 0-100 și categorii explicabile | • volume, frequency, balance, session design, rest | • nu este AI și ...","textChars":152,"textLines":4,"bbox":[495,282,290,144]}
+{"kind":"shape","id":"sh/e9cvixcz","slide":7,"bbox":[880,220,300,220]}
+{"kind":"textbox","id":"sh/3q5o7qpg","slide":7,"text":"Coaching","textPreview":"Coaching","textChars":8,"textLines":1,"bbox":[898,236,264,34]}
+{"kind":"textbox","id":"sh/wb2hwfyx","slide":7,"text":"• invitații coach-client\n• relație PENDING/ACTIVE/REVOKED/REJECTED\n• coach vede doar clienții activi\n• history, analytics, sessions și search scoped","textPreview":"• invitații coach-client | • relație PENDING/ACTIVE/REVOKED/REJECTED | • coach vede doar clienții activi | • history, analytics, sessions...","textChars":148,"textLines":4,"bbox":[900,282,260,144]}
+{"kind":"textbox","id":"sh/lwval87e","slide":7,"text":"Aceste module nu sunt insule separate: toate respectă owner checks, date istorice stabile și sursa de adevăr PostgreSQL.","textPreview":"Aceste module nu sunt insule separate: toate respectă owner checks, date istorice stabile și sursa de adevăr PostgreSQL.","textChars":120,"textLines":1,"bbox":[110,515,1010,60]}
+{"kind":"textbox","id":"sh/ex0nuxc3","slide":7,"text":"Licență - prezentare proiect","textPreview":"Licență - prezentare proiect","textChars":28,"textLines":1,"bbox":[52,676,320,24]}
+{"kind":"textbox","id":"sh/3itgfmlk","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1190,676,40,24]}
+{"kind":"notes","id":"nt/qob23g","slide":7,"text":"Aici arăt că proiectul este mai mult decât OpenSearch.\nMarketplace-ul demonstrează deep copy și independența copiei.\nAnalizatorul e explicabil, iar coaching-ul demonstrează ReBAC."}
+{"kind":"slide","id":"sl/vgt5s2","slide":8,"title":"Platformă web pentru antrenamente de forță","textShapes":20}
+{"kind":"textbox","id":"sh/l87ed8ba","slide":8,"text":"Platformă web pentru antrenamente de forță","textPreview":"Platformă web pentru antrenamente de forță","textChars":42,"textLines":1,"bbox":[52,32,640,28]}
+{"kind":"textbox","id":"sh/ahoza1gv","slide":8,"text":"OpenSearch este justificat prin căutare fuzzy și scalare măsurată","textPreview":"OpenSearch este justificat prin căutare fuzzy și scalare măsurată","textChars":65,"textLines":1,"bbox":[52,74,1080,112]}
+{"kind":"shape","id":"sh/32lszqtc","slide":8,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/szqtcj6t","slide":8,"bbox":[82,220,230,130]}
+{"kind":"textbox","id":"sh/lkjm1cfa","slide":8,"text":"PostgreSQL","textPreview":"PostgreSQL","textChars":10,"textLines":1,"bbox":[96,232,202,28]}
+{"kind":"textbox","id":"sh/at47y1kr","slide":8,"text":"source of truth\ntranzacții și integritate\nSQL browse/list fallback","textPreview":"source of truth | tranzacții și integritate | SQL browse/list fallback","textChars":66,"textLines":3,"bbox":[96,268,202,74]}
+{"kind":"shape","id":"sh/3ex0nuxc","slide":8,"bbox":[380,220,230,130]}
+{"kind":"textbox","id":"sh/w3m94fu1","slide":8,"text":"AFTER_COMMIT events","textPreview":"AFTER_COMMIT events","textChars":19,"textLines":1,"bbox":[394,232,202,28]}
+{"kind":"textbox","id":"sh/loj2t83i","slide":8,"text":"indexarea nu vede rollback-uri\nfailure log + rebuild","textPreview":"indexarea nu vede rollback-uri | failure log + rebuild","textChars":52,"textLines":2,"bbox":[394,268,202,74]}
+{"kind":"shape","id":"sh/9knih4by","slide":8,"bbox":[678,220,230,130]}
+{"kind":"textbox","id":"sh/kzupwb2h","slide":8,"text":"OpenSearch","textPreview":"OpenSearch","textChars":10,"textLines":1,"bbox":[692,232,202,28]}
+{"kind":"textbox","id":"sh/re1w7mp0","slide":8,"text":"templates alias\nworkout_sessions alias\nfuzzy, facets, highlight","textPreview":"templates alias | workout_sessions alias | fuzzy, facets, highlight","textChars":63,"textLines":3,"bbox":[692,268,202,74]}
+{"kind":"shape","id":"sh/2t83itgf","slide":8,"bbox":[976,220,180,130]}
+{"kind":"textbox","id":"sh/9w3m94fu","slide":8,"text":"Revalidare","textPreview":"Revalidare","textChars":10,"textLines":1,"bbox":[990,232,152,28]}
+{"kind":"textbox","id":"sh/kb6xkf6d","slide":8,"text":"IDs verificate din nou în PostgreSQL","textPreview":"IDs verificate din nou în PostgreSQL","textChars":36,"textLines":1,"bbox":[990,268,152,74]}
+{"kind":"shape","id":"sh/rqd4vmtw","slide":8,"bbox":[312,285,68,0]}
+{"kind":"shape","id":"sh/25kb6xkf","slide":8,"bbox":[610,285,68,0]}
+{"kind":"shape","id":"sh/94fu18jq","slide":8,"bbox":[908,285,68,0]}
+{"kind":"shape","id":"sh/kjm1cfa9","slide":8,"bbox":[96,405,235,150]}
+{"kind":"textbox","id":"sh/wfyxobm5","slide":8,"text":"15.8s","textPreview":"15.8s","textChars":5,"textLines":1,"bbox":[114,425,199,60]}
+{"kind":"textbox","id":"sh/l0rqd4vm","slide":8,"text":"PostgreSQL fuzzy p50 la 2M documente","textPreview":"PostgreSQL fuzzy p50 la 2M documente","textChars":36,"textLines":1,"bbox":[116,493,195,48]}
+{"kind":"shape","id":"sh/ed8bat47","slide":8,"bbox":[378,405,235,150]}
+{"kind":"textbox","id":"sh/7u54zido","slide":8,"text":"3.9ms","textPreview":"3.9ms","textChars":5,"textLines":1,"bbox":[396,425,199,60]}
+{"kind":"textbox","id":"sh/wra5gbq1","slide":8,"text":"OpenSearch fuzzy p50 la 2M documente","textPreview":"OpenSearch fuzzy p50 la 2M documente","textChars":36,"textLines":1,"bbox":[398,493,195,48]}
+{"kind":"shape","id":"sh/lc7u54zi","slide":8,"bbox":[660,405,235,150]}
+{"kind":"textbox","id":"sh/eloj2t83","slide":8,"text":"2x","textPreview":"2x","textChars":2,"textLines":1,"bbox":[678,425,199,60]}
+{"kind":"textbox","id":"sh/36hcrmhk","slide":8,"text":"OpenSearch a construit indexul mai repede la 2M","textPreview":"OpenSearch a construit indexul mai repede la 2M","textChars":47,"textLines":1,"bbox":[680,493,195,48]}
+{"kind":"shape","id":"sh/wval87ed","slide":8,"bbox":[942,405,235,150]}
+{"kind":"textbox","id":"sh/pg3ex0nu","slide":8,"text":"3.6x","textPreview":"3.6x","textChars":4,"textLines":1,"bbox":[960,425,199,60]}
+{"kind":"textbox","id":"sh/bm58z25k","slide":8,"text":"index OpenSearch mai mic pe disc la 2M","textPreview":"index OpenSearch mai mic pe disc la 2M","textChars":38,"textLines":1,"bbox":[962,493,195,48]}
+{"kind":"textbox","id":"sh/m1cfa9w3","slide":8,"text":"Licență - prezentare proiect","textPreview":"Licență - prezentare proiect","textChars":28,"textLines":1,"bbox":[52,676,320,24]}
+{"kind":"textbox","id":"sh/tsvu9kni","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1190,676,40,24]}
+{"kind":"notes","id":"nt/vgt5s2","slide":8,"text":"Aici spun că OpenSearch nu a fost introdus ca ornament.\nBenchmark-ul compară cu PostgreSQL bine configurat, nu cu ILIKE.\nCea mai puternică justificare este fuzzy search: benhc -> bench la latență interactivă."}
+{"kind":"slide","id":"sl/axd6i8","slide":9,"title":"Platformă web pentru antrenamente de forță","textShapes":16}
+{"kind":"textbox","id":"sh/kb6xkf6d","slide":9,"text":"Platformă web pentru antrenamente de forță","textPreview":"Platformă web pentru antrenamente de forță","textChars":42,"textLines":1,"bbox":[52,32,640,28]}
+{"kind":"textbox","id":"sh/rqd4vmtw","slide":9,"text":"Corectitudinea este împinsă în baza de date și verificată cu teste reale","textPreview":"Corectitudinea este împinsă în baza de date și verificată cu teste reale","textChars":72,"textLines":1,"bbox":[52,74,1080,112]}
+{"kind":"shape","id":"sh/25kb6xkf","slide":9,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/9knih4by","slide":9,"bbox":[82,230,250,150]}
+{"kind":"textbox","id":"sh/kzupwb2h","slide":9,"text":"28","textPreview":"28","textChars":2,"textLines":1,"bbox":[100,250,214,60]}
+{"kind":"textbox","id":"sh/re1w7mp0","slide":9,"text":"tabele în schema Flyway V1","textPreview":"tabele în schema Flyway V1","textChars":26,"textLines":1,"bbox":[102,318,210,48]}
+{"kind":"shape","id":"sh/2t83itgf","slide":9,"bbox":[372,230,250,150]}
+{"kind":"textbox","id":"sh/9gr2p8nq","slide":9,"text":"128","textPreview":"128","textChars":3,"textLines":1,"bbox":[390,250,214,60]}
+{"kind":"textbox","id":"sh/gvy90je9","slide":9,"text":"teste în backend/src/test","textPreview":"teste în backend/src/test","textChars":25,"textLines":1,"bbox":[392,318,210,48]}
+{"kind":"shape","id":"sh/yd0z6103","slide":9,"bbox":[662,230,250,150]}
+{"kind":"textbox","id":"sh/rytsvu9k","slide":9,"text":"2M","textPreview":"2M","textChars":2,"textLines":1,"bbox":[680,250,214,60]}
+{"kind":"textbox","id":"sh/gfmlkjm1","slide":9,"text":"documente în benchmark-ul de căutare","textPreview":"documente în benchmark-ul de căutare","textChars":36,"textLines":1,"bbox":[682,318,210,48]}
+{"kind":"shape","id":"sh/90je9cvi","slide":9,"bbox":[952,230,250,150]}
+{"kind":"textbox","id":"sh/y1kre1w7","slide":9,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[970,250,214,60]}
+{"kind":"textbox","id":"sh/rmhk3q5o","slide":9,"text":"workout activ permis per utilizator","textPreview":"workout activ permis per utilizator","textChars":35,"textLines":1,"bbox":[972,318,210,48]}
+{"kind":"shape","id":"sh/g7adsji5","slide":9,"bbox":[100,450,480,94]}
+{"kind":"textbox","id":"sh/9s36hcrm","slide":9,"text":"Constrângeri care contează","textPreview":"Constrângeri care contează","textChars":26,"textLines":1,"bbox":[118,466,444,34]}
+{"kind":"textbox","id":"sh/yxobm58z","slide":9,"text":"FK-uri, CHECK-uri, indecși unici parțiali, soft delete și UNIQUE pentru ordinea seturilor/exercițiilor.","textPreview":"FK-uri, CHECK-uri, indecși unici parțiali, soft delete și UNIQUE pentru ordinea seturilor/exercițiilor.","textChars":103,"textLines":1,"bbox":[120,512,440,18]}
+{"kind":"shape","id":"sh/nih4byhg","slide":9,"bbox":[700,450,480,94]}
+{"kind":"textbox","id":"sh/3m94fu18","slide":9,"text":"Testare pe infrastructură reală","textPreview":"Testare pe infrastructură reală","textChars":31,"textLines":1,"bbox":[718,466,444,34]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":9,"text":"Testcontainers pornește PostgreSQL 16, iar suita de search pornește OpenSearch real. Nu se folosește H2.","textPreview":"Testcontainers pornește PostgreSQL 16, iar suita de search pornește OpenSearch real. Nu se folosește H2.","textChars":104,"textLines":1,"bbox":[720,512,440,18]}
+{"kind":"textbox","id":"sh/lszqtcj6","slide":9,"text":"Licență - prezentare proiect","textPreview":"Licență - prezentare proiect","textChars":28,"textLines":1,"bbox":[52,676,320,24]}
+{"kind":"textbox","id":"sh/s72x4nap","slide":9,"text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1190,676,40,24]}
+{"kind":"notes","id":"nt/axd6i8","slide":9,"text":"Subliniez că nu am lăsat integritatea doar în cod.\nExemplu bun: unique partial index pentru un singur workout IN_PROGRESS per user.\nTestele pornesc servicii reale, deci acoperă comportament apropiat de producție."}
+{"kind":"slide","id":"sl/a3pcih","slide":10,"title":"Platformă web pentru antrenamente de forță","textShapes":11}
+{"kind":"textbox","id":"sh/ih4byhgn","slide":10,"text":"Platformă web pentru antrenamente de forță","textPreview":"Platformă web pentru antrenamente de forță","textChars":42,"textLines":1,"bbox":[52,32,640,28]}
+{"kind":"textbox","id":"sh/p8nqxs72","slide":10,"text":"Contribuția este integrarea coerentă a unui sistem complet, sigur și extensibil","textPreview":"Contribuția este integrarea coerentă a unui sistem complet, sigur și extensibil","textChars":79,"textLines":1,"bbox":[52,74,1080,112]}
+{"kind":"shape","id":"sh/0nuxc3yl","slide":10,"bbox":[52,194,1176,0]}
+{"kind":"shape","id":"sh/7ed8bat4","slide":10,"bbox":[78,220,330,220]}
+{"kind":"textbox","id":"sh/itgfmlkj","slide":10,"text":"Ce am construit","textPreview":"Ce am construit","textChars":15,"textLines":1,"bbox":[96,236,294,34]}
+{"kind":"textbox","id":"sh/pkzupwb2","slide":10,"text":"• aplicație full-stack funcțională\n• planificare, sesiuni, istoric, analytics\n• marketplace, coaching, analizator, search","textPreview":"• aplicație full-stack funcțională | • planificare, sesiuni, istoric, analytics | • marketplace, coaching, analizator, search","textChars":121,"textLines":3,"bbox":[98,282,290,144]}
+{"kind":"shape","id":"sh/0z61032l","slide":10,"bbox":[475,220,330,220]}
+{"kind":"textbox","id":"sh/7qpg3ex0","slide":10,"text":"Ce o face robustă","textPreview":"Ce o face robustă","textChars":17,"textLines":1,"bbox":[493,236,294,34]}
+{"kind":"textbox","id":"sh/i5sneloj","slide":10,"text":"• snapshot-uri pentru istoric stabil\n• JWT, refresh rotation, BCrypt\n• ownership, RBAC și ReBAC\n• PostgreSQL ca sursă de adevăr","textPreview":"• snapshot-uri pentru istoric stabil | • JWT, refresh rotation, BCrypt | • ownership, RBAC și ReBAC | • PostgreSQL ca sursă de adevăr","textChars":127,"textLines":4,"bbox":[495,282,290,144]}
+{"kind":"shape","id":"sh/0nuxc3yl","slide":10,"bbox":[872,220,330,220]}
+{"kind":"textbox","id":"sh/p8nqxs72","slide":10,"text":"Ce demonstrează tehnic","textPreview":"Ce demonstrează tehnic","textChars":22,"textLines":1,"bbox":[890,236,294,34]}
+{"kind":"textbox","id":"sh/ih4byhgn","slide":10,"text":"• OpenSearch ca read model derivat\n• benchmark empiric cu 2M documente\n• teste cu infrastructură reală\n• arhitectură modulară","textPreview":"• OpenSearch ca read model derivat | • benchmark empiric cu 2M documente | • teste cu infrastructură reală | • arhitectură modulară","textChars":125,"textLines":4,"bbox":[892,282,290,144]}
+{"kind":"textbox","id":"sh/72x4nap4","slide":10,"text":"Pe scurt: proiectul rezolvă o problemă de produs reală prin decizii tehnice care păstrează datele corecte, private și căutabile la scară.","textPreview":"Pe scurt: proiectul rezolvă o problemă de produs reală prin decizii tehnice care păstrează datele corecte, private și căutabile la scară.","textChars":137,"textLines":1,"bbox":[110,520,1010,70]}
+{"kind":"textbox","id":"sh/0z61032l","slide":10,"text":"Licență - prezentare proiect","textPreview":"Licență - prezentare proiect","textChars":28,"textLines":1,"bbox":[52,676,320,24]}
+{"kind":"textbox","id":"sh/pkzupwb2","slide":10,"text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1190,676,40,24]}
+{"kind":"notes","id":"nt/a3pcih","slide":10,"text":"Închei revenind la ideea de început: planificare editabilă, istoric stabil.\nApoi comprim contribuția: sistem complet, securitate, snapshot-uri, OpenSearch, teste.\nDacă sunt întrebat ce e cel mai important, răspund integrarea acestor piese într-o platformă coerentă."}

@@ -3,43 +3,54 @@
 
 \section{Concluzii privind realizarea temei}
 
-Am construit o platformă coerentă pentru antrenamente de forță, gândită în jurul integrității datelor:
-planurile devin istoric care nu se mai schimbă, prin instantanee; analizele și feedback-ul ies din
-date reale; iar un marketplace permite ca programele să fie partajate și copiate independent. M-am
-concentrat pe corectitudine (teste pe baze de date reale), pe integritatea datelor (instantanee pe
-două niveluri, ștergere logică, constrângeri în baza de date), pe securitate (autentificare JWT cu
-rotație și acces sigur față de IDOR, RBAC plus ReBAC pentru coaching) și pe explicabilitate (un
-analizor determinist, cu avertismente), nu pe funcționalități de fațadă.
+Lucrarea a pornit de la ideea unei aplicații de fitness, dar rezultatul este mai apropiat de o
+platformă completă pentru planificarea și urmărirea antrenamentelor de forță. Utilizatorul poate
+construi programe, porni sesiuni live, salva istoricul, urmări progresul, publica programe în
+marketplace, primi o analiză structurală a programului și, dacă dorește, poate colabora cu un antrenor.
+Aceste funcționalități sunt legate între ele prin același principiu: datele editabile rămân separate de
+istoricul executat.
 
-Căutarea am tratat-o ca pe o problemă de inginerie a sistemelor: un model de citire separat, eventual
-consistent și reconstruibil, cu o securitate care nu poate fi ocolită din parametrii cererii. Cea mai
-importantă contribuție din punct de vedere științific este \emph{comparația concretă} dintre OpenSearch
-și PostgreSQL, făcută pe un set de date crescut până la două milioane de documente. Ea arată că cele
-două soluții se echivalează în jurul a 10.000 de documente și că diferența mare apare la căutarea cu
-greșeli de tastare, unde varianta din baza de date ajunge la mai multe secunde, în timp ce motorul
-dedicat rămâne aproape constant. Astfel, o decizie de arhitectură luată de obicei „din reflex” devine
-una cu temei și cu cifre.
+Din punct de vedere tehnic, partea cea mai importantă a proiectului este modul în care funcționalitățile
+sunt protejate și păstrate corecte. Instantaneele fac ca o sesiune finalizată să rămână fidelă
+momentului în care a fost executată, chiar dacă ulterior se schimbă exercițiile, echipamentul sau
+programul inițial. Autentificarea cu JWT și token-uri de reîmprospătare rotite, verificările de
+proprietate, protecția față de IDOR și combinația RBAC/ReBAC din modulul de coaching limitează accesul
+la date fără să se bazeze pe identificatori trimiși de frontend. În plus, regulile stabile sunt dublate
+de constrângeri în PostgreSQL, nu doar de verificări în servicii.
 
-\section{Aprecieri personale privind relevanța rezultatelor}
+Aplicația include și componente mai avansate, dar acestea sunt integrate în povestea domeniului.
+Analizorul de programe oferă feedback determinist și explicabil, nu un sfat opac. Marketplace-ul
+folosește copii independente, astfel încât un program public poate fi reutilizat fără să rupă datele
+autorului. Căutarea cu OpenSearch este implementată ca model de citire derivat din PostgreSQL, iar
+rezultatele sunt validate din nou în baza relațională. Benchmark-ul arată că PostgreSQL este suficient
+pentru colecții mici, dar că un motor dedicat devine justificat la volume mari, mai ales pentru
+căutarea tolerantă la greșeli de tastare.
 
-Cred că valoarea lucrării nu stă în numărul de funcționalități, ci în felul în care au fost făcute: o
-singură sursă de adevăr verificată strict, o suită de teste de integrare pe infrastructură reală și o
-măsurătoare clară a unei alegeri de arhitectură. Aceste rezultate se pot folosi și în altă parte:
-ideea instantaneelor pentru păstrarea istoricului, modelul de citire separat și eventual consistent și
-metoda de comparare a soluțiilor de căutare se aplică în multe alte domenii (comerț electronic,
-sisteme de documente, jurnale de activitate).
+\section{Relevanța rezultatelor}
+
+Consider că valoarea lucrării vine din faptul că proiectul nu demonstrează o singură tehnologie izolată,
+ci o arhitectură coerentă. Fiecare zonă importantă are o regulă clară: PostgreSQL este sursa de adevăr,
+Flyway controlează schema, sesiunile finalizate sunt istorice, accesul este mereu verificat în funcție
+de utilizatorul curent, iar indexul de căutare poate fi reconstruit. Acest tip de proiectare este
+important pentru aplicații reale, unde o funcționalitate aparent simplă poate deveni problematică dacă
+istoricul se modifică retroactiv sau dacă un utilizator poate vedea datele altcuiva schimbând un ID.
+
+Rezultatele sunt transferabile și în afara domeniului fitness. Separarea dintre date editabile și
+instantanee istorice apare și în comerț electronic, programări, facturare sau documente. Modelul de
+citire pentru căutare se aplică oricărui sistem în care datele relaționale trebuie găsite rapid prin
+text și filtre. Regulile de acces pentru coaching seamănă cu multe situații în care un utilizator are
+acces delegat, dar limitat, la datele altuia.
 
 \section{Dezvoltări ulterioare}
 
-Arhitectura a fost gândită ca să poată fi extinsă, iar schema bazei de date pregătește deja mai multe
-direcții (tabelele \code{outbox\_events}, \code{template\_analysis\_results},
-\code{coach\_session\_comments} și \code{coach\_template\_assignments} există din prima migrare, dar
-încă nu sunt folosite de cod). Ce aș face în continuare, descris ca proiectare în
-Secțiunea~\ref{sec:directii}: (1) un strat de cache Redis de tip cache-aside pentru marketplace, cu
-invalidare condusă de evenimente și protecție împotriva efectului de turmă; (2) un \emph{outbox
-tranzacțional} pentru indexare, care rezolvă problema dual-write folosind tabela și indexatorul
-idempotent deja existente; (3) o evaluare a calității relevanței (precision@k, nDCG), care completează
-măsurarea de viteză deja făcută; (4) paginare prin chei pentru paginile adânci; (5) limitarea ratei la
-autentificare și trecerea la Argon2id; și (6) observabilitate prin trasare și metrici, partiționarea pe
-timp a istoricului, o coadă de lucru bazată pe \code{SKIP LOCKED} și vederi materializate pentru
-analize. Fiecare dintre acestea extinde, nu schimbă, ce am construit până acum.
+Există mai multe direcții naturale de dezvoltare. Prima este folosirea efectivă a tabelei
+\code{outbox\_events} pentru un outbox tranzacțional, astfel încât indexarea în OpenSearch să fie
+reluabilă și auditabilă după erori. A doua este adăugarea unui cache Redis pentru clasamentele din
+marketplace, cu invalidare bazată pe evenimente și protecție împotriva încărcărilor bruște. A treia
+este evaluarea relevanței căutării, prin metrici precum precision@k sau nDCG, nu doar prin latență.
+
+Alte îmbunătățiri țin de maturizarea operațională: limitarea ratei la autentificare, trecerea la
+Argon2id, metrici și tracing, paginare prin chei pentru istoricul mare, materializarea unor agregări de
+analiză și folosirea tabelelor pregătite pentru comentarii de coach sau rezultate persistente ale
+analizorului. Aceste dezvoltări nu schimbă fundamentul aplicației, ci îl duc mai aproape de un produs
+care poate fi rulat și întreținut pe termen lung.

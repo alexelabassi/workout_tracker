@@ -15,6 +15,9 @@
 
 % Suport pentru diacritice și alte simboluri
 \usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setsansfont{Arial}
+\setmonofont{Consolas}[Scale=MatchLowercase]
 
 % Suport pentru mai multe limbi
 \usepackage{polyglossia}
@@ -32,7 +35,7 @@
 
 % Bibliografie
 \usepackage[
-    backend=bibtex,
+    backend=biber,
     maxbibnames=50,
     sorting=nty
 ]{biblatex}
@@ -44,6 +47,22 @@
 
 % Geometria paginii
 \usepackage{geometry}
+\geometry{margin=2.5cm}
+
+% Ghidul FMI cere ca secțiunile principale să nu fie forțate pe pagină nouă.
+% Păstrăm noțiunea de capitol, dar o tipărim ca titlu continuu, fără clearpage.
+\RenewDocumentCommand{\chapter}{s m}{%
+  \par\addvspace{2.5ex plus .5ex minus .2ex}%
+  \IfBooleanTF{#1}{%
+    \noindent{\normalfont\Large\bfseries #2}\par\nobreak\vspace{1.5ex plus .2ex}%
+  }{%
+    \refstepcounter{chapter}%
+    \setcounter{section}{0}%
+    \setcounter{subsection}{0}%
+    \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#2}%
+    \noindent{\normalfont\Large\bfseries Capitolul~\thechapter. #2}\par\nobreak\vspace{1.5ex plus .2ex}%
+  }%
+}
 
 % Marjă de elasticitate pentru a evita cutiile supradimensionate (overfull hbox)
 \setlength{\emergencystretch}{3em}
@@ -88,10 +107,11 @@
     urlcolor={blue}
 ]{hyperref}
 
-% Simboluri matematice Unicode
-\usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
 \usepackage{amsmath}
 \usepackage{mathtools}
+% Simboluri matematice Unicode
+\usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
+\setmathfont{Latin Modern Math}
 \newcommand{\bigO}[1]{\symcal{O}\left(#1\right)}
 
 % Rezumat în două limbi
@@ -107,21 +127,12 @@
 \usepackage{appendix}
 \usepackage{fancyhdr}
 
-% Comandă pentru un substituent de captură de ecran (se înlocuiește cu
-% \includegraphics atunci când imaginea reală este adăugată în images/).
-\newcommand{\capturaplaceholder}[1]{%
-  \begin{center}
-  \fbox{\parbox[c][4.2cm][c]{0.82\textwidth}{\centering\itshape
-  [Substituent imagine] #1\\[2pt]\footnotesize
-  (se va înlocui cu \texttt{\textbackslash includegraphics} după adăugarea capturii în \texttt{images/})}}
-  \end{center}}
-
 % Cod inline scurt; permite ruperea liniei după underscore pentru identificatori lungi
 \newcommand{\codeus}{\textunderscore\allowbreak}
 \newcommand{\code}[1]{\texttt{\let\_\codeus #1}}
 
 % Metadate
-\title{Platformă bazată pe dovezi pentru monitorizarea antrenamentelor, descoperirea de programe, coaching și căutare în istoricul de antrenament}
+\title{Platformă web sigură pentru planificarea, monitorizarea și analiza antrenamentelor de forță}
 \author{[Prenume NUME]}
 
 \makeatletter
@@ -132,13 +143,12 @@
 % Dezactivează ancorele de pagină hyperref pe materia preliminară (titlu, rezumat,
 % cuprins), unde numerotarea este manipulată, pentru a evita ancore duplicate.
 \hypersetup{pageanchor=false}
+\pagestyle{empty}
 \cleardoublepage
-\let\ps@plain
 
 % Pagina de titlu
 \input{0-title}
 \restoregeometry
-\newgeometry{margin=2.5cm}
 
 \fancypagestyle{main}{
   \fancyhf{}
@@ -154,9 +164,10 @@
 
 % Cuprinsul
 \tableofcontents
+\thispagestyle{empty}
 
 % ----------------------------------------------------------------- main matter
-\cleardoublepage
+\clearpage
 \pagestyle{main}
 \let\ps@plain\ps@main
 % Reactivează ancorele de pagină pentru corpul lucrării (referințe corecte).
@@ -168,6 +179,7 @@
 \input{4-concluzii}
 
 % Bibliografie (nu se numerotează ca un capitol)
+\clearpage
 \printbibliography[heading=bibintoc]
 
 % Anexe

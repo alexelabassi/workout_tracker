@@ -1,0 +1,32 @@
+Anexa 5 – Configurație și rulare
+Fișierul docker-compose.yml pornește PostgreSQL 16, OpenSearch 2.13.0 și apli-
+cația Spring Boot. Imaginea aplicației construiește frontend-ul Vite în timpul build-ului Maven
+și îl include în jar-ul Spring Boot, astfel încât interfața și API-ul sunt servite de aceeași aplicație
+la http://localhost:8080.
+docker compose up −−build
+Configurația principală păstrează schema sub controlul Flyway și dezactivează Hiberna-
+te DDL. Modulul de căutare este dezactivat implicit și este activat în compose prin APP_
+SEARCH_ENABLED=true.
+spring:
+jpa:
+hibernate:
+ddl−auto: validate
+flyway:
+enabled: true
+app:
+security:
+jwt:
+issuer: workout−thesis
+access−ttl: 15m
+refresh−ttl: 14d
+search:
+enabled: ${APP_SEARCH_ENABLED:false}
+uri: ${APP_SEARCH_URI:http://localhost:9200}
+templates−index: templates_v1
+templates−alias: templates
+sessions−index: workout_sessions_v1
+sessions−alias: workout_sessions
+Pentru dezvoltare, frontend-ul poate rula separat prin Vite pe portul 5173, iar backend-ul
+pe portul 8080. Testele de integrare folosesc Testcontainers și au nevoie de Docker funcțional,
+deoarece pornesc PostgreSQL 16 și, pentru suita de căutare, un container OpenSearch 2.x.
+31

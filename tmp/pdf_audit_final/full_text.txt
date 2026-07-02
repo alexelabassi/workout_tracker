@@ -1,0 +1,1020 @@
+--- PAGE 1 ---
+UNIVERSITATEA DIN BUCUREȘTI
+FACULTATEA DE
+MATEMATICĂ ȘI INFORMATICĂ
+SPECIALIZAREA INFORMATICĂ
+Lucrare de licență
+PLATFORMĂ WEB PENTRU PLANIFICAREA,
+MONITORIZAREA ȘI ANALIZA
+ANTRENAMENTELOR DE FORȚĂ
+Absolvent
+El Abassi Tamer Alexandru
+Coordonator științific
+Ipate Florentin Eugen
+București, iulie 2026
+
+--- PAGE 2 ---
+Rezumat
+Această lucrare prezintă o platformă web pentru planificarea și monitorizarea antrenamentelor
+de forță, construită cu accent pe corectitudinea datelor și pe controlul accesului. Aplicația per-
+mite unui utilizator să își gestioneze exercițiile, rutinele, sălile și echipamentele, să construiască
+programe pe mai multe zile, să execute sesiuni live, să consulte istoricul și progresul, să publice
+sau să copieze programe dintr-un marketplace și să colaboreze, în mod controlat, cu un antrenor.
+Accentul lucrarii este pus pe transformarea acestei aplicatii intr-un sistem corect, scalabil si
+sigur, nu doar intr-o interfata CRUD. Backend-ul foloseste autentificare cu JWT, token-uri de
+reimprospatare rotite si stocate doar ca amprente SHA-256, parole hash-uite cu BCrypt, verifi-
+cari de proprietate pentru prevenirea IDOR si reguli de autorizare RBAC/ReBAC pentru modul
+de coaching. Modelul de date separa datele editabile (majoritatea fiind datele de planificare)
+de datele istorice: la pornirea unei sesiuni aplicatia copiaza numele exercitiilor, grupele muscu-
+lare, rutinele, sala, echipamentele si campurile planificate in snapshot-uri, astfel incat istoricul
+ramane corect dupa editari sau stergeri ulterioare
+Proiectul include și mecanisme orientate spre utilizare reală și scalare: programele publi-
+cate în marketplace pot fi votate, salvate și copiate printr-o operație de tip deep copy, căutarea
+peste programe și istoricul sesiunilor este realizată printr-un model de citire OpenSearch deri-
+vat din PostgreSQL, iar rezultatele căutării sunt validate din nou în baza relațională înainte de
+a fi returnate. Pentru a justifica această alegere, lucrarea include o evaluare experimentală între
+OpenSearch și o variantă PostgreSQL bine indexată, pe un set de date generat până la 2 milioa-
+ne de documente. Implementarea este realizată cu Spring Boot 3 și Java 21, PostgreSQL 16 ca
+sursă unică de adevăr, migrații Flyway, frontend React cu TypeScript și teste de integrare bazate
+pe Testcontainers.
+Abstract
+
+--- PAGE 3 ---
+This thesis presents a web platform for planning and tracking strength training, built with a
+strong focus on data correctness and access control. The application lets users manage exercises,
+routines, gyms and equipment, build multi-day training programs, run live workout sessions,
+inspect history and progress, publish or copy programs through a marketplace, and collaborate
+with a coach under explicit relationship-based access rules.
+The focus of the thesis is on turning this application into a correct and secure multi-user
+system, not merely a CRUD interface. The backend uses JWT authentication, rotated refresh
+tokens stored only as SHA-256 hashes, BCrypt password hashing, ownership checks to prevent
+IDOR vulnerabilities, and RBAC/ReBAC authorization rules for the coaching module. The data
+model separates editable planning data from historical data: when a session starts, the applica-
+tion copies exercise names, muscle groups, routines, gym, equipment and planned fields into
+snapshots, so workout history remains correct after later edits or deletions.
+The project also includes mechanisms aimed at realistic usage and scaling: public mar-
+ketplace templates can be voted on, saved and copied through a deep-copy operation, search
+over programs and workout history is implemented through an OpenSearch read model derived
+from PostgreSQL, and search results are revalidated against the relational database before be-
+ing returned. To justify this choice, the thesis includes an experimental evaluation comparing
+OpenSearch with a well-indexed PostgreSQL baseline over a generated corpus scaled up to 2
+million documents. The implementation uses Spring Boot 3 and Java 21, PostgreSQL 16 as the
+single source of truth, Flyway migrations, a React and TypeScript frontend, and integration tests
+based on Testcontainers.
+
+--- PAGE 4 ---
+Cuprins
+1 Introducere 6
+1.1 Tipul lucrării și încadrarea temei . . . . . . . . . . . . . . . . . . . . . . . . . 6
+1.2 Prezentarea generală a temei . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+1.3 Problema urmărită . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+1.4 Contribuția proprie . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+1.5 Structura lucrării . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+2 Preliminarii 8
+2.1 Aplicații web și sursa de adevăr . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+2.2 Date de planificare și date istorice . . . . . . . . . . . . . . . . . . . . . . . . 9
+2.3 Autentificare, autorizare și IDOR . . . . . . . . . . . . . . . . . . . . . . . . . 9
+2.4 Căutare full-text și modele de citire . . . . . . . . . . . . . . . . . . . . . . . . 10
+2.5 Analiză deterministă a programelor . . . . . . . . . . . . . . . . . . . . . . . 10
+3 Contribuția proprie 10
+3.1 Vedere de ansamblu asupra aplicației . . . . . . . . . . . . . . . . . . . . . . . 10
+3.2 Fluxul complet de utilizare . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+3.3 Cerințe funcționale și nefuncționale . . . . . . . . . . . . . . . . . . . . . . . 12
+3.3.1 Cerințe funcționale . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+3.3.2 Cerințe nefuncționale . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+3.4 Modelul de date și istoricul prin snapshot-uri . . . . . . . . . . . . . . . . . . 15
+3.5 Constrângeri, ștergere logică și concurență . . . . . . . . . . . . . . . . . . . . 16
+3.6 Securitate și controlul accesului . . . . . . . . . . . . . . . . . . . . . . . . . 16
+3.7 Funcționalități de planificare și execuție . . . . . . . . . . . . . . . . . . . . . 18
+3.8 Istoric, analize și marketplace . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+3.9 Analizatorul de programe . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+3.10 Modul de coaching . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+3.11 Modelul de citire pentru căutare . . . . . . . . . . . . . . . . . . . . . . . . . 20
+3.12 Evaluarea OpenSearch vs. PostgreSQL . . . . . . . . . . . . . . . . . . . . . . 20
+3.13 Testare și verificarea corectitudinii . . . . . . . . . . . . . . . . . . . . . . . . 21
+4 Concluzii 22
+4.1 Concluzii privind realizarea temei . . . . . . . . . . . . . . . . . . . . . . . . 22
+4.2 Relevanța rezultatelor . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+Bibliografie 24
+Anexa 1 – Schema bazei de date 25
+
+--- PAGE 5 ---
+Anexa 2 – Listări de cod reprezentative 26
+Anexa 3 – Rezultatele complete ale evaluării 28
+Anexa 4 – Contractul API (selecție) 29
+Anexa 5 – Configurație și rulare 31
+
+--- PAGE 6 ---
+Capitolul 1. Introducere
+1.1 Tipul lucrării și încadrarea temei
+Lucrarea de față este o aplicație web full-stack dedicată domeniului fitness, având ca obiectiv
+dezvoltarea unei platforme pentru planificarea, desfășurarea și analiza antrenamentelor. Proiec-
+tul nu se limitează doar la un jurnal de antrenamente, ci reprezintă un sistem mai amplu, o
+platformă completă, prin care utilizatorii își pot construi programele de antrenament, pot urmări
+execuția antrenamentelor, pot analiza progresul pe baza datelor înregistrate, pot căuta în istoricul
+antrenamentelor (după orice field), și pot descoperi programe create de către alți utilizatori. O
+parte foarte relevantă a proiectului constă în modul în care toate aceste componente sunt combi-
+nate într-un sistem întreg și coerent, în care fiecare funcționalitate trebuie să fie atât utilă pentru
+utilizatori, cât și corect integrată în arhitectura generală a platformei.
+Din punct de vedere tehnic, proiectul combină mai multe probleme specifice unui sistem
+software real: autentificare și autorizare, controlul și asigurarea accesului la resurse, păstrarea
+corectă a datelor istorice, tratarea operațiilor concurente, căutarea full-text, funcționalități de tip
+marketplace, analiza automată a structurii unui program (pe baza studiilor științifice) și acces
+controlat pentru antrenori.
+1.2 Prezentarea generală a temei
+Un utilizator al aplicației începe prin configurarea spațiului de lucru al acestuia: exerciții
+predefinite și exerciții proprii, rutine de încălzire sau încheiere, săli de antrenament și echipa-
+mente disponibile. Pe baza acestora, utilizatorul poate crea programe de antrenament. O zi din
+program conține exerciții, valori planificate (serii, repetări, greutate, pauză) și, opțional, rutine
+atașate.
+În momentul în care utilizatorul pornește un antrenament, programul este transformat într-o
+sesiune live. Aici apar datele istorice propriu-zise: seriile efectuate, greutatea, repetările, dura-
+ta, RPE-ul (nivelul de efort perceput, fiind o metrica subiectiva), notele și echipamentul folosit.
+După finalizare, sesiunea este salvată în istoric și poate fi folosită în analizele de progres. Siste-
+mul calculează volumul în timp, antrenamentele pe săptămână și distribuția pe grupe musculare.
+Pe lângă fluxul individual, aplicația are un marketplace de programe publice. Un utilizator poate
+publica un program, iar ceilalți utilizatori îl pot vota, salva sau copia în biblioteca lor privată.
+Există și un mod de coaching: un utilizator cu rol de antrenor poate vedea istoricul și analizele
+unui client (numai dacă există o relație activă acceptată de client). Acest acces este intenționat
+limitat la citire, pentru a ne asigura că separam colaborarea dintre antrenor si client cu dreptul
+de a modifica datele personale ale clientului.
+6
+
+--- PAGE 7 ---
+1.3 Problema urmărită
+Într-o aplicație de acest tip, problema cea mai importantă nu este doar să se poată salva an-
+trenamentele, ci fiabilitatea datelor salvate. Datele de planificare sunt, prin natura lor, editabile:
+un utilizator poate redenumi un exercițiu, poate modifica un program, poate șterge o sală sau
+poate schimba echipamentul disponibil. În schimb, istoricul trebuie să descrie ce s-a întâmplat
+la momentul respectiv. Dacă o sesiune veche s-ar schimba pentru că programul original a fost
+editat, istoricul nu ar mai reflecta realitatea.
+De aici rezultă prima direcție a lucrării: un model de date cu snapshot-uri pentru istoricul
+antrenamentelor. La pornirea sesiunii, aplicația copiază datele relevante din planificare în tabele
+de sesiune. Cheile către datele sursă rămân doar ca legături auxiliare și pot avea valoare nulă, în
+timp ce valorile afișate în istoric sunt cele copiate în momentul execuției.
+A doua direcție este securitatea. Aplicația este multi-user și include resurse personale, relații
+antrenor-client și endpoint-uri administrative. De aceea, fiecare operație trebuie să știe cine este
+utilizatorul curent și ce are voie să vadă sau să modifice. Sistemul folosește JWT, token-uri de
+reîmprospătare opace rotite, interogări în funcție de proprietar și reguli de acces care întorc 404
+pentru resursele altui utilizator, pentru a evita scurgerile de informație de tip IDOR.
+A treia direcție este regăsirea informației. Pe măsură ce crește numărul de programe și se-
+siuni, utilizatorul are nevoie de căutare după exerciții, grupe musculare, săli, echipamente, note
+și filtre. În proiect, căutarea este implementată cu OpenSearch ca model de citire derivat din
+PostgreSQL, dar lucrarea nu tratează OpenSearch ca soluție implicită. Ea include și o com-
+parație practică împotriva unei variante PostgreSQL bine indexate, pentru a vedea când merită
+complexitatea unui motor separat.
+1.4 Contribuția proprie
+Contribuția proprie constă în proiectarea și implementarea unei platforme funcționale, con-
+struită ca aplicație web full-stack, nu ca prototip izolat. Principalele elemente realizate sunt:
+• un backend Spring Boot organizat modular, cu separarea responsabilităților între nivelul
+de domeniu, servicii, repository-uri și controllere;
+• o schemă PostgreSQL gestionată prin Flyway, cu reguli de integritate, indecși unici par-
+țiali, ștergere logică și constrângeri pentru tratarea unor cazuri de concurență la nivelul
+bazei de date;
+• un model de sesiuni bazat pe snapshot-uri, prin care istoricul antrenamentelor rămâne
+stabil și corect chiar dacă datele de planificare sunt editate sau șterse ulterior;
+• un sistem de autentificare și autorizare bazat pe JWT, rotația token-urilor de reîmprospă-
+tare și protecție împotriva accesului neautorizat la resursele altor utilizatori;
+7
+
+--- PAGE 8 ---
+• funcționalități pentru gestionarea exercițiilor, rutinelor, sălilor, echipamentelor, progra-
+melor de antrenament, sesiunilor active, istoricului, analizelor, marketplace-ului și modu-
+lui de coaching;
+• un analizator determinist al structurii programelor de antrenament, bazat pe reguli expli-
+cabile, fără a pretinde furnizarea unor recomandări medicale;
+• un model de citire în OpenSearch pentru căutare full-text peste programe și istoric, cu
+filtre, fațete, evidențiere, toleranță la greșeli și verificare suplimentară în PostgreSQL;
+• o evaluare experimentală între OpenSearch și PostgreSQL, realizată pe un set de date
+generat, cu până la două milioane de documente.
+1.5 Structura lucrării
+Capitolul 2 introduce noțiunile teoretice și tehnice necesare pentru înțelegerea proiectului:
+aplicații web, modelarea datelor istorice, autentificarea cu token-uri, controlul accesului, cău-
+tarea full-text și principiile utilizate de analizatorul de programe. Capitolul ?? prezintă imple-
+mentarea platformei, urmărind mai întâi fluxul principal de utilizare, iar apoi deciziile tehnice
+relevante: modelul de date, mecanismele de securitate, funcționalitățile aplicației, modul de coa-
+ching, căutarea, evaluarea experimentală și testarea. Capitolul ?? rezumă rezultatele obținute și
+discută posibile direcții de dezvoltare ulterioară. Pentru a păstra claritatea textului principal, de-
+taliile extinse, precum schema bazei de date, fragmentele de cod, tabelele complete ale evaluării
+experimentale și contractul API, sunt incluse în anexe.
+Capitolul 2. Preliminarii
+În acest capitol prezint noțiunile tehnice pe care se sprijină proiectul. Le includ aici nu ca
+o listă de tehnologii, ci ca fundal pentru deciziile din implementare: de ce PostgreSQL rămâne
+sursa de adevăr, de ce istoricul se păstrează prin snapshot-uri, de ce accesul trebuie verificat pe
+fiecare resursă și de ce căutarea este tratată ca model de citire separat.
+2.1 Aplicații web și sursa de adevăr
+Platforma este o aplicație web cu frontend React și backend Spring Boot. Frontend-ul trimite
+cereri JSON către un API REST, iar backend-ul aplică regulile de domeniu și persistă datele.
+Într-un astfel sistem, baza de date relațională nu este doar un loc de stocare, ci și componenta
+care poate garanta integritatea prin chei externe, constrângeri și tranzacții.
+În proiect, PostgreSQL este sursa unică de adevăr. Această alegere este importantă deoarece
+aplicația are date care nu trebuie pierdute sau interpretate diferit: sesiuni de antrenament, token-
+uri de reîmprospătare, relații antrenor-client, voturi și salvări în marketplace. Hibernate este
+8
+
+--- PAGE 9 ---
+folosit pentru maparea obiect-relațională, dar schema nu este generată automat de aplicație. Ea
+este creată și modificată numai prin migrații Flyway, iar configurația Hibernate este setată pe
+ddl-auto: validate. Astfel, aplicația verifică schema la pornire, dar nu o schimbă
+implicit.
+2.2 Date de planificare și date istorice
+O diferență esențială în domeniul aplicației este cea dintre date de planificare și date istorice.
+Datele de planificare descriu intenția utilizatorului: programe, zile, exerciții planificate, rutine,
+săli și echipamente. Ele trebuie să rămână editabile. Datele istorice descriu însă ce s-a întâmplat
+la un moment concret și nu ar trebui să se schimbe retroactiv.
+Soluția folosită este modelarea prin snapshot-uri. Un snapshot nu înseamnă o copie a între-
+gii baze de date, ci copierea atributelor relevante într-o entitate istorică. De exemplu, o sesiune
+nu se bazează pe numele curent al exercițiului, ci păstrează numele exercițiului copiat atunci
+când sesiunea a fost pornită. Același principiu se aplică grupelor musculare, programului, zi-
+lei, rutinei, sălii și echipamentului. Cheile externe către sursă pot exista în continuare pentru
+trasabilitate, dar trebuie să poată deveni NULL fără a strica istoricul.
+2.3 Autentificare, autorizare și IDOR
+Autentificarea stabilește identitatea utilizatorului care trimite o cerere. În aplicațiile moder-
+ne, un mod uzual de lucru este folosirea token-urilor JWT [2]: serverul semnează un token de
+acces, iar clientul îl trimite în antetul Authorization. Token-ul de acces trebuie să aibă o
+durată scurtă, deoarece este prezent la fiecare cerere. Pentru sesiuni mai lungi se folosește un
+token de reîmprospătare, care trebuie protejat mai strict.
+Autorizarea răspunde la o altă întrebare: utilizatorul autentificat are voie să acceseze resur-
+sa cerută? Într-un sistem multi-user, o greșeală frecventă este IDOR (Insecure Direct Object
+Reference), adică situația în care un utilizator schimbă un identificator într-o cerere și obține
+datele altcuiva. O protecție corectă nu se bazează pe identificatori primiți de la frontend, ci pe
+utilizatorul curent extras din token și pe interogări care includ proprietarul resursei.
+Pe lângă regulile obișnuite pe roluri (RBAC), modul de coaching cere și reguli bazate pe
+relații (ReBAC). Un utilizator cu rol de antrenor nu ar trebui să poată vedea orice utilizator, ci
+doar clienții cu care are o relație activă. De aceea, rolul este doar primul filtru; al doilea este
+relația antrenor-client acceptată.
+9
+
+--- PAGE 10 ---
+2.4 Căutare full-text și modele de citire
+PostgreSQL poate face căutare full-text prin tsvector, indecși GIN și funcții de ranking
+[5]. Pentru colecții mici sau pentru interogări simple, aceasta poate fi o soluție suficientă și
+mai ușor de operat decât un motor separat. Când apar însă cerințe precum toleranță la greșeli
+de tastare, sinonime, scoruri de relevanță pe mai multe câmpuri, evidențierea fragmentelor și
+fațete, un motor dedicat precum OpenSearch [3] devine mai potrivit.
+În această lucrare, OpenSearch nu înlocuiește PostgreSQL. El este un model de citire deri-
+vat: documentele indexate sunt reconstruibile din baza de date relațională, iar rezultatele sunt
+validate din nou în PostgreSQL înainte de a fi returnate. Această abordare introduce consistență
+eventuală, dar păstrează o sursă unică de adevăr și permite refacerea indexului în caz de eroare.
+2.5 Analiză deterministă a programelor
+Aplicația include și un analizator al structurii programelor. Scopul lui nu este să ofere re-
+comandări medicale și nici să înlocuiască un antrenor, ci să dea un feedback explicabil des-
+pre structură: volumul săptămânal, acoperirea grupelor musculare, frecvența, echilibrul între
+regiuni, lungimea sesiunilor și pauzele. Regulile sunt inspirate din literatura despre volumul
+antrenamentului [4] și din formule simple pentru estimarea progresului, cum este formula lui
+Epley pentru 1RM [1].
+Am ales o abordare deterministă, bazată pe scăderi fixe dintr-un scor, deoarece este mai ușor
+de explicat și de testat decât o soluție de tip „AI coach”. Pentru o lucrare de licență și pentru
+un produs care atinge antrenamentul fizic, această onestitate este importantă: sistemul poate
+semnala probleme de structură, dar nu poate cunoaște recuperarea, tehnica, somnul, alimentația
+sau nivelul real de efort al utilizatorului.
+Capitolul 3. Contribuția proprie
+3.1 Vedere de ansamblu asupra aplicației
+sp Platforma implementată urmărește întregul ciclu al unui antrenament. Utilizatorul își
+definește mai întâi datele de bază: exerciții, grupe musculare, rutine, săli și echipamente. Apoi
+construiește programe pe mai multe zile. O zi de program poate conține exerciții planificate,
+valori țintă și rutine de început sau final. Dintr-o astfel de zi se pornește o sesiune live, în care se
+adaugă seriile efectuate și notele din timpul antrenamentului. După finalizare, sesiunea devine
+istoric și intră în paginile de progres, căutare și coaching.
+Aplicația nu este construită ca un CRUD simplu. Fiecare zonă are reguli de domeniu: un
+utilizator nu poate porni două antrenamente active în același timp; un program public trebuie
+să aibă o dată de publicare; un antrenor nu poate deveni propriul client; o sesiune finalizată
+10
+
+--- PAGE 11 ---
+nu mai permite modificarea seriilor; un program copiat din marketplace devine o copie privată
+independentă. Aceste reguli sunt implementate atât în servicii, cât și, unde este posibil, în baza
+de date.
+Backend-ul este organizat pe funcționalități: auth, exercise, routine, gym,
+template, session, history, analytics, marketplace, analyzer,
+search, coaching și shared. În interiorul fiecărei funcționalități se păstrează aceeași
+separare: model de domeniu, servicii de aplicație, repository-uri și controllere. Frontend-ul
+React urmează aceeași împărțire pe funcționalități, fără expunerea directă a entităților JPA prin
+API.
+O selecție a contractului API este prezentată în Anexa 4. Ea arată cum sunt grupate fluxu-
+rile principale: autentificare, planificare, sesiuni live, istoric, marketplace, analizator, căutare și
+coaching.
+3.2 Fluxul complet de utilizare
+Pentru a înțelege platforma, trebuie urmărit mai întâi parcursul obișnuit al unui utilizator.
+După autentificare, acesta lucrează cu propriile resurse: exerciții, rutine, săli de antrenament și
+echipamente. Exercițiile pot fi cele oferite de aplicație sau pot fi create de utilizator, iar fiecare
+exercițiu este asociat cu grupe musculare primare și secundare. Rutinele sunt gândite ca secvențe
+reutilizabile, folosite mai ales la începutul sau la finalul unei zile de antrenament. Sălile conțin
+echipamentele disponibile, iar echipamentele pot fi apoi folosite la înregistrarea seturilor dintr-o
+sesiune.
+Pornind de la aceste resurse, utilizatorul își construiește programele de antrenament. În
+aplicație, acestea sunt reprezentate prin template-uri împărțite pe zile. Fiecare zi poate avea
+exerciții planificate, valori țintă și rutine atașate. Când utilizatorul începe efectiv antrenamentul,
+o zi de template este transformată într-o sesiune activă. În acel moment, aplicația copiază datele
+importante în snapshot-uri, astfel încât sesiunea să păstreze forma pe care o avea programul la
+momentul pornirii. În timpul antrenamentului, utilizatorul adaugă seturile efectuate, împreună
+cu informații precum greutatea, numărul de repetări, durata, distanța, nivelul de efort perceput,
+notele și echipamentul folosit. Dacă este nevoie, pot fi adăugate și exerciții suplimentare, care
+nu existau în template-ul inițial.
+După terminarea antrenamentului, sesiunea poate fi finalizată sau anulată. O sesiune fina-
+lizată intră în istoricul utilizatorului și poate fi consultată ulterior, fie într-o listă paginată, fie
+prin pagina de detalii a sesiunii. Analizele aplicației folosesc aceste sesiuni finalizate pentru a
+calcula volumul în timp, frecvența antrenamentelor, distribuția pe grupe musculare și estimări
+ale progresului în forță. Separat, template-urile pot fi verificate de un analizator determinist,
+care evaluează structura programului pe baza unor reguli explicabile.
+Platforma include și un marketplace pentru programe publice. Un utilizator poate publica
+un template, iar ceilalți îl pot vota, salva sau copia. În momentul copierii, programul devine
+11
+
+--- PAGE 12 ---
+o resursă privată și independentă, astfel încât modificările ulterioare nu afectează template-ul
+original. Pe lângă acest flux, aplicația are și un mod de coaching. Un antrenor poate trimite o
+invitație unui client, iar clientul o poate accepta sau respinge. Numai o relație activă permite
+antrenorului să vadă istoricul, analizele, detaliile sesiunilor și rezultatele de căutare din istoricul
+clientului.
+Căutarea este disponibilă în programe, marketplace și istoric, fiind implementată cu Open-
+Search pentru interogări full-text și filtrare mai flexibilă. Totuși, funcționalitățile principale nu
+depind complet de acest motor de căutare: dacă OpenSearch nu este disponibil, listele obișnuite
+bazate pe PostgreSQL rămân în continuare accesibile.
+3.3 Cerințe funcționale și nefuncționale
+3.3.1 Cerințe funcționale
+Cerințele funcționale descriu ce trebuie să poată face sistemul din perspectiva utilizatorilor și
+a rolurilor existente în aplicație. Deoarece platforma acoperă mai multe zone, cerințele sunt gru-
+pate în funcție de fluxurile principale: autentificare, planificarea antrenamentelor, desfășurarea
+sesiunilor, istoricul, marketplace-ul, coaching-ul și căutarea.
+Autentificare și conturi. Sistemul trebuie să permită înregistrarea unui utilizator, auten-
+tificarea acestuia, reîmprospătarea sesiunii prin refresh token și delogarea. După autentificare,
+backend-ul trebuie să poată identifica utilizatorul curent pe baza token-ului JWT și să aplice re-
+gulile corespunzătoare rolului său. Aplicația folosește roluri diferite pentru utilizatorul obișnuit,
+coach și administrator.
+Exerciții și rutine. Utilizatorul trebuie să poată consulta exercițiile oficiale disponibile în
+platformă și să își poată crea propriile exerciții personalizate. Exercițiile custom pot fi editate
+sau șterse logic, fără a afecta istoricul sesiunilor deja realizate. Fiecare exercițiu este asociat cu
+grupe musculare primare și, opțional, secundare. Aplicația trebuie să permită și crearea unor
+rutine reutilizabile, care pot fi atașate ulterior la zilele unui program de antrenament.
+Săli și echipamente. Sistemul trebuie să permită utilizatorului să creeze, să editeze și să
+șteargă logic săli de antrenament. În fiecare sală pot fi adăugate echipamente, iar aceste echipa-
+mente pot fi folosite la înregistrarea seturilor dintr-o sesiune. Aplicația trebuie să verifice faptul
+că echipamentul selectat aparține sălii asociate sesiunii, pentru a evita înregistrarea unor date
+inconsistente.
+Programe și template-uri. Utilizatorul trebuie să poată crea template-uri de antrenament,
+să le editeze metadatele și să le organizeze pe zile. În fiecare zi pot fi adăugate exerciții plani-
+ficate, împreună cu valori țintă precum numărul de seturi, repetările, greutatea și durata pauzei.
+De asemenea, utilizatorul poate atașa rutine la începutul sau la finalul unei zile. Pentru a sus-
+ține căutarea și filtrarea, sistemul trebuie să calculeze și să actualizeze agregatele relevante ale
+template-urilor. Un template poate fi publicat sau retras din marketplace.
+12
+
+--- PAGE 13 ---
+Sesiuni active. Sistemul trebuie să permită pornirea unei sesiuni active dintr-o zi de tem-
+plate, dar să împiedice existența a două sesiuni active simultan pentru același utilizator. La
+pornirea sesiunii, aplicația copiază datele relevante în snapshot-uri, astfel încât istoricul să nu
+depindă de modificările ulterioare ale template-ului. Cât timp sesiunea este activă, utilizatorul
+poate adăuga, edita sau șterge seturi și poate introduce exerciții suplimentare care nu existau în
+planificarea inițială. O sesiune poate fi finalizată sau anulată, iar după finalizare utilizatorul mai
+poate modifica doar notele asociate.
+Istoric și analytics. După finalizare, sesiunile trebuie să poată fi consultate în istoricul uti-
+lizatorului, atât sub formă de listă, cât și prin pagina de detalii a unei sesiuni. Pe baza sesiunilor
+finalizate, aplicația trebuie să calculeze indicatori precum volumul total, numărul de antrena-
+mente pe săptămână, distribuția pe grupe musculare, cele mai bune seturi și estimarea valorii
+1RM folosind formula Epley.
+Marketplace. Aplicația trebuie să permită listarea template-urilor publice și sortarea aces-
+tora după criterii precum noutate, scor sau popularitate recentă. Utilizatorii pot vota, salva sau
+copia template-uri publice, dar nu își pot vota propriile template-uri. Atunci când un template
+este copiat din marketplace, sistemul trebuie să creeze o copie privată și independentă, astfel
+încât modificările ulterioare să nu afecteze template-ul original.
+Analizator de programe. Sistemul trebuie să permită analiza unui template de antrenament
+printr-un analizator determinist. Rezultatul analizei include un scor între 0 și 100, o categorie
+generală, sub-scoruri și observații împărțite în avertismente, puncte forte și limitări. Analizatorul
+se bazează pe reguli explicabile și nu are rolul de a oferi recomandări medicale sau de a înlocui
+un antrenor.
+Coaching. Aplicația trebuie să permită crearea unei relații între coach și client. Coach-ul
+poate trimite o invitație, iar clientul o poate accepta sau respinge. Relația poate fi revocată ulte-
+rior de oricare dintre părți. Doar o relație activă permite coach-ului să vadă istoricul clientului,
+analizele acestuia, detaliile sesiunilor și rezultatele căutării în istoricul clientului.
+Căutare. Sistemul trebuie să ofere căutare pentru template-urile personale, template-urile
+din marketplace, istoricul personal și istoricul unui client accesibil unui coach. Căutarea trebuie
+să suporte filtre, fațete, evidențierea termenilor găsiți și toleranță la greșeli de scriere. Rezultatele
+obținute prin OpenSearch sunt revalidate în PostgreSQL, pentru a respecta regulile de acces și
+starea curentă a datelor. Pentru administrare, aplicația include și un endpoint dedicat reindexării.
+3.3.2 Cerințe nefuncționale
+Cerințele nefuncționale descriu calitățile pe care sistemul trebuie să le respecte, nu doar
+funcționalitățile pe care trebuie să le ofere. În cazul acestei aplicații, cele mai importante as-
+pecte sunt corectitudinea datelor, securitatea, izolarea între utilizatori, performanța, consistența,
+testabilitatea și mentenabilitatea.
+Corectitudinea datelor. PostgreSQL este sursa unică de adevăr a aplicației. Schema bazei
+13
+
+--- PAGE 14 ---
+de date este controlată prin Flyway, iar Hibernate nu este folosit pentru modificarea automată
+a schemei. Regulile importante nu sunt verificate doar în cod, ci și prin constrângeri la nivelul
+bazei de date, acolo unde acest lucru este posibil. Pentru istoricul antrenamentelor, sistemul
+folosește snapshot-uri, astfel încât sesiunile finalizate să nu depindă de template-uri sau alte
+resurse care pot fi editate ulterior. Resursele folosite la planificare sunt șterse logic, pentru a
+evita pierderea contextului necesar istoricului.
+Securitate. Accesul la endpoint-uri este protejat prin JWT, iar reîmprospătarea sesiunii se
+face prin refresh token stocat în cookie HttpOnly. Refresh token-ul este stocat sub formă de
+hash și este rotit la utilizare, iar parolele utilizatorilor sunt protejate cu BCrypt. Frontend-ul
+nu trimite explicit userId pentru operațiile asupra resurselor personale; utilizatorul curent
+este determinat de backend pe baza token-ului. Serviciile verifică ownership-ul resurselor, iar
+accesul la resursele altui utilizator întoarce 404, pentru a evita expunerea existenței acestora.
+Pentru zonele speciale sunt folosite reguli de tip RBAC, în cazul rolurilor de admin și coach, și
+reguli de tip ReBAC, în cazul relației coach-client.
+Izolare multi-user. Fiecare utilizator trebuie să vadă și să modifice doar resursele care îi
+aparțin. Resursele publice, cum sunt template-urile din marketplace, sunt vizibile controlat și
+nu expun date private ale autorului. Un coach nu are acces la toți utilizatorii aplicației, ci doar
+la clienții cu care are o relație activă. De asemenea, atunci când un template este copiat din
+marketplace, copia devine o resursă privată și independentă, fără să mai depindă de autorul
+inițial.
+Scalabilitate și performanță. Datele relaționale sunt păstrate în PostgreSQL, iar căutarea
+full-text este mutată în OpenSearch, pentru a susține interogări mai flexibile peste programe și
+istoric. OpenSearch este tratat ca model de citire derivat, nu ca sursă de adevăr, ceea ce înseam-
+nă că indexul poate fi reconstruit din baza de date. Pentru template-uri sunt folosite agregate
+denormalizate, utile la filtrare și căutare, iar interogările importante sunt susținute prin inde-
+xuri. Evaluarea experimentală dintre PostgreSQL și OpenSearch este folosită pentru a justifica
+situațiile în care complexitatea unui motor separat de căutare merită introdusă.
+Consistență și toleranță la erori. Sistemul trebuie să rămână corect chiar dacă OpenSearch
+nu este disponibil temporar. Din acest motiv, PostgreSQL rămâne sursa de adevăr, iar indexarea
+se face după confirmarea tranzacției în baza de date. Rezultatele obținute din OpenSearch sunt
+revalidate în PostgreSQL, pentru a verifica atât existența datelor, cât și drepturile de acces. Dacă
+indexul conține informații învechite, datele invalide nu sunt returnate utilizatorului. În plus,
+fluxurile principale rămân accesibile prin liste SQL, iar pentru administrare există un mecanism
+de reindexare.
+Testabilitate. Testele trebuie să reflecte cât mai bine infrastructura reală a aplicației. Din
+acest motiv, proiectul folosește teste de integrare cu PostgreSQL real și teste pentru OpenSear-
+ch rulat într-un container, fără a înlocui baza de date cu H2. Sunt testate fluxurile HTTP im-
+portante, regulile de acces de tip IDOR, comportamentul snapshot-urilor, precum și zonele de
+marketplace, coaching și căutare. Astfel, suita de teste verifică nu doar logica de business, ci și
+14
+
+--- PAGE 15 ---
+interacțiunea cu componentele externe folosite în aplicație.
+Mentenabilitate. Codul este organizat modular, pe funcționalități, pentru a face proiectul
+mai ușor de extins. În backend este păstrată separarea între controllere, servicii, repository-
+uri și modelul de domeniu, iar API-ul expune DTO-uri în loc să expună direct entitățile JPA.
+Repository-urile sunt ținute cât mai clare, iar modificările bazei de date sunt versionate prin
+migrații Flyway. Frontend-ul este împărțit la rândul lui pe feature-uri, iar Docker Compose
+permite rularea reproductibilă a infrastructurii necesare proiectului.
+Limitări asumate. Analizatorul de programe nu are rolul de a oferi sfat medical și nu
+înlocuiește un antrenor. El oferă doar o evaluare deterministă, bazată pe reguli explicabile. De
+asemenea, OpenSearch nu este sursă de adevăr, ci doar un model derivat pentru căutare, iar
+corectitudinea datelor rămâne responsabilitatea bazei de date PostgreSQL.
+3.4 Modelul de date și istoricul prin snapshot-uri
+Schema este creată prin migrarea Flyway V1, care conține 28 de tabele. Migrarea V2 adaugă
+grupele musculare și exercițiile oficiale, iar V3 introduce un index unic parțial pentru regula „un
+singur antrenament activ per utilizator”. O sinteză a tabelelor și a constrângerilor se găsește în
+Anexa 1.
+Modelul de date este împărțit în două zone. Prima zonă este cea de planificare: workout_
+templates, template_days, template_day_exercises, rutine, săli și echi-
+pamente. A doua zonă este cea istorică: workout_sessions, session_exercises,
+session_routines, session_exercise_muscle_groups și workout_
+sets. Regula principală este că seriile efectuate nu sunt legate direct de exercițiile dintr-un
+template, ci de exercițiile copiate în sesiune:
+workout_sets -> session_exercises -> workout_sessions
+Această separare este importantă deoarece template-ul reprezintă planul antrenamentului,
+nu execuția lui istorică. Dacă seriile efectuate ar fi legate direct de template_day_
+exercises, istoricul ar depinde de o resursă editabilă. De exemplu, un utilizator poate
+începe o sesiune dintr-o zi care conține Bench Press, poate finaliza antrenamentul, iar peste
+câteva zile poate redenumi exercițiul, schimba grupele musculare sau modifica template-ul.
+Într-un model fără snapshot-uri, sesiunea veche ar putea afișa informații noi, care nu mai
+corespund antrenamentului făcut la acel moment.
+În modelul implementat, momentul pornirii sesiunii este momentul în care planul devine
+istoric. Serviciul de sesiuni încarcă ziua de program a utilizatorului și creează o sesiune nouă
+într-o tranzacție. Pentru fiecare exercițiu planificat se creează un session_exercise, în
+care sunt copiate valorile relevante: numele exercițiului, tipul, poziția, seriile planificate, re-
+petările, greutatea, pauza și notele. Grupele musculare sunt copiate separat în session_
+15
+
+--- PAGE 16 ---
+exercise_muscle_groups, iar rutinele sunt copiate în session_routines. Da-
+că în timpul antrenamentului se folosește un echipament, seria păstrează și equipment_
+name_snapshot.
+Acest design face ca istoricul să fie stabil. Dacă după două săptămâni utilizatorul redenu-
+mește un exercițiu, șterge echipamentul sau modifică programul, sesiunea veche nu se schimbă.
+Cheile externe către datele sursă sunt ON DELETE SET NULL, iar valorile folosite pentru
+afișarea istoricului sunt coloanele *_snapshot. Astfel, template-ul poate continua să fie
+editat ca resursă de planificare, în timp ce sesiunea finalizată rămâne o înregistrare a ceea ce
+utilizatorul a avut în față și a executat în ziua respectivă.
+Același principiu apare și la copierea programelor din marketplace: copia păstrează nume,
+tipuri și grupe musculare, iar legăturile către exerciții sunt păstrate doar când exercițiul este
+oficial și sigur de referit.
+3.5 Constrângeri, ștergere logică și concurență
+Am încercat să mut cât mai multe reguli stabile în PostgreSQL, nu doar în cod Java.
+Exemplele cele mai importante sunt constrângerile CHECK pentru enumerări, days_per_
+week BETWEEN 1 AND 7, rpe BETWEEN 1.0 AND 10.0, finished_at >=
+started_at, contoare nenegative și interdicția ca un antrenor să fie propriul client. Pentru
+programe publice există o constrângere care cere ca published_at să fie nenul atunci când
+visibility='PUBLIC'.
+Resursele de planificare folosesc ștergere logică prin deleted_at. Astfel, o ștergere
+nu rupe istoricul care referă acea resursă. Pentru a permite reutilizarea numelor după ștergere,
+unicitatea este impusă prin indecși unici parțiali care iau în calcul doar rândurile active. De
+exemplu, un utilizator poate crea din nou o sală cu același nume după ce vechea sală a fost
+ștearsă logic.
+Concurența este tratată explicit în două locuri. Pentru sesiunile live, indexul ux_
+workout_sessions_one_active_per_user garantează la nivel de bază de date
+că un utilizator nu poate avea două sesiuni IN_PROGRESS. Serviciul verifică regula înainte,
+pentru un răspuns mai prietenos, dar garanția finală este indexul. Pentru marketplace, contoarele
+de voturi și salvări sunt actualizate prin SQL atomic și mărginit cu GREATEST(0, ...),
+evitând valori negative sau curse de tip citire-modificare-scriere.
+3.6 Securitate și controlul accesului
+Securitatea aplicației este construită în jurul a două idei principale: autentificarea utilizato-
+rului și verificarea dreptului de acces la fiecare resursă. Nu este suficient ca un utilizator să fie
+autentificat; sistemul trebuie să verifice și dacă acel utilizator are voie să vadă sau să modifi-
+16
+
+--- PAGE 17 ---
+ce resursa cerută. Acest lucru este important deoarece aplicația este multi-user și conține date
+personale, sesiuni de antrenament, programe private și relații între antrenori și clienți.
+Autentificarea este bazată pe token-uri JWT. La login sau înregistrare, backend-ul emite un
+token de acces semnat HS256, cu durată scurtă, și un token de reîmprospătare opac. Token-ul de
+acces este trimis de frontend în antetul Authorization, iar token-ul de reîmprospătare este
+transmis ca un cookie HttpOnly, SameSite=Strict, limitat la calea /api/auth.
+Alegerea unui cookie HttpOnly pentru token-ul de reîmprospătare reduce riscul ca acesta să
+fie citit direct din JavaScript în cazul unei vulnerabilități de tip XSS. În același timp, limitarea
+cookie-ului la ruta de autentificare face ca token-ul să fie trimis doar acolo unde este necesar.
+În baza de date nu este păstrat token-ul de reîmprospătare în clar, ci doar amprenta sa SHA-
+256. Astfel, dacă baza de date ar fi expusă, token-urile existente nu ar putea fi folosite direct.
+La fiecare reîmprospătare, token-ul vechi este revocat și se emite o pereche nouă de token-uri
+în aceeași tranzacție. Această rotație limitează perioada în care un token furat ar putea fi util.
+Dacă un token vechi este refolosit, amprenta lui poate exista în baza de date, dar rândul este deja
+revocat, iar cererea este respinsă. Parolele utilizatorilor sunt stocate cu BCrypt, nu în clar.
+Configurația de securitate este stateless, ceea ce înseamnă că serverul nu păstrează
+sesiuni HTTP pentru utilizatori. Rutele de autentificare și /api/health sunt publice,
+/api/admin/** cere rolul ADMIN, /api/coach/** cere rolul COACH, iar restul
+rutelor /api/** cer un utilizator autentificat. Rolurile sunt folosite pentru a separa zonele
+mari ale aplicației, dar ele nu sunt suficiente pentru accesul la date concrete. De exemplu, faptul
+că un utilizator are rolul COACH nu înseamnă că poate vedea datele tuturor utilizatorilor.
+Protecția față de IDOR este aplicată prin modul în care sunt încărcate resursele. Frontend-ul
+nu trimite userId în corpul cererii pentru operațiile asupra resurselor personale, deoarece o
+astfel de valoare ar putea fi modificată ușor de client. În schimb, backend-ul extrage utiliza-
+torul curent din JWT și îl folosește în toate verificările de acces. Serviciile încarcă resursele
+prin metode care includ proprietarul, iar resursele imbricate verifică lanțul de proprietate pâ-
+nă la rădăcină. De exemplu, pentru o resursă care aparține unei zile de template, verificarea
+nu se oprește la identificatorul resursei respective, ci urmărește legătura până la template și la
+utilizatorul care îl deține.
+Dacă un utilizator cere o resursă care aparține altcuiva, răspunsul este 404, nu 403. Diferența
+este intenționată. Un răspuns 403 ar confirma că resursa există, dar nu poate fi accesată de
+utilizatorul curent. În schimb, un răspuns 404 nu oferă informații despre existența resursei și
+reduce riscul de enumerare a identificatorilor. Această abordare este folosită mai ales pentru
+resursele personale, unde existența datelor altui utilizator nu trebuie confirmată.
+Aplicația folosește atât RBAC, cât și ReBAC. RBAC, adică accesul bazat pe roluri, este
+folosit pentru zone precum administrarea sau endpoint-urile dedicate antrenorilor. De exemplu,
+doar un utilizator cu rolul ADMIN poate accesa rutele administrative, iar doar un utilizator cu
+rolul COACH poate accesa rutele de coaching. ReBAC, adică accesul bazat pe relații, este folosit
+pentru cazul coach-client. În acest caz, rolul de coach nu este suficient. Coach-ul poate vedea
+17
+
+--- PAGE 18 ---
+datele unui client doar dacă există o relație activă între cei doi, acceptată de client.
+Această separare este importantă deoarece accesul unui coach trebuie să fie limitat la clienții
+lui reali. Un coach poate trimite o invitație, clientul o poate accepta sau respinge, iar relația poate
+fi revocată ulterior. Doar starea activă a acestei relații permite accesul la istoricul clientului,
+la analize, la detaliile sesiunilor și la căutarea în istoricul acestuia. În lipsa unei relații active,
+sistemul tratează clientul ca inaccesibil pentru acel coach, chiar dacă utilizatorul are rolul corect.
+Prin aceste mecanisme, securitatea nu depinde de o singură verificare. Token-urile stabilesc
+identitatea utilizatorului, rolurile limitează accesul la zonele aplicației, verificările de ownership
+protejează resursele personale, iar relațiile coach-client controlează accesul colaborativ. Astfel,
+aplicația evită situațiile în care un utilizator autentificat poate accesa date care nu îi aparțin doar
+prin modificarea unui identificator în cerere.
+3.7 Funcționalități de planificare și execuție
+Funcționalitățile de planificare sunt gândite ca blocuri reutilizabile. Catalogul de exerciții
+conține exerciții oficiale, vizibile tuturor, și exerciții custom, vizibile doar proprietarului. Fiecare
+exercițiu are grupe musculare primare sau secundare. Rutinele sunt texte reutilizabile pentru
+început sau final de antrenament. Sălile și echipamentele sunt personale, iar echipamentele sunt
+legate de o sală.
+Un program de antrenament este compus din zile. Fiecare zi are exerciții ordonate, valori
+planificate și rutine atașate. După modificarea exercițiilor unei zile, backend-ul recalculează în
+PostgreSQL vectori agregați ai programului: grupe musculare, identificatori de exerciții oficiale
+și nume de exerciții. Acești vectori sunt utili pentru filtrare și căutare.
+Execuția live pornește dintr-o zi de program și creează snapshot-urile descrise mai sus. În
+timpul sesiunii, utilizatorul poate adăuga serii, poate introduce greutate, repetări, durată, dis-
+tanță, RPE, note și echipament, sau poate adăuga exerciții neplanificate. După finalizare sau
+anulare, sesiunea devine terminală. Seriile nu mai pot fi modificate după finalizare, dar notele
+sesiunii pot fi editate, fiind comentariu al utilizatorului, nu datele efective ale execuției.
+3.8 Istoric, analize și marketplace
+Istoricul afișează sesiunile utilizatorului, ordonate descrescător după data de început. Pentru
+a evita problema N+1, sumarul unei pagini (număr de exerciții, număr de serii și volum total)
+este calculat printr-o singură interogare în lot. Analizele de progres sunt calculate în PostgreSQL
+peste sesiunile finalizate: volum pe zi, antrenamente pe săptămână, distribuția seriilor după
+grupa musculară primară, cele mai bune serii pe exercițiu și evoluția estimării 1RM folosind
+formula lui Epley.
+Marketplace-ul permite publicarea programelor private, dar numai dacă programul nu este
+18
+
+--- PAGE 19 ---
+gol. Un utilizator poate naviga programele publice, le poate sorta după noutate, scor sau tendință,
+le poate vota, salva și copia. Copierea este o operație de tip deep copy: se creează un program
+privat nou, cu zile, exerciții, rutine și snapshot-uri proprii. Nu se expun date private ale autorului,
+iar copia poate fi folosită independent de original.
+Pentru interacțiuni, votul propriu asupra propriului program este respins, salvarea este idem-
+potentă, iar contoarele sunt menținute în template_stats. Evenimentele de folosire sunt
+păstrate în template_use_events, astfel încât popularitatea programelor poate fi folo-
+sită la sortare și căutare.
+3.9 Analizatorul de programe
+Analizatorul este expus prin GET /api/templates/{id}/analysis. El citește
+structura programului dintr-un model de aplicație, nu din DTO-uri web, și produce un scor între
+0 și 100. Scorul este împărțit în cinci sub-scoruri: volum și acoperire, frecvență, echilibru, de-
+signul sesiunii și specificitate / pauză. Fiecare sub-scor pornește de la maxim și scade penalizări
+fixe pentru problemele găsite.
+Volumul este calculat doar pentru exercițiile de forță. Seriile sunt ponderate în funcție de
+rolul muscular: o grupă primară primește 1.0, iar una secundară 0.5. Exercițiile fără serii pla-
+nificate nu primesc valori inventate; ele sunt excluse din volum și marcate ca date incomplete.
+Categoriile rezultate sunt WELL_STRUCTURED pentru scoruri de cel puțin 80, DECENT_
+STRUCTURE pentru scoruri de cel puțin 55 și NEEDS_REVIEW pentru restul.
+Răspunsul include avertismente cu severitate, explicații și sugestii. Exemple de reguli sunt
+lipsa unei regiuni importante, volum prea mic sau excesiv, dezechilibru push/pull, dezechilibru
+lower/upper, sesiuni prea lungi sau pauze prea scurte. Analizatorul include și limitări explicite:
+nu vede tehnica, recuperarea, somnul, alimentația sau efortul real, deci nu oferă sfat medical.
+3.10 Modul de coaching
+Modul de coaching combină RBAC și ReBAC. Rutele /api/coach/** cer rolul
+COACH, dar acest rol nu este suficient pentru a vedea datele unui client. Pentru fiecare citire
+legată de un client, serviciul verifică existența unei relații active între antrenor și client. Dacă
+relația lipsește sau nu este activă, răspunsul este 404.
+Relațiile au un ciclu de viață clar: PENDING, ACTIVE, REJECTED și REVOKED. An-
+trenorul trimite invitația, clientul o acceptă sau o respinge, iar oricare dintre părți poate revoca
+accesul. O constrângere din baza de date interzice relația cu sine însuși, iar un index unic parțial
+permite o singură relație vie pentru aceeași pereche.
+Accesul antrenorului este doar de citire: lista de clienți activi, istoricul clientului, analizele,
+detaliile unei sesiuni și căutarea în istoricul clientului. Nu există endpoint prin care antrenorul
+19
+
+--- PAGE 20 ---
+să modifice sesiunile sau programele clientului. Această limitare este intenționată și menține
+separația dintre colaborare și proprietatea datelor.
+3.11 Modelul de citire pentru căutare
+Căutarea este implementată cu OpenSearch ca model de citire derivat din datele pastrate
+in PostgreSQL. OpenSearch nu este sursa de adevăr a aplicației, ci o structură optimizată pen-
+tru interogări full-text, filtrare și agregări. Există două indexuri logice: templates pentru
+programe și workout_sessions pentru istoricul antrenamentelor. Documentele sunt de-
+normalizate și conțin câmpurile utile pentru căutare: nume, descrieri, exerciții, grupe musculare,
+săli, echipamente, note, scor de analiză și statistici de popularitate.
+Interogările folosesc multi_match cu ponderi diferite pe câmpuri. De De exemplu,
+numele programului contează mai mult decât descrierea, iar în istoricul de antrenament nu-
+mele exercițiului contează mai mult decât nota sesiunii. Pentru greșeli de tastare se folosește
+fuzziness=AUTO, dar nu si pentru interogări foarte scurte, deoarece acestea pot produce
+potriviri prea zgomotoase. Analizatorul de căutare include sinonime precum pecs -> chest sau
+ohp -> overhead press. Rezultatele pot include fațete și evidențieri cu <mark>.
+Scrierea în index se face prin evenimente Spring declanșate după commit-ul tranzacției, pen-
+tru ca datele anulate prin rollback să nu fie indexate. Există două tipuri de actualizare: struc-
+turală, când se reconstruiește documentul complet, și de statistici, când se actualizează doar
+contoarele de popularitate. Dacă o scriere în OpenSearch eșuează, eroarea este jurnalizată, iar
+PostgreSQL rămâne sursa de adevăr.
+Securitatea căutării are două straturi. Primul este un filtru obligatoriu derivat din utilizato-
+rul curent: marketplace înseamnă visibility=PUBLIC, programele personale înseamnă
+ownerUserId=apelant, iar istoricul înseamnă ownerUserId=apelant. Al doilea
+strat este validarea rezultatelor în PostgreSQL. Identificatorii întorși de OpenSearch sunt verifi-
+cați din nou în baza relațională, astfel încât un rezultat învechit, șters sau depublicat nu ajunge
+la client.
+Reconstrucția indexului creează un index nou, îl umple din PostgreSQL și apoi schimbă ato-
+mic alias-ul. Endpoint-ul manual de reindexare este permis doar rolului ADMIN. Dacă modulul
+de căutare este dezactivat sau OpenSearch nu răspunde, API-ul întoarce 503, iar interfața poate
+reveni la lista SQL autoritativă.
+3.12 Evaluarea OpenSearch vs. PostgreSQL
+Pentru a evita o concluzie bazată doar pe preferința pentru un motor de căutare, am imple-
+mentat o evaluare practică între OpenSearch și PostgreSQL. Varianta PostgreSQL nu este una
+slabă: folosește tsvector ponderat, index GIN, ts_rank_cd, pg_trgm pentru fuzzy
+20
+
+--- PAGE 21 ---
+search și GROUP BY pentru fațete. Varianta OpenSearch folosește mapările și interogările
+aplicației.
+Setul de date este generat determinist și crește de la 1.000 la 2.000.000 de documente. Am
+măsurat cinci scenarii: două căutări full-text, o căutare fuzzy cu greșeală de tastare, o căutare
+filtrată și o agregare pe fațete. Tabelul 3.1 arată rezultatele la dimensiunea maximă, iar tabelele
+complete sunt în Anexa 3.
+Scenariu la 2M documente PostgreSQL OpenSearch
+Full-text „bench press” (𝑝 ) 1864 ms 64 ms
+50
+Full-text „squat” (𝑝 ) 1437 ms 4 ms
+50
+Fuzzy „benhc” (𝑝 ) 15825 ms 4 ms
+50
+Filtrat (press + INTERMEDIATE + PPL) (𝑝 ) 2295 ms 7 ms
+50
+Fațetă după dificultate (𝑝 ) 1193 ms 2 ms
+50
+Timp de construcție a indexului 239 s 115 s
+Dimensiune pe disc 2632 MB 739 MB
+Tabela 3.1: Comparație OpenSearch vs. PostgreSQL la 2.000.000 de documente.
+Rezultatul principal este că cele două soluții se echivalează în jurul a 10.000 de documente.
+Sub acest prag, PostgreSQL este mai simplu și uneori mai rapid. Peste el, OpenSearch câștigă
+clar, mai ales la căutarea tolerantă la greșeli de tastare. Aceasta justifică arhitectura cu model de
+citire separat, dar și arată că un motor separat nu trebuie introdus fără un motiv concret.
+3.13 Testare și verificarea corectitudinii
+Suita de teste este gândită să ruleze pe o infrastructură cât mai apropiată de cea reală. Tes-
+tele de integrare pornesc PostgreSQL 16 prin Testcontainers, iar testele pentru căutare pornesc
+și un container OpenSearch și activează modulul de search. Am evitat folosirea unei baze H2
+sau a unor repository-uri false, deoarece multe reguli importante ale aplicației depind direct de
+PostgreSQL: indecși unici parțiali, constrângeri CHECK, comportamentul cheilor externe, com-
+portamente de tip ON DELETE SET NULL, query-uri native, tranzacții și extensii precum
+pg_trgm. O bază de date diferită ar fi făcut testele mai rapide, dar ar fi verificat un sistem
+diferit de cel folosit efectiv.
+Testele sunt organizate pe fluxuri funcționale, nu doar pe metode izolate. Există teste pentru
+autentificare, exerciții, rutine, săli și echipamente, template-uri, sesiuni live, istoric și analytics,
+marketplace, coaching, analizator și căutare. În acest fel sunt verificate nu doar serviciile indi-
+viduale, ci și interacțiunea dintre controllere, servicii, repository-uri, validări și constrângerile
+bazei de date.
+O parte importantă a testelor urmărește regulile de securitate și integritate. Sunt verificate
+situații precum accesarea resurselor altui utilizator, pornirea a două sesiuni active pentru același
+utilizator, stabilitatea snapshot-urilor după modificarea datelor sursă, interdicția de a modifica
+21
+
+--- PAGE 22 ---
+seturile unei sesiuni finalizate, accesul coach-ului doar la clienții cu relație activă și copierea in-
+dependentă a unui template din marketplace. Pentru căutare, testele verifică faptul că rezultatele
+nu includ date ale altui utilizator și că filtrarea de securitate este aplicată și peste datele întoarse
+de OpenSearch.
+Testele dedicate căutării folosesc un container OpenSearch real. Astfel sunt verificate ma-
+pările, indexarea, interogările cu filtre, fațetele și regulile de securitate aplicate peste rezultatele
+motorului de căutare. De asemenea, sunt acoperite cazurile în care modulul de search este dez-
+activat sau OpenSearch nu este disponibil, situații în care endpoint-urile de căutare trebuie să
+răspundă controlat, fără să afecteze fluxurile principale bazate pe PostgreSQL.
+În forma curentă, suita conține 128 de teste automate și necesită un mediu Docker funcțio-
+nal pentru verificările bazate pe Testcontainers. Testele nu garantează absența tuturor erorilor,
+dar acoperă zonele în care o greșeală ar avea impact mare: acces neautorizat, pierderea corec-
+titudinii istoricului, inconsistența marketplace-ului, accesul coach-client și căutarea peste date
+denormalizate. Fragmente reprezentative din implementarea analizatorului, din configurația de
+securitate și din migrările SQL sunt incluse în Anexa 2, iar configurația de rulare a aplicației
+este rezumată în Anexa 5.
+Capitolul 4. Concluzii
+4.1 Concluzii privind realizarea temei
+Lucrarea a pornit de la ideea unei aplicații de fitness, dar rezultatul este mai apropiat de
+o platformă completă pentru planificarea și urmărirea antrenamentelor de forță. Utilizatorul
+poate construi programe, porni sesiuni live, salva istoricul, urmări progresul, publica programe
+în marketplace, primi o analiză structurală a programului și, dacă dorește, poate colabora cu
+un antrenor. Aceste funcționalități sunt legate între ele prin același principiu: datele editabile
+rămân separate de istoricul executat.
+Din punct de vedere tehnic, partea cea mai importantă a proiectului este modul în care func-
+ționalitățile sunt protejate și păstrate corecte. Snapshot-urile fac ca o sesiune finalizată să rămână
+fidelă momentului în care a fost executată, chiar dacă ulterior se schimbă exercițiile, echipamen-
+tul sau programul inițial. Autentificarea cu JWT și token-uri de reîmprospătare rotite, verificările
+de proprietate, protecția față de IDOR și combinația RBAC/ReBAC din modulul de coaching li-
+mitează accesul la date fără să se bazeze pe identificatori trimiși de frontend. În plus, regulile
+stabile sunt dublate de constrângeri în PostgreSQL, nu doar de verificări în servicii.
+Aplicația include și componente mai avansate, dar acestea sunt integrate în povestea do-
+meniului. Analizator de programe oferă feedback determinist și explicabil, nu un sfat opac.
+Marketplace-ul folosește copii independente, astfel încât un program public poate fi reutilizat
+fără să rupă datele autorului. Căutarea cu OpenSearch este implementată ca model de citire
+derivat din PostgreSQL, iar rezultatele sunt validate din nou în baza relațională. Benchmark-ul
+22
+
+--- PAGE 23 ---
+arată că PostgreSQL este suficient pentru colecții mici, dar că un motor dedicat devine justificat
+la volume mari, mai ales pentru căutarea tolerantă la greșeli de tastare.
+4.2 Relevanța rezultatelor
+Consider că valoarea lucrării vine din faptul că proiectul nu demonstrează o singură tehno-
+logie izolată, ci o arhitectură coerentă. Fiecare zonă importantă are o regulă clară: PostgreSQL
+este sursa de adevăr, Flyway controlează schema, sesiunile finalizate sunt istorice, accesul este
+mereu verificat în funcție de utilizatorul curent, iar indexul de căutare poate fi reconstruit. Acest
+tip de proiectare este important pentru aplicații reale, unde o funcționalitate aparent simplă poa-
+te deveni problematică dacă istoricul se modifică retroactiv sau dacă un utilizator poate vedea
+datele altcuiva schimbând un ID.
+Rezultatele sunt transferabile și în afara domeniului fitness. Separarea dintre date editabile
+și snapshot-urile istorice apare și în comerț electronic, programări, facturare sau documente.
+Modelul de citire pentru căutare se aplică oricărui sistem în care datele relaționale trebuie găsite
+rapid prin text și filtre. Regulile de acces pentru coaching seamănă cu multe situații în care un
+utilizator are acces delegat, dar limitat, la datele altuia.
+23
+
+--- PAGE 24 ---
+Bibliografie
+[1] Boyd Epley, Poundage Chart. Boyd Epley Workout, Lincoln, NE: Body Enterprises, 1985.
+[2] Michael B. Jones, John Bradley și Nat Sakimura, JSON Web Token (JWT), RFC 7519,
+Internet Engineering Task Force (IETF), 2015, URL: https://www.rfc-editor.
+org/rfc/rfc7519 (accesat în 16.6.2026).
+[3] OpenSearch Project, OpenSearch Documentation, 2024, URL: https://opensearch.
+org/docs/latest/ (accesat în 16.6.2026).
+[4] Brad J. Schoenfeld, Dan Ogborn și James W. Krieger, „Dose-response Relationship Be-
+tween Weekly Resistance Training Volume and Increases in Muscle Mass: A Systematic
+Review and Meta-analysis”, în Journal of Sports Sciences 35.11 (2017), pp. 1073–1082,
+DOI: 10.1080/02640414.2016.1210197.
+[5] The PostgreSQL Global Development Group, PostgreSQL Documentation: Full Text Sear-
+ch, 2024, URL: https://www.postgresql.org/docs/16/textsearch.
+html (accesat în 16.6.2026).
+24
+
+--- PAGE 25 ---
+Anexa 1 – Schema bazei de date
+Schema este creată de migrarea Flyway V1, care definește 28 de tabele. Migrarea V2 adaugă
+datele oficiale pentru grupe musculare și exerciții, iar migrarea V3 adaugă indexul unic parțial
+care garantează că un utilizator poate avea o singură sesiune activă.
+Zonă Tabele principale
+Autentificare și coaching app_users, refresh_tokens, coach_profiles,
+coach_client_relationships
+Catalog și planificare muscle_groups, exercises, exercise_muscle_
+groups, routines, gyms, equipment
+Programe workout_templates, template_stats,
+template_days, template_day_exercises,
+template_day_exercise_muscle_groups,
+template_day_routines
+Sesiuni istorice workout_sessions, session_exercises,
+session_exercise_muscle_groups, session_
+routines, workout_sets
+Marketplace template_votes, template_saves, template_
+use_events
+Extensii pregătite coach_session_comments, coach_template_
+assignments, template_analysis_results,
+outbox_events
+Tabela 1.1: Gruparea tabelelor din schema PostgreSQL.
+Constrângerile importante includ: valori admise pentru enumerări, days_per_
+week BETWEEN 1 AND 7, rpe BETWEEN 1.0 AND 10.0, finished_at >=
+started_at, contoare nenegative, interdicția ca un utilizator să fie propriul antrenor,
+publicarea doar cu published_at nenul și indecși unici parțiali pentru resursele șterse
+logic.
+CREATE UNIQUE INDEX ux_workout_sessions_one_active_per_user
+ON workout_sessions (user_id)
+WHERE status = 'IN_PROGRESS';
+CREATE UNIQUE INDEX gyms_user_name_active_idx
+ON gyms (user_id, lower(name))
+WHERE deleted_at IS NULL;
+ALTER TABLE workout_templates
+ADD CONSTRAINT check_template_visibility_published
+CHECK (
+(visibility = 'PUBLIC' AND published_at IS NOT NULL)
+OR visibility = 'PRIVATE'
+);
+25
+
+--- PAGE 26 ---
+Anexa 2 – Listări de cod reprezentative
+Următoarele fragmente sunt scurtate pentru lizibilitate, dar păstrează forma regulilor imple-
+mentate în proiect.
+Listarea 1. Analizatorul de programe folosește reguli deterministe: fiecare sub-scor pornește
+de la valoarea maximă și scade penalizări fixe pentru problemele găsite.
+private int scoreVolumeAndCoverage() {
+int score = 35;
+if (!lowerBody) {
+add("NO_LOWER_BODY", HIGH, "No lower−body work is planned.");
+score −= 12;
+}
+if (!pulling) {
+add("NO_PULL", HIGH, "No pulling movement is planned.");
+score −= 12;
+}
+if (!pushing) {
+add("NO_PUSH", HIGH, "No pushing movement is planned.");
+score −= 12;
+}
+for (String bucket : ALL_BUCKETS) {
+double volume = weeklyWeightedSets(bucket);
+if (volume <= 3) {
+add("MUSCLE_VOLUME_VERY_LOW", MEDIUM, bucket);
+score −= 3;
+} else if (volume > 25) {
+add("MUSCLE_VOLUME_EXCESSIVE", HIGH, bucket);
+score −= 5;
+} else if (volume > 20) {
+add("MUSCLE_VOLUME_HIGH", MEDIUM, bucket);
+score −= 2;
+}
+}
+return Math.max(0, score);
+}
+Listarea 2. Configurația de securitate aplică RBAC la nivel de rută; verificările de proprietate
+și relațiile de coaching sunt apoi aplicate în servicii.
+.authorizeHttpRequests(auth −> auth
+.requestMatchers(POST, "/api/auth/register", "/api/auth/login",
+"/api/auth/refresh", "/api/auth/logout").
+permitAll()
+.requestMatchers(GET, "/api/health").permitAll()
+26
+
+--- PAGE 27 ---
+.requestMatchers("/api/admin/∗∗").hasRole("ADMIN")
+.requestMatchers("/api/coach/∗∗").hasRole("COACH")
+.requestMatchers("/api/∗∗").authenticated()
+.anyRequest().permitAll())
+Listarea 3. Tabela outbox_events există încă din prima migrare și poate fi folosită ulterior
+pentru indexare tranzacțională.
+CREATE TABLE outbox_events (
+id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+aggregate_type varchar(100) NOT NULL,
+aggregate_id uuid NOT NULL,
+event_type varchar(100) NOT NULL,
+payload jsonb NOT NULL DEFAULT '{}'::jsonb,
+status varchar(30) NOT NULL DEFAULT 'PENDING',
+attempts int NOT NULL DEFAULT 0,
+available_at timestamptz NOT NULL DEFAULT now(),
+processed_at timestamptz,
+created_at timestamptz NOT NULL DEFAULT now(),
+last_error text,
+CONSTRAINT check_outbox_status
+CHECK (status IN ('PENDING','PROCESSING','PROCESSED','FAILED'))
+);
+CREATE INDEX outbox_events_processing_idx
+ON outbox_events (status, available_at, created_at);
+27
+
+--- PAGE 28 ---
+Anexa 3 – Rezultatele complete ale evaluării
+Măsurătorile au fost făcute la șapte dimensiuni ale corpusului, de la 1.000 la 2.000.000 de
+documente. Pentru PostgreSQL s-au folosit tsvector, GIN, ts_rank_cd și pg_trgm.
+Pentru OpenSearch s-au folosit aceleași câmpuri denormalizate ca în indexul aplicației. Cifrele
+reprezintă latențe în milisecunde.
+Corpus Construire PG Construire OS Dimensiune PG Dimensiune OS
+1.000 216 ms 203 ms 1,6 MB 0,3 MB
+10.000 1.926 ms 975 ms 14,6 MB 2,9 MB
+50.000 7.966 ms 3.481 ms 68,7 MB 14,3 MB
+100.000 14.006 ms 6.349 ms 135,5 MB 28,5 MB
+500.000 68.752 ms 37.987 ms 664,7 MB 140,8 MB
+1.000.000 125.774 ms 57.701 ms 1.313,6 MB 349,1 MB
+2.000.000 239.192 ms 114.908 ms 2.632,5 MB 738,7 MB
+Tabela 3.1: Timpul de construire a indexului și dimensiunea pe disc.
+Corpus PostgreSQL (𝑝 /𝑝 /𝑝 ) OpenSearch (𝑝 /𝑝 /𝑝 )
+50 95 99 50 95 99
+1.000 1,46 / 2,68 / 3,12 3,25 / 5,70 / 10,56
+10.000 10,64 / 14,32 / 17,63 2,85 / 5,21 / 7,17
+50.000 48,70 / 66,59 / 77,97 5,17 / 10,05 / 13,98
+100.000 100,21 / 117,87 / 136,46 6,84 / 10,59 / 12,83
+500.000 779,47 / 1021,25 / 1229,16 22,75 / 38,09 / 67,26
+1.000.000 872,19 / 1199,43 / 1220,09 33,64 / 45,24 / 83,90
+2.000.000 1863,97 / 2783,12 / 2783,12 63,65 / 73,05 / 111,67
+Tabela 3.2: Latența căutării full-text pentru interogarea bench press.
+Corpus PostgreSQL (𝑝 /𝑝 /𝑝 ) OpenSearch (𝑝 /𝑝 /𝑝 )
+50 95 99 50 95 99
+1.000 14,45 / 18,91 / 21,69 2,37 / 3,74 / 5,63
+10.000 127,93 / 134,06 / 136,22 3,23 / 7,38 / 10,94
+50.000 621,74 / 645,63 / 646,08 2,66 / 4,95 / 6,59
+100.000 1831,47 / 2169,61 / 2169,61 3,15 / 5,74 / 7,38
+500.000 2447,22 / 8354,43 / 8354,43 4,06 / 7,20 / 8,95
+1.000.000 7806,25 / 17790,10 / 17790,10 3,94 / 9,18 / 13,35
+2.000.000 15825,49 / 16399,71 / 16399,71 3,89 / 9,38 / 14,14
+Tabela 3.3: Latența căutării fuzzy pentru interogarea greșită benhc.
+28
+
+--- PAGE 29 ---
+Anexa 4 – Contractul API (selecție)
+Toate endpoint-urile, cu excepția autentificării și a verificării de sănătate, cer un token JWT
+valid. Erorile folosesc un format uniform, cu un cod stabil, de exemplu TEMPLATE_NOT_
+FOUND, ACTIVE_WORKOUT_EXISTS sau SEARCH_UNAVAILABLE.
+Autentificare : POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/refresh
+POST /api/auth/logout
+GET /api/auth/me
+Planificare : GET /api/exercises
+GET|POST /api/routines
+GET|POST /api/gyms
+GET|POST /api/gyms/{id}/equipment
+PUT|DELETE /api/equipment/{id}
+Programe : GET|POST /api/templates
+GET|PUT|DELETE /api/templates/{id}
+POST /api/templates/{id}/publish
+POST /api/templates/{id}/unpublish
+Sesiuni : POST /api/workouts/start
+GET /api/workouts/active
+POST /api/workouts/{id}/finish
+POST /api/workouts/{id}/cancel
+POST /api/session−exercises/{id}/sets
+PUT|DELETE /api/sets/{id}
+Istoric : GET /api/history
+GET /api/analytics/overview
+Marketplace : GET /api/marketplace/templates
+POST /api/marketplace/templates/{id}/vote
+POST /api/marketplace/templates/{id}/save
+POST /api/marketplace/templates/{id}/use
+Analizator : GET /api/templates/{id}/analysis
+Cautare : GET /api/search/templates
+GET /api/search/workouts
+POST /api/admin/search/reindex
+Coaching : GET /api/coach/clients/{id}/history
+GET /api/coach/clients/{id}/analytics
+GET /api/coach/clients/{id}/sessions
+29
+
+--- PAGE 30 ---
+GET /api/coach/clients/{id}/search
+POST /api/coach/clients/invite
+DELETE /api/coach/clients/{id}
+GET /api/coaching/invites
+GET /api/coaching/coaches
+30
+
+--- PAGE 31 ---
+Anexa 5 – Configurație și rulare
+Fișierul docker-compose.yml pornește PostgreSQL 16, OpenSearch 2.13.0 și apli-
+cația Spring Boot. Imaginea aplicației construiește frontend-ul Vite în timpul build-ului Maven
+și îl include în jar-ul Spring Boot, astfel încât interfața și API-ul sunt servite de aceeași aplicație
+la http://localhost:8080.
+docker compose up −−build
+Configurația principală păstrează schema sub controlul Flyway și dezactivează Hiberna-
+te DDL. Modulul de căutare este dezactivat implicit și este activat în compose prin APP_
+SEARCH_ENABLED=true.
+spring:
+jpa:
+hibernate:
+ddl−auto: validate
+flyway:
+enabled: true
+app:
+security:
+jwt:
+issuer: workout−thesis
+access−ttl: 15m
+refresh−ttl: 14d
+search:
+enabled: ${APP_SEARCH_ENABLED:false}
+uri: ${APP_SEARCH_URI:http://localhost:9200}
+templates−index: templates_v1
+templates−alias: templates
+sessions−index: workout_sessions_v1
+sessions−alias: workout_sessions
+Pentru dezvoltare, frontend-ul poate rula separat prin Vite pe portul 5173, iar backend-ul
+pe portul 8080. Testele de integrare folosesc Testcontainers și au nevoie de Docker funcțional,
+deoarece pornesc PostgreSQL 16 și, pentru suita de căutare, un container OpenSearch 2.x.
+31

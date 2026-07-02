@@ -3,71 +3,95 @@
 
 \section{Tipul lucrării și încadrarea temei}
 
-Aceasta este o lucrare de licență aplicativă, din zona aplicațiilor web full-stack. Pe lângă partea
-clasică de inginerie software (baze de date, securitate, testare), are și o componentă care ține de
-regăsirea informației: o căutare full-text construită peste motorul OpenSearch. Partea cea mai
-interesantă din punct de vedere științific este compararea acestei căutări cu ce poate face PostgreSQL
-de unul singur.
+Lucrarea de față este o lucrare de licență aplicativă, încadrată în zona aplicațiilor web full-stack
+și a sistemelor de gestiune a datelor pentru domeniul fitness. Tema nu constă doar într-un jurnal de
+antrenamente, ci într-o platformă completă în care utilizatorul își poate planifica antrenamentele,
+le poate executa, le poate analiza după ce au fost realizate și poate descoperi programe create de
+alți utilizatori.
+
+Din punct de vedere tehnic, proiectul combină mai multe subprobleme care apar într-un sistem real:
+autentificare sigură, autorizare pe resurse, date istorice care nu trebuie alterate, operații
+concurente, căutare full-text, marketplace, analiză automată a structurii unui program și acces
+controlat pentru antrenori. Tocmai această combinație este partea interesantă: fiecare funcționalitate
+trebuie să fie utilă pentru utilizator, dar și corectă în raport cu restul sistemului.
 
 \section{Prezentarea generală a temei}
 
-Aplicațiile de monitorizare a antrenamentelor sunt, în general, de două feluri. Unele sunt doar
-jurnale: rețin ce ai făcut, dar nu te ajută să planifici. Altele dau recomandări de tip „antrenor cu
-inteligență artificială”, pe care utilizatorul nu le poate verifica și care par mai sigure decât sunt
-în realitate. Pe lângă asta, multe dintre ele tratează istoricul ca pe niște date care se pot
-schimba: dacă îți modifici sau îți ștergi un program, antrenamentele vechi pot deveni incoerente.
+Un utilizator al aplicației începe prin a-și construi biblioteca de lucru: exerciții oficiale și
+exerciții proprii, rutine de încălzire sau încheiere, săli și echipamente. Pe baza acestora creează
+programe de antrenament împărțite pe zile. O zi de program conține exerciții ordonate, valori
+planificate (serii, repetări, greutate, pauză) și, opțional, rutine atașate.
 
-Platforma pe care am construit-o pleacă de la o poziție diferită. În primul rând, tratează istoricul
-ca pe ceva ce nu trebuie să se mai schimbe: la execuția unui antrenament, planul este copiat în
-instantanee, iar istoricul rămâne corect indiferent ce se întâmplă mai târziu cu datele sursă. În al
-doilea rând, dă un feedback pe care utilizatorul îl poate înțelege: o analiză bazată pe reguli clare,
-pornite din ce se știe despre antrenamentul de forță, care nu pretinde a fi sfat medical. În al
-treilea rând, duce căutarea dincolo de un simplu filtru SQL, printr-un model de citire făcut special
-pentru căutare, și măsoară concret când merită această alegere.
+În momentul în care utilizatorul pornește un antrenament, programul devine o sesiune live. Aici apar
+datele istorice propriu-zise: seriile efectuate, greutatea, repetările, durata, RPE-ul, notele și
+echipamentul folosit. După finalizare, sesiunea intră în istoric și este folosită în analizele de
+progres. Sistemul calculează volum în timp, antrenamente pe săptămână, distribuția pe grupe musculare
+și estimări de progres la forță.
 
-\section{Scopul și motivația alegerii temei}
+Pe lângă fluxul individual, aplicația are un marketplace de programe publice. Un utilizator poate
+publica un program, iar ceilalți îl pot vota, salva sau copia în biblioteca lor privată. Există și un
+mod de coaching: un utilizator cu rol de antrenor poate vedea istoricul și analizele unui client numai
+dacă există o relație activă acceptată de client. Acest acces este intenționat limitat la citire, ca
+să nu amestece colaborarea cu dreptul de a modifica datele personale ale clientului.
 
-Scopul meu a fost să construiesc un sistem cât mai apropiat de unul real, nu o aplicație de tip „temă
-de an”. Am vrut să arăt că pot lucra cu lucruri importante din inginerie software: securitate
-(autentificare cu token-uri, control al accesului pe roluri și pe relații), integritatea datelor
-(instantanee care nu se modifică, constrângeri puse la nivelul bazei de date), modele de citire
-separate, precum și o disciplină serioasă de testare.
+\section{Problema urmărită}
 
-Am ales căutarea ca temă centrală din două motive. Pe de o parte, o căutare full-text care tolerează
-greșelile, ordonează rezultatele după relevanță și oferă fațete chiar este utilă pentru un istoric
-mare de antrenamente (genul „găsește acel antrenament din 2020”). Pe de altă parte, alegerea dintre a
-folosi baza de date așa cum e și a adăuga un motor de căutare separat este o decizie de arhitectură
-luată des, dar adesea fără să fie cu adevărat justificată. Eu am transformat-o într-o întrebare la
-care se poate răspunde cu cifre: \emph{de la ce dimensiune începe să merite un motor de căutare
-dedicat?}
+Într-o aplicație de acest tip, problema cea mai importantă nu este doar să se poată salva antrenamente,
+ci să se poată avea încredere în ce s-a salvat. Datele de planificare sunt, prin natura lor,
+editabile: un utilizator poate redenumi un exercițiu, poate modifica un program, poate șterge o sală
+sau poate schimba echipamentul disponibil. În schimb, istoricul trebuie să descrie ce s-a întâmplat
+la momentul respectiv. Dacă o sesiune veche s-ar schimba pentru că programul original a fost editat,
+aplicația ar pierde sensul de jurnal.
 
-\section{Contribuția proprie (pe scurt)}
+De aici rezultă prima direcție a lucrării: un model de date cu instantanee pentru istoricul
+antrenamentelor. La pornirea sesiunii, aplicația copiază datele relevante din planificare în tabele de
+sesiune. Cheile către datele sursă rămân doar ca legături auxiliare și sunt anulabile, în timp ce
+valorile afișate în istoric sunt cele copiate în momentul execuției.
 
-Am proiectat și implementat singur întregul sistem. Mai exact:
+A doua direcție este securitatea. Aplicația este multi-user și include resurse personale, relații
+antrenor-client și endpoint-uri administrative. De aceea, fiecare operație trebuie să știe cine este
+utilizatorul curent și ce are voie să vadă sau să modifice. Sistemul folosește JWT, token-uri de
+reîmprospătare opace rotite, interogări scoping după proprietar și reguli de acces care întorc 404
+pentru resursele altui utilizator, pentru a evita scurgerile de informație de tip IDOR.
+
+A treia direcție este regăsirea informației. Pe măsură ce crește numărul de programe și sesiuni,
+utilizatorul are nevoie de căutare după exerciții, grupe musculare, săli, echipamente, note și
+filtre. În proiect, căutarea este implementată cu OpenSearch ca model de citire derivat din
+PostgreSQL, dar lucrarea nu tratează OpenSearch ca soluție implicită. Ea include și o comparație
+practică împotriva unei variante PostgreSQL bine indexate, pentru a vedea când merită complexitatea
+unui motor separat.
+
+\section{Contribuția proprie}
+
+Contribuția proprie constă în proiectarea și implementarea unei platforme funcționale, nu doar a unui
+prototip izolat. Principalele elemente realizate sunt:
+
 \begin{itemize}
-  \item un model de date cu integritate puternică (instantanee care nu se modifică, ștergere logică,
-        indecși unici parțiali, constrângeri \code{CHECK}), validat de Hibernate în mod \code{validate};
-  \item un sistem de securitate cu token-uri JWT și rotația token-urilor de reîmprospătare, control al
-        accesului pe roluri (RBAC) și pe relații (ReBAC) pentru coaching, gândit să nu permită
-        atacuri de tip IDOR (răspunde cu 404, nu cu 403);
-  \item un analizor al structurii programelor, bazat pe reguli și ușor de explicat, cu un scor pe 100
-        de puncte împărțit în cinci părți și cu avertismente motivate;
-  \item un model de citire separat pentru căutare, construit peste OpenSearch și ținut la zi prin
-        evenimente după salvare, cu securitate pe două straturi;
-  \item o comparație practică între OpenSearch și PostgreSQL pe un set de date generat, crescut de la
-        1.000 la 2.000.000 de documente, cu o variantă de PostgreSQL făcută corect (\code{tsvector}+GIN,
-        \code{pg\_trgm});
-  \item o suită de teste de integrare care rulează pe baze de date reale (PostgreSQL și OpenSearch
-        prin Testcontainers, fără mock-uri și fără H2).
+  \item un backend Spring Boot organizat pe funcționalități, cu separare între domeniu, servicii,
+        repository-uri și controllere;
+  \item o schemă PostgreSQL gestionată prin Flyway, cu constrângeri de integritate, indecși unici
+        parțiali, ștergere logică și reguli de concurență la nivel de bază de date;
+  \item un model de sesiuni cu instantanee, astfel încât istoricul rămâne corect după editarea sau
+        ștergerea datelor de planificare;
+  \item autentificare cu JWT, rotația token-urilor de reîmprospătare și protecție față de accesul
+        neautorizat la resursele altor utilizatori;
+  \item funcționalități complete pentru exerciții, rutine, săli, echipamente, programe, sesiuni live,
+        istoric, analize, marketplace și coaching;
+  \item un analizor determinist al structurii programelor, bazat pe reguli explicabile, fără a pretinde
+        că oferă sfat medical;
+  \item un model de citire OpenSearch pentru căutare full-text peste programe și istoric, cu filtre,
+        fațete, evidențiere, toleranță la greșeli și verificare suplimentară în PostgreSQL;
+  \item o evaluare experimentală OpenSearch vs. PostgreSQL pe un set de date generat până la două
+        milioane de documente.
 \end{itemize}
 
 \section{Structura lucrării}
 
-Lucrarea este organizată astfel. Capitolul~\ref{cap:preliminarii} (\emph{Preliminarii}) explică
-noțiunile și tehnologiile pe care se sprijină tema și unde se află astăzi acest domeniu.
-Capitolul~\ref{cap:contributie} (\emph{Contribuția proprie}) descrie arhitectura sistemului, modelul
-de date și ideea instantaneelor, securitatea, analizorul, căutarea peste OpenSearch, comparația
-OpenSearch vs.\ PostgreSQL, modul de coaching, testarea și ce am proiectat deja pentru viitor.
-Capitolul~\ref{cap:concluzii} (\emph{Concluzii}) adună rezultatele și discută ce ar urma. Detaliile
-mai voluminoase — capturi din interfață, schema completă a bazei de date, bucăți de cod, tabelele cu
-toate măsurătorile și lista de endpoint-uri — sunt puse în anexe și sunt referite din text.
+Capitolul~\ref{cap:preliminarii} introduce noțiunile folosite în proiect: aplicații web, modelarea
+datelor istorice, autentificarea cu token-uri, controlul accesului, căutarea full-text și principiile
+folosite de analizorul de programe. Capitolul~\ref{cap:contributie} descrie implementarea efectivă a
+platformei, urmărind fluxul de utilizare și apoi deciziile tehnice: modelul de date, securitatea,
+funcționalitățile, coaching-ul, căutarea, benchmark-ul și testarea. Capitolul~\ref{cap:concluzii}
+rezumă rezultatele și discută direcțiile de dezvoltare rămase. Detaliile care ar încărca textul
+principal, cum ar fi schema bazei de date, fragmente de cod, tabelele complete de benchmark și
+contractul API, sunt incluse în anexe.

@@ -1,0 +1,9 @@
+% Language definition file (part of polyglossia v2.10 -- 2026/04/18)
+%
+\ProvidesFile{gloss-german-de-1901.ldf}[polyglossia: module for German (Germany, old spelling)]
+
+% We provide this as a babel alias
+
+\InheritGlossFile{german}
+
+\endinput

@@ -1,0 +1,36 @@
+interacțiunea cu componentele externe folosite în aplicație.
+Mentenabilitate. Codul este organizat modular, pe funcționalități, pentru a face proiectul
+mai ușor de extins. În backend este păstrată separarea între controllere, servicii, repository-
+uri și modelul de domeniu, iar API-ul expune DTO-uri în loc să expună direct entitățile JPA.
+Repository-urile sunt ținute cât mai clare, iar modificările bazei de date sunt versionate prin
+migrații Flyway. Frontend-ul este împărțit la rândul lui pe feature-uri, iar Docker Compose
+permite rularea reproductibilă a infrastructurii necesare proiectului.
+Limitări asumate. Analizatorul de programe nu are rolul de a oferi sfat medical și nu
+înlocuiește un antrenor. El oferă doar o evaluare deterministă, bazată pe reguli explicabile. De
+asemenea, OpenSearch nu este sursă de adevăr, ci doar un model derivat pentru căutare, iar
+corectitudinea datelor rămâne responsabilitatea bazei de date PostgreSQL.
+3.4 Modelul de date și istoricul prin snapshot-uri
+Schema este creată prin migrarea Flyway V1, care conține 28 de tabele. Migrarea V2 adaugă
+grupele musculare și exercițiile oficiale, iar V3 introduce un index unic parțial pentru regula „un
+singur antrenament activ per utilizator”. O sinteză a tabelelor și a constrângerilor se găsește în
+Anexa 1.
+Modelul de date este împărțit în două zone. Prima zonă este cea de planificare: workout_
+templates, template_days, template_day_exercises, rutine, săli și echi-
+pamente. A doua zonă este cea istorică: workout_sessions, session_exercises,
+session_routines, session_exercise_muscle_groups și workout_
+sets. Regula principală este că seriile efectuate nu sunt legate direct de exercițiile dintr-un
+template, ci de exercițiile copiate în sesiune:
+workout_sets -> session_exercises -> workout_sessions
+Această separare este importantă deoarece template-ul reprezintă planul antrenamentului,
+nu execuția lui istorică. Dacă seriile efectuate ar fi legate direct de template_day_
+exercises, istoricul ar depinde de o resursă editabilă. De exemplu, un utilizator poate
+începe o sesiune dintr-o zi care conține Bench Press, poate finaliza antrenamentul, iar peste
+câteva zile poate redenumi exercițiul, schimba grupele musculare sau modifica template-ul.
+Într-un model fără snapshot-uri, sesiunea veche ar putea afișa informații noi, care nu mai
+corespund antrenamentului făcut la acel moment.
+În modelul implementat, momentul pornirii sesiunii este momentul în care planul devine
+istoric. Serviciul de sesiuni încarcă ziua de program a utilizatorului și creează o sesiune nouă
+într-o tranzacție. Pentru fiecare exercițiu planificat se creează un session_exercise, în
+care sunt copiate valorile relevante: numele exercițiului, tipul, poziția, seriile planificate, re-
+petările, greutatea, pauza și notele. Grupele musculare sunt copiate separat în session_
+15
